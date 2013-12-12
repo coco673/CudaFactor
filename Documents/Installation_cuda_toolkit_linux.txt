@@ -1,0 +1,31 @@
+1 - Telecharger le .deb correspondant sur http://developer.nvidia.com/cuda-downloads
+2 - supprimer le driver current $/usr/bin/nvidia-uninstall
+3 - depaquetage du .deb et installation 
+$ sudo dpkg -i cuda-repo-<distro>_<version>_<architecture>.deb
+$ sudo apt-get update
+$ sudo apt-get install cuda
+
+4 - Set les variables d'env 
+(32 bits)
+$export PATH=/usr/local/cuda-5.5/bin:$PATH
+$ export LD_LIBRARY_PATH=/usr/local/cuda-5.5/lib:$LD_LIBRARY_PATH
+(64 bits)
+$export PATH=/usr/local/cuda-5.5/bin:$PATH
+$ export LD_LIBRARY_PATH=/usr/local/cuda-5.5/lib64:$LD_LIBRARY_PATH
+
+5 - copier les samples et utils 
+$ cuda-install-samples-5.5.sh <dir>
+
+6 - Verifier l'installation
+$ nvcc -V
+$ cd ~/NVIDIA_CUDA-5.5_Samples
+$ make
+
+7 - Executer deviceQuery pour confirmation de l'installation et affichage des infos de la carte
+$ ~/NVIDIA_CUDA-5.5_Samples/1_Utilities/deviceQuery/
+result doit valoir PASS
+Carte graphique Cuda capable detected
+
+$ ~/NVIDIA_CUDA-5.5_Samples/1_Utilities/bandwithTest
+result doit valoir PASS
+
