@@ -13,8 +13,18 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    attente.cpp \
+    choixmethodeexecution.cpp \
+    choixnombre.cpp \
+    fenetreprincipale.cpp \
+    resultat.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    attente.h \
+    choixmethodeexecution.h \
+    choixnombre.h \
+    fenetreprincipale.h \
+    resultat.h
 
 FORMS    += mainwindow.ui
