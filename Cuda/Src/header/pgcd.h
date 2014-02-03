@@ -17,7 +17,7 @@
 #define N 2000
 
 
-int pgcd(long double a, long double b);
+long double pgcd(long double a, long double b);
 char *convert(long double a);
 char *equalNBit(char *res,int size);
 

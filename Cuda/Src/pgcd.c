@@ -5,13 +5,14 @@
  *      Author: tony
  */
 
-/*
- * Debut d'algorithme de Kannan-Miller-Rudolph pour obtenir le pgcd de manière parallelisée
- */
+
 
 #include "header/pgcd.h"
 
-int pgcd(long double a, long double b){
+/*
+ * Debut d'algorithme de Kannan-Miller-Rudolph pour obtenir le pgcd de manière parallelisée
+ */
+/*int pgcd(long double a, long double b){
 	int n;
 	if(a<b){
 		n=strlen(convert(b));
@@ -42,7 +43,7 @@ int pgcd(long double a, long double b){
 				i=i+2;
 			}
 	}
-}
+}*/
 /*
  * Change la taille de representation du binaire en size bits
  */
@@ -95,4 +96,27 @@ char *convert(long double a){
 	}
 
 	return res;
+}
+
+/*
+ * calcule du pgcd selon l'algorithme d'euclide pour les grands entiers.
+ */
+long double pgcd(long double a,long double b){
+
+	long double r,q;
+	if(a<b){
+		long double c = a;
+		a=b;
+		b=c;
+	}
+	r = fmodl(a, b);
+	while (r != 0){
+		if(a > b){
+			a = b;
+			b = r;
+			r = fmodl(a, b);
+		}
+	}
+	q = b;
+return q;
 }
