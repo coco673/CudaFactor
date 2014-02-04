@@ -21,14 +21,14 @@ public:
     void pagePrec();
     void pageSuiv();
     QList<QFrame *> getListeFrames();
-    ChoixNombre getChoixNombre();
-    ChoixMethode getChoixMethode();
-    Attente getAttente();
-    Resultat getResultat();
-    ModelChoixNombre getModelChoixNombre();
-    ModelChoixMethode getModelChoixMethode();
-    ModelAttente getModelAttente();
-    ModelResultat getModelResultat();
+    ChoixNombre* getChoixNombre();
+    ChoixMethode* getChoixMethode();
+    Attente* getAttente();
+    Resultat* getResultat();
+    ModelChoixNombre* getModelChoixNombre();
+    ModelChoixMethode* getModelChoixMethode();
+    ModelAttente* getModelAttente();
+    ModelResultat* getModelResultat();
 
 private:
     int page;
