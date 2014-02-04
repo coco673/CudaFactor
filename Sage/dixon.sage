@@ -5,6 +5,18 @@ def premiers(base) :
         prems.append(next_prime(nb))
     return prems
 
+def est_dans(liste, x) :
+    for k in [0..len(liste)] :
+        if liste[k] == x : return True
+    return false
+    
+def est_friable(base,nb) :
+    facteurs = list(factor(nb))
+    for k in [0,len(facteurs)] :
+        p = facteurs[k][0]
+        if p > base : return False
+    return True
+    
 def dixon (nb, base) :
     prems = premiers(base)
     k = len(prems)
@@ -15,11 +27,11 @@ def dixon (nb, base) :
     div = []
     prod = produit(div)
     while prod <> nb :
-        x = randint(sdrt(nb),nb)
+        x = randint(sqrt(nb),nb)
         m = 0
         while m <> k+1 :
             y = x**2 % nb
-            if est_friable(y) and not est_dans(div, y) :
+            if est_friable(base,y) and not est_dans(div, y) :
                 r.append(x,y)
                 liste_x.append(x)
                 liste_y.append(y)
