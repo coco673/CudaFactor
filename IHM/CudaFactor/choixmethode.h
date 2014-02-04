@@ -12,7 +12,7 @@ class ChoixMethode: public QFrame
 public:
     ChoixMethode(ModelChoixMethode *m);
 
-private slots:
+public slots:
     void pressCUDA();
     void pressSAGE();
 

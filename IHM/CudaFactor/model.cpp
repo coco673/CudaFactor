@@ -34,6 +34,38 @@ QList<QFrame *> Model::getListeFrames() {
     return listFrames;
 }
 
+ChoixNombre Model::getChoixNombre() {
+    return choixNombre;
+}
+
+ChoixMethode Model::getChoixMethode() {
+    return choixMethode;
+}
+
+Attente Model::getAttente() {
+    return attente;
+}
+
+Resultat Model::getResultat() {
+    return resultat;
+}
+
+ModelChoixNombre Model::getModelChoixNombre() {
+    return modelChoixNombre;
+}
+
+ModelChoixMethode Model::getModelChoixMethode() {
+    return modelChoixMethode;
+}
+
+ModelAttente Model::getModelAttente() {
+    return modelAttente;
+}
+
+ModelResultat Model::getModelResultat() {
+    return modelResultat;
+}
+
 void Model::pagePrec() {
     if (page < 1) {
         page = 0;
