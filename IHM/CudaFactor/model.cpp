@@ -2,82 +2,46 @@
 
 Model::Model()
 {
-    page = 0;
-
-    //Initialisation des models
-    modelChoixNombre = new ModelChoixNombre();
-    modelChoixMethode = new ModelChoixMethode();
-    modelAttente = new ModelAttente();
-    modelResultat = new ModelResultat();
-
-    //Initialisation des QFrames
-    choixNombre = new ChoixNombre(modelChoixNombre);
-    choixMethode = new ChoixMethode(modelChoixMethode);
-    attente = new Attente(modelAttente);
-    resultat = new Resultat(modelResultat);
-
-    listFrames.append(choixNombre);
-    listFrames.append(choixMethode);
-    listFrames.append(attente);
-    listFrames.append(resultat);
+    methode = CUDA;
+    nombre = 0;
+    temps = -1;
 }
 
-int Model::getPage(){
-    return page;
+int Model::getMethode() {
+    return methode;
 }
 
-QFrame * Model::getFrameCourante() {
-    return listFrames[page];
+long double Model::getNombre() {
+    return nombre;
 }
 
-QList<QFrame *> Model::getListeFrames() {
-    return listFrames;
+QList<long double> Model::getListFacteursPremiers() {
+    return listFacteursPremiers;
 }
 
-ChoixNombre* Model::getChoixNombre() {
-    return choixNombre;
+int Model::getTempsExecution() {
+    return temps;
 }
 
-ChoixMethode* Model::getChoixMethode() {
-    return choixMethode;
+void Model::setMethode(int m) {
+    methode = m;
 }
 
-Attente* Model::getAttente() {
-    return attente;
+void Model::setNombre(long double n) {
+    nombre = n;
 }
 
-Resultat* Model::getResultat() {
-    return resultat;
+void Model::setListFacteursPremiers(QList<long double> l) {
+    listFacteursPremiers = l;
 }
 
-ModelChoixNombre* Model::getModelChoixNombre() {
-    return modelChoixNombre;
+void Model::setTempsExecution(int t) {
+    temps = t;
 }
 
-ModelChoixMethode* Model::getModelChoixMethode() {
-    return modelChoixMethode;
-}
-
-ModelAttente* Model::getModelAttente() {
-    return modelAttente;
-}
-
-ModelResultat* Model::getModelResultat() {
-    return modelResultat;
-}
-
-void Model::pagePrec() {
-    if (page < 1) {
-        page = 0;
-    } else {
-        page--;
-    }
-}
-
-void Model::pageSuiv() {
-    if (page >= listFrames.size()-1) {
-        page = 0;
-    } else {
-        page++;
-    }
+void Model::reinitialiser() {
+    methode = CUDA;
+    nombre = 0;
+    temps = -1;
+    listFacteursPremiers.clear();
 }

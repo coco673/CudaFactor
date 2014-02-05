@@ -1,7 +1,11 @@
 #include "attente.h"
 
-Attente::Attente(ModelAttente *m)
+Attente::Attente(Model *m)
 {
     model = m;
     setStyleSheet("background-color: red;");
+}
+
+void Attente::actualiser() {
+
 }

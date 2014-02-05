@@ -1,16 +1,17 @@
 #ifndef RESULTAT_H
 #define RESULTAT_H
 
-#include "modelresultat.h"
+#include "model.h"
 #include <QFrame>
 
 class Resultat: public QFrame
 {
 public:
-    Resultat(ModelResultat *m);
+    Resultat(Model *m);
+    void actualiser();
 
 private:
-    ModelResultat * model;
+    Model * model;
 
 };
 

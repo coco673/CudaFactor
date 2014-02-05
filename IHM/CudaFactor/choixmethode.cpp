@@ -1,6 +1,6 @@
 #include "choixmethode.h"
 
-ChoixMethode::ChoixMethode(ModelChoixMethode *m)
+ChoixMethode::ChoixMethode(Model *m)
 {
     model = m;
     setStyleSheet("background-color: orange;");
@@ -17,7 +17,7 @@ ChoixMethode::ChoixMethode(ModelChoixMethode *m)
     cudaButton->move(175, 250);
     cudaButton->setCursor(Qt::PointingHandCursor);
     cudaButton->raise(); //au premier plan
-    cudaButton->setStyleSheet("background-color: white; border: 5px solid white");
+    cudaButton->setStyleSheet("background-color: white; border: 5px solid red");
 
     sageButton->setFixedSize(100, 100);
     sageButton->move(525, 250);
@@ -30,6 +30,20 @@ ChoixMethode::ChoixMethode(ModelChoixMethode *m)
     QObject::connect(sageButton, SIGNAL(clicked()), this, SLOT(pressSAGE()));
 
 }
+
+void ChoixMethode::actualiser() {
+    switch(model->getMethode()) {
+    case SAGE:
+        cudaButton->setStyleSheet("background-color: white; border: 5px solid white");
+        sageButton->setStyleSheet("background-color: white; border: 5px solid red");
+        break;
+    default:
+        sageButton->setStyleSheet("background-color: white; border: 5px solid white");
+        cudaButton->setStyleSheet("background-color: white; border: 5px solid red");
+        break;
+    }
+}
+
 
 void ChoixMethode::pressCUDA() {
     model->setMethode(CUDA);

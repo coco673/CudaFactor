@@ -4,19 +4,34 @@ FenetrePrincipale::FenetrePrincipale() {
     // Initialisation du model
     model = new Model();
 
+    page = 0;
+
+    //Initialisation des QFrames
+
+    choixNombre = new ChoixNombre(model);
+    choixMethode = new ChoixMethode(model);
+    attente = new Attente(model);
+    resultat = new Resultat(model);
+
+    listFrames.append(choixNombre);
+    listFrames.append(choixMethode);
+    listFrames.append(attente);
+    listFrames.append(resultat);
+
+
     // Construction de la frame visible
-    for (int i = 0; i < model->getListeFrames().size(); i++) {
-        (model->getListeFrames()[i])->setParent(this);
-        (model->getListeFrames()[i])->setFixedSize(800, 600);
-        (model->getListeFrames()[i])->hide();
+    for (int i = 0; i < listFrames.size(); i++) {
+        (listFrames[i])->setParent(this);
+        (listFrames[i])->setFixedSize(800, 600);
+        (listFrames[i])->hide();
     }
 
-    model->getFrameCourante()->show();
+    listFrames[page]->show();
 
     // Construction des boutons
 
     suivant = new QPushButton("Suivant", this);
-    precedent = new QPushButton("Précédent", this);
+    precedent = new QPushButton("Precedent", this);
 
     suivant->setFixedSize(70, 70);
     suivant->move(700, 500);
@@ -34,14 +49,51 @@ FenetrePrincipale::FenetrePrincipale() {
 
 }
 
+int FenetrePrincipale::getPage(){
+    return page;
+}
+
+QList<QFrame *> FenetrePrincipale::getListeFrames() {
+    return listFrames;
+}
+
+ChoixNombre* FenetrePrincipale::getChoixNombre() {
+    return choixNombre;
+}
+
+ChoixMethode* FenetrePrincipale::getChoixMethode() {
+    return choixMethode;
+}
+
+Attente* FenetrePrincipale::getAttente() {
+    return attente;
+}
+
+Resultat* FenetrePrincipale::getResultat() {
+    return resultat;
+}
+
 void FenetrePrincipale::prev() {
-    model->getFrameCourante()->hide();
-    model->pagePrec();
-    model->getFrameCourante()->show();
+    listFrames[page]->hide();
+    if (page < 1) {
+        page = 0;
+    } else {
+        page--;
+    }
+    listFrames[page]->show();
 }
 
 void FenetrePrincipale::next() {
-    model->getFrameCourante()->hide();
-    model->pageSuiv();
-    model->getFrameCourante()->show();
+    listFrames[page]->hide();
+    if (page >= listFrames.size()-1) {
+        page = 0;
+        model->reinitialiser();
+        choixNombre->actualiser();
+        choixMethode->actualiser();
+        attente->actualiser();
+        resultat->actualiser();
+    } else {
+        page++;
+    }
+    listFrames[page]->show();
 }

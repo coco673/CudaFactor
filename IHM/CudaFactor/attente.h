@@ -1,16 +1,17 @@
 #ifndef ATTENTE_H
 #define ATTENTE_H
 
-#include "modelattente.h"
+#include "model.h"
 #include <QFrame>
 
 class Attente: public QFrame
 {
 public:
-    Attente(ModelAttente *m);
+    Attente(Model *m);
+    void actualiser();
 
 private:
-    ModelAttente * model;
+    Model * model;
 
 };
 

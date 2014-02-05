@@ -1,47 +1,30 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "choixnombre.h"
-#include "choixmethode.h"
-#include "attente.h"
-#include "resultat.h"
-#include "modelchoixnombre.h"
-#include "modelchoixmethode.h"
-#include "modelattente.h"
-#include "modelresultat.h"
-
 #include <QList>
+
+#define CUDA 0
+#define SAGE 1
 
 class Model
 {
 public:
     Model();
-    int getPage();
-    QFrame * getFrameCourante();
-    void pagePrec();
-    void pageSuiv();
-    QList<QFrame *> getListeFrames();
-    ChoixNombre* getChoixNombre();
-    ChoixMethode* getChoixMethode();
-    Attente* getAttente();
-    Resultat* getResultat();
-    ModelChoixNombre* getModelChoixNombre();
-    ModelChoixMethode* getModelChoixMethode();
-    ModelAttente* getModelAttente();
-    ModelResultat* getModelResultat();
+    void reinitialiser();
+    int getMethode();
+    void setMethode(int m);
+    long double getNombre();
+    void setNombre(long double);
+    QList<long double> getListFacteursPremiers();
+    void setListFacteursPremiers(QList<long double> l);
+    int getTempsExecution();
+    void setTempsExecution(int t);
 
 private:
-    int page;
-    ChoixNombre * choixNombre;
-    ChoixMethode * choixMethode;
-    Attente * attente;
-    Resultat * resultat;
-    ModelChoixNombre * modelChoixNombre;
-    ModelChoixMethode * modelChoixMethode;
-    ModelAttente * modelAttente;
-    ModelResultat * modelResultat;
-    QList<QFrame *> listFrames;
-
+    int methode;
+    long double nombre;
+    QList<long double> listFacteursPremiers;
+    int temps;
 
 };
 

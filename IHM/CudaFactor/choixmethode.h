@@ -1,7 +1,7 @@
 #ifndef CHOIXMETHODE_H
 #define CHOIXMETHODE_H
 
-#include"modelchoixmethode.h"
+#include"model.h"
 #include <QPushButton>
 #include <QFrame>
 
@@ -10,14 +10,15 @@ class ChoixMethode: public QFrame
     Q_OBJECT
 
 public:
-    ChoixMethode(ModelChoixMethode *m);
+    ChoixMethode(Model *m);
 
 public slots:
     void pressCUDA();
     void pressSAGE();
+    void actualiser();
 
 private:
-    ModelChoixMethode * model;
+    Model * model;
     QPushButton * cudaButton;
     QPushButton * sageButton;
 
