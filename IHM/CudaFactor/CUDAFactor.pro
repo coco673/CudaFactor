@@ -17,24 +17,16 @@ SOURCES += main.cpp\
     fenetreprincipale.cpp \
     model.cpp \
     choixnombre.cpp \
-    modelchoixnombre.cpp \
     choixmethode.cpp \
-    modelchoixmethode.cpp \
     attente.cpp \
-    modelattente.cpp \
-    resultat.cpp \
-    modelresultat.cpp
+    resultat.cpp
 
 HEADERS  += mainwindow.h \
     fenetreprincipale.h \
     model.h \
     choixnombre.h \
-    modelchoixnombre.h \
     choixmethode.h \
-    modelchoixmethode.h \
     attente.h \
-    modelattente.h \
-    resultat.h \
-    modelresultat.h
+    resultat.h
 
 FORMS    += mainwindow.ui
