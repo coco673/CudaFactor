@@ -3,6 +3,7 @@
 
 import sys
 from sage.all import *
+from sage import *
 
 #créer la liste des premiers inférieurs à la borne
 def premiers(borne) :
@@ -43,10 +44,11 @@ def dixon (nb, base) :
     r = []
     liste_v = []
     div = []
-    while prod(div[i] for i in range(0,len(div)-1)) != nb :
+    prod_div = 0
+    while prod_div != nb :
         m = 0
         while m != k+1 :
-	    x = randint(floor(sqrt(nb)),nb)
+            x = randint(floor(sqrt(nb)),nb)
             y = x**2 % nb
             if est_friable(base,y) and not est_dans(div, y) :
                 r.append((x,y))
@@ -59,29 +61,33 @@ def dixon (nb, base) :
                 tmp = getElem(liste_div_y, prems[j])
                 liste_vv.append(tmp%2)
             vecteur = vector(ZZ,liste_vv)
-            liste_v.append(vecteur) # créer les vi,p penser a faire mod 2 ici... 
+            liste_v.append(vecteur) 
             
         matrice = matrix(liste_v) 
         e = matrice.right_kernel() # vecteur non nul noyau de m 
         for z in e.basis() :
-            relation_subset = [rel for i,rel in enumerate(r) if z[i] == 1]
+            #relation_subset = [rel for i,rel in enumerate(r) if z[i] == 1]
+            relation_subset = []
+	    for i in range(0,len(z)-1) :
+		if z[i] == 1 : relation_subset.append((i,r[i]))
             u = 1
             sumvals = k*[0]
-            for x,val in relation_subset :
-                u *= x
-                for i,v in enumerate(val) : 
-                    sumvals[i] += v
-            v = prod(p**(v//2) for p,v in zip(prems, sumvals))
-            
-            if pgcd > 1 and pgcd < nb :
+            for i,x in relation_subset :
+                u *= x[0]
+                for j,vect in enumerate(liste_v[i]) :
+                    sumvals[i] += vect
+            v = prod(p**(vv//2) for p,vv in zip(prems, sumvals))
+            if nb.gcd(u-v) > 1 and nb.gcd(u-v) < nb and (u-v).is_prime() :
+                print "u-v"
                 div.append(u-v)
+                nb = nb/(u-v)
                 break
-            elif nb.gcd(u+v) > 1 and nb.gcd(u+v) < nb :
-                    div.append(u+v)
-                    break
-                #else :
-                    # erreur   
+            elif nb.gcd(u+v) > 1 and nb.gcd(u+v) < nb and (u+v).is_prime() :
+                print "u+v"
+                div.append(u+v)
+                nb = nb/(u+v)
+                break
+        prod_div = prod(div)
+    return div
 
-    return e
-
-dixon(221,1500)
+dixon(221,150)
