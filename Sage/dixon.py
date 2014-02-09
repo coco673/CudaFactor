@@ -29,6 +29,7 @@ def getElem(liste, a) :
     
 # teste si nb est B-friable
 def est_friable(borne,nb) :
+    if nb == 0 : return False
     facteurs = list(factor(nb))
     for k in range(0,len(facteurs)-1) :
         p = facteurs[k][0]
@@ -43,9 +44,9 @@ def dixon (nb, base) :
     liste_v = []
     div = []
     while prod(div[i] for i in range(0,len(div)-1)) != nb :
-        x = randint(floor(sqrt(nb)),nb)
         m = 0
         while m != k+1 :
+	    x = randint(floor(sqrt(nb)),nb)
             y = x**2 % nb
             if est_friable(base,y) and not est_dans(div, y) :
                 r.append((x,y))
@@ -63,7 +64,7 @@ def dixon (nb, base) :
         matrice = matrix(liste_v) 
         e = matrice.right_kernel() # vecteur non nul noyau de m 
         for z in e.basis() :
-            relation_subset = [rel for i,rel in enumerate(r)]
+            relation_subset = [rel for i,rel in enumerate(r) if z[i] == 1]
             u = 1
             sumvals = k*[0]
             for x,val in relation_subset :
@@ -72,16 +73,15 @@ def dixon (nb, base) :
                     sumvals[i] += v
             v = prod(p**(v//2) for p,v in zip(prems, sumvals))
             
-            if pgcd != 1 and pgcd != nb :
+            if pgcd > 1 and pgcd < nb :
                 div.append(u-v)
                 break
-            else :
-                pgcd = nb.gcd(u+v)
-                if pgcd != 1 and pgcd != nb :
+            elif nb.gcd(u+v) > 1 and nb.gcd(u+v) < nb :
                     div.append(u+v)
                     break
                 #else :
-                    # erreur            
+                    # erreur   
+
     return e
 
 dixon(221,1500)
