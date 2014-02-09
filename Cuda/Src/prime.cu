@@ -63,28 +63,26 @@ int primeList(int *list, int *result, int borne) {
 	return id;
 }
 
-int main(int argc, char **argv) {
+int generatePrimeList(int borne) {
+	if (borne < 2) {
+		return EXIT_FAILURE;
+	}
 	int *numbers;
 	int *dev_numbers;
-	int borne;
-	if (argc == 1) {
-		borne = 100;
-	} else {
-		borne = atoi(argv[1]);
-	}
+	//tableaux des nombres de 2 a borne
 	numbers = (int *) malloc((borne - 1) * sizeof(int));
 	int ret = cudaMalloc(&dev_numbers, ((borne - 1) * sizeof(int)));
 	if (ret != cudaSuccess) {
 		fprintf(stderr, "%s", cudaGetErrorString(cudaGetLastError()));
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
-	//borne + 1 pour inclure la borne
+	//borne + 1 pour inclure la borne les blocks rentrent leur id
 	listNumbers<<<borne + 1, 1>>>(dev_numbers);
 	eratosthene<<<borne, 1>>>(dev_numbers, borne);
 	cudaMemcpy(numbers, dev_numbers, (borne - 1) * sizeof(int), cudaMemcpyDeviceToHost);
 	if (ret != cudaSuccess) {
 		fprintf(stderr, "%s", cudaGetErrorString(cudaGetLastError()));
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 	int *result = (int *) malloc(borne * sizeof(int));
 	int taille = primeList(numbers, result, borne);
@@ -95,4 +93,15 @@ int main(int argc, char **argv) {
 	free(numbers);
 	free(result);
 	return EXIT_SUCCESS;
+}
+
+int main(int argc, char **argv) {
+	int borne;
+	if (argc < 2) {
+		borne = 100;
+	} else {
+		borne = atoi(argv[1]);
+	}
+	int res = generatePrimeList(borne);
+	return res;
 }
