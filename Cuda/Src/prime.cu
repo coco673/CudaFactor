@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "header/prime.h"
 
 __global__ void eratosthene(int *list, int borne) {
 	int id = blockIdx.x;
@@ -93,15 +94,4 @@ int generatePrimeList(int borne) {
 	free(numbers);
 	free(result);
 	return EXIT_SUCCESS;
-}
-
-int main(int argc, char **argv) {
-	int borne;
-	if (argc < 2) {
-		borne = 100;
-	} else {
-		borne = atoi(argv[1]);
-	}
-	int res = generatePrimeList(borne);
-	return res;
 }
