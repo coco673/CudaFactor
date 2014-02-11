@@ -12,7 +12,7 @@ __global__ void eratosthene(int *list, int borne);
 __global__ void listNumbers(int *list);
 __global__ void copyTab(int *src, int *dest, int size);
 int primeList(int *list, int *result, int borne);
-int generatePrimeList(int borne);
+int *generatePrimeList(int borne, int *tailleResult);
 
 
 #endif /* PRIME_H_ */

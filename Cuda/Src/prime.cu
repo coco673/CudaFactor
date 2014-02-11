@@ -3,6 +3,11 @@
 #include <math.h>
 #include "header/prime.h"
 
+
+// Cette fonctions elimine les multiples de chaques nombres
+// Ce qui a pour effet d'enlever les nombres non premiers
+// list contient tous les nombres de 2 a borne
+// borne est la borne
 __global__ void eratosthene(int *list, int borne) {
 	int id = blockIdx.x;
 	int limite = (int) sqrt((double) borne);
@@ -13,6 +18,8 @@ __global__ void eratosthene(int *list, int borne) {
 	}
 }
 
+// Cette fonction remplie la liste des nombres de 2 à la borne choisie (nb de blocks cuda)
+// list est la liste a remplir
 __global__ void listNumbers(int *list) {
 	int id = blockIdx.x;
 	if (id != 0 && id != 1) {
@@ -20,6 +27,10 @@ __global__ void listNumbers(int *list) {
 	}
 }
 
+// Copie d'un tableau en Cuda
+// src est le tableau source
+// dest est le tableau de destination
+// size est la taille de src
 __global__ void copyTab(int *src, int *dest, int size) {
 	int id = blockIdx.x;
 	if (id < size) {
@@ -27,6 +38,11 @@ __global__ void copyTab(int *src, int *dest, int size) {
 	}
 }
 
+// Cette fonction reduit le tableau des nombres premiers en enlevant les 0 inutiles
+// list est le tableau de premiers avec les zeros inutiles
+// result est le tableau contenant le resultat
+// borne est la borne choisie
+// Cette fonction retourne la taille de result
 int primeList(int *list, int *result, int borne) {
 	int id = 0;
 	int res;
@@ -64,9 +80,13 @@ int primeList(int *list, int *result, int borne) {
 	return id;
 }
 
-int generatePrimeList(int borne) {
+// Genere la liste d'entiers premiers
+// borne est la limite max des nb premiers generes
+// tailleResult est la taille du tableau retourne
+// Cette fonction retourne le tableau d'entiers
+int *generatePrimeList(int borne, int *tailleResult) {
 	if (borne < 2) {
-		return EXIT_FAILURE;
+		return NULL;
 	}
 	int *numbers;
 	int *dev_numbers;
@@ -75,7 +95,7 @@ int generatePrimeList(int borne) {
 	int ret = cudaMalloc(&dev_numbers, ((borne - 1) * sizeof(int)));
 	if (ret != cudaSuccess) {
 		fprintf(stderr, "%s", cudaGetErrorString(cudaGetLastError()));
-		return EXIT_FAILURE;
+		return NULL;
 	}
 	//borne + 1 pour inclure la borne les blocks rentrent leur id
 	listNumbers<<<borne + 1, 1>>>(dev_numbers);
@@ -83,15 +103,12 @@ int generatePrimeList(int borne) {
 	cudaMemcpy(numbers, dev_numbers, (borne - 1) * sizeof(int), cudaMemcpyDeviceToHost);
 	if (ret != cudaSuccess) {
 		fprintf(stderr, "%s", cudaGetErrorString(cudaGetLastError()));
-		return EXIT_FAILURE;
+		return NULL;
 	}
 	int *result = (int *) malloc(borne * sizeof(int));
 	int taille = primeList(numbers, result, borne);
-	for (int i = 0; i < taille; i++) {
-		printf("%d\n", result[i]);
-	}
+	*tailleResult = taille;
 	cudaFree(dev_numbers);
 	free(numbers);
-	free(result);
-	return EXIT_SUCCESS;
+	return result;
 }
