@@ -38,22 +38,26 @@ def est_friable(borne,nb) :
     return True
     
 # implémentation de l'algorithme de Dixon
-def dixon (nb, base) :
+def dixon (n,base) :
+  #  base = Integer(round(sqrt(exp(sqrt(log(n)*log(log(n))))).n()))
+    print "base : ", base
     prems = premiers(base)
+    print "premierzs : ", prems
     k = len(prems)
-    r = []
-    liste_v = []
+    nb = n
     div = []
-    prod_div = 0
-    while prod_div != nb :
+    prod_div = 1
+    while prod_div < n :
         m = 0
-        while m != k+1 :
-            x = randint(floor(sqrt(nb)),nb)
-            y = x**2 % nb
+        r = []
+        liste_v = []
+        while m < k+1 :
+	    x = randint(floor(sqrt(n)),n)
+            y = x**2 % n
             if est_friable(base,y) and not est_dans(div, y) :
                 r.append((x,y))
                 m = len(r)
-        for i in range(1,m) :
+        for i in range(0,m) :
             yy = r[i][0]
             liste_vv = []
             liste_div_y = list(factor(yy))
@@ -61,8 +65,7 @@ def dixon (nb, base) :
                 tmp = getElem(liste_div_y, prems[j])
                 liste_vv.append(tmp%2)
             vecteur = vector(ZZ,liste_vv)
-            liste_v.append(vecteur) 
-            
+            liste_v.append(vecteur) # créer les vi,p penser a faire mod 2 ici...  
         matrice = matrix(liste_v) 
         e = matrice.right_kernel() # vecteur non nul noyau de m 
         for z in e.basis() :
@@ -72,22 +75,33 @@ def dixon (nb, base) :
 		if z[i] == 1 : relation_subset.append((i,r[i]))
             u = 1
             sumvals = k*[0]
+            cols_m = column_matrix(matrice)
             for i,x in relation_subset :
                 u *= x[0]
-                for j,vect in enumerate(liste_v[i]) :
-                    sumvals[i] += vect
+                for j,vect in enumerate(cols_m[i]) :
+			sumvals[i] += vect
             v = prod(p**(vv//2) for p,vv in zip(prems, sumvals))
             if nb.gcd(u-v) > 1 and nb.gcd(u-v) < nb and (u-v).is_prime() :
-                print "u-v"
-                div.append(u-v)
-                nb = nb/(u-v)
+                print "u-v" 
+                div.append(u-v)                
+                #nb = nb/(u-v)
+                #div.append(nb)
                 break
             elif nb.gcd(u+v) > 1 and nb.gcd(u+v) < nb and (u+v).is_prime() :
                 print "u+v"
                 div.append(u+v)
-                nb = nb/(u+v)
+                #nb = nb/(u+v)
+                #div.append(nb)
                 break
-        prod_div = prod(div)
+            #else : print "erreur"        
+        prod_div = prod(div) 
+        #print prod_div, div, nb   
     return div
+ 
+ 
+# 71189, 731021, 757637, 1517, 46570845863, 221
 
-dixon(221,150)
+t = cputime(subprocesses=True)
+div = dixon(54931, 50)
+print "temps d'exécution (en secondes) : ", cputime(t)
+print "facteurs : ", div[0], " et ", div[1]
