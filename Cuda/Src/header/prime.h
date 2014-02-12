@@ -8,6 +8,9 @@
 #ifndef PRIME_H_
 #define PRIME_H_
 
+#include <cuda.h>
+#include <cuda_runtime.h>
+
 __global__ void eratosthene(int *list, int borne);
 __global__ void listNumbers(int *list);
 __global__ void copyTab(int *src, int *dest, int size);

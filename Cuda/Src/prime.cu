@@ -3,7 +3,6 @@
 #include <math.h>
 #include "header/prime.h"
 
-
 // Cette fonctions elimine les multiples de chaques nombres
 // Ce qui a pour effet d'enlever les nombres non premiers
 // list contient tous les nombres de 2 a borne
