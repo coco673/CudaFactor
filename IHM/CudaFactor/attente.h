@@ -3,6 +3,7 @@
 
 #include "model.h"
 #include <QFrame>
+#include <QLabel>
 
 class Attente: public QFrame
 {
@@ -12,6 +13,7 @@ public:
 
 private:
     Model * model;
+    QLabel * label;
 
 };
 

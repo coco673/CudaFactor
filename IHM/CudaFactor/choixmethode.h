@@ -4,6 +4,7 @@
 #include"model.h"
 #include <QPushButton>
 #include <QFrame>
+#include <QLabel>
 
 class ChoixMethode: public QFrame
 {
@@ -11,14 +12,19 @@ class ChoixMethode: public QFrame
 
 public:
     ChoixMethode(Model *m);
+    void actualiser();
 
 public slots:
     void pressCUDA();
     void pressSAGE();
-    void actualiser();
 
 private:
     Model * model;
+    QLabel * label;
+    QIcon * cudaIcon;
+    QIcon * cudaIconSelect;
+    QIcon * sageIcon;
+    QIcon * sageIconSelect;
     QPushButton * cudaButton;
     QPushButton * sageButton;
 

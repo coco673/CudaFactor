@@ -30,3 +30,6 @@ HEADERS  += mainwindow.h \
     resultat.h
 
 FORMS    += mainwindow.ui
+
+OTHER_FILES += \
+    exemple.xml

@@ -39,6 +39,27 @@ void Model::setTempsExecution(int t) {
     temps = t;
 }
 
+int Model::getNbreInstruction() {
+    return nbre_instructions;
+}
+
+void Model::setNbreInstruction(int nbrInstruction) {
+    nbre_instructions = nbrInstruction;
+}
+
+double Model::getNbreInstrParSec() {
+    return (nbre_instructions/temps);
+}
+
+QString Model::getTitre() {
+    return titre;
+}
+
+void Model::setTitre(QString titre) {
+    this->titre = titre;
+}
+
+
 void Model::reinitialiser() {
     methode = CUDA;
     nombre = 0;

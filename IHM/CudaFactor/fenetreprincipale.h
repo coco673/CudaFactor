@@ -34,6 +34,8 @@ public slots:
 private:
     QPushButton * precedent;
     QPushButton * suivant;
+    QIcon * suivantIcon;
+    QIcon * precedentIcon;
     Model * model;
     int page;
     ChoixNombre * choixNombre;

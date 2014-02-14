@@ -30,18 +30,25 @@ FenetrePrincipale::FenetrePrincipale() {
 
     // Construction des boutons
 
-    suivant = new QPushButton("Suivant", this);
-    precedent = new QPushButton("Precedent", this);
+    suivantIcon = new QIcon("images/boutonSuivant.png");
+    precedentIcon = new QIcon("images/boutonRetour.png");
 
-    suivant->setFixedSize(70, 70);
+    suivant = new QPushButton(this);
+    precedent = new QPushButton(this);
+
+    suivant->setFixedSize(55, 55);
     suivant->move(700, 500);
     suivant->setCursor(Qt::PointingHandCursor);
     suivant->raise(); //au premier plan
+    suivant->setIcon(*suivantIcon);
+    suivant->setIconSize(QSize(55, 55));
 
-    precedent->setFixedSize(70, 70);
+    precedent->setFixedSize(55, 55);
     precedent->move(30, 500);
     precedent->setCursor(Qt::PointingHandCursor);
     precedent->raise(); //au premier plan
+    precedent->setIcon(*precedentIcon);
+    precedent->setIconSize(QSize(55, 55));
 
     //Connection SLOTS-SIGNAUX
     QObject::connect(suivant, SIGNAL(clicked()), this, SLOT(next()));
