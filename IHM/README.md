@@ -11,4 +11,3 @@ Pré-requis
 
 * Compilateur g++ : `apt-get install g++`
 * Programme qmake : `apt-get install qt4-qmake`
-* Librairie libxml++ : `apt-get install libxml++2.6-dev libxml++2.6-doc`
