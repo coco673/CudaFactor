@@ -13,16 +13,16 @@ typedef struct couple {
   int y;
 } couple;
 
+union nb{
+   int val;
+   couple couple;
+ };
 struct cell {
-  union {
-    int val;
-    couple couple;
-  }ind;
- // struct cell *next;
+ nb ind ;
 };
 typedef struct cell* ensemble;
 
-__host__ __device__ ensemble initEns(int *size);
-__host__ __device__ ensemble addCouple(ensemble ens, int x, int y,int *size);
-__host__ __device__ ensemble addVal(ensemble ens, int x,int *size);
+ ensemble initEns(int *size);
+ __host__ __device__ int addCouple(ensemble ens, int x, int y,int *size);
+__host__ __device__ int addVal(ensemble ens, int x,int *size);
 #endif /* STRUCTURE_H_ */
