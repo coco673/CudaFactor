@@ -16,12 +16,13 @@
 
 #include "structure.h"
 
-__global__ void isInEnsembleG(ensemble ens, int y,int size,int *res);
-__global__ void fillEnsembleG(int *ens[],int n,int base,ensemble div,int sizeDiv);
-__global__ void isBSmoothG(int *list,int size, int y, int *result);
+__device__ void isInEnsembleG(ensemble ens, int y,int size,int *res);
+__global__ void fillEnsembleG(ensemble ens,int *p,int k,int n,int base,ensemble div
+		,int sizeDiv,int *sizeR);
+__device__ void isBSmoothG(int *list,int size, int y, int *result);
 
 bool isBSmooth(int *list,int size, int y);
 bool isInEnsemble(ensemble ens, int y,int size);
-void fillEnsemble(int *ens[],int n,int base,ensemble div,int sizeDiv);
+void fillEnsemble(ensemble ens,int n,int base,ensemble div,int sizeDiv);
 
 #endif /* FILLENSEMBLE_H_ */

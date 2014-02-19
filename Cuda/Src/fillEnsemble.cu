@@ -8,7 +8,8 @@
 #include "header/fillEnsemble.h"
 #include "header/prime.h"
 #include <string.h>
-
+#include <curand.h>
+#include <curand_kernel.h>
 
 
 /**
@@ -80,7 +81,7 @@ __device__ bool isInf(int *list, int size, int y){
  * list est la liste des premiers de la borne
  * result le resultat retourné
  */
-__global__ void isBSmoothG(int *list,int size, int y,int *result){
+__device__ void isBSmoothG(int *list,int size, int y,int *result){
 	int i =threadIdx.x;
 	volatile __shared__ int found;
 	if(threadIdx.x == 0) found = 0;
@@ -104,7 +105,7 @@ __global__ void isBSmoothG(int *list,int size, int y,int *result){
  * size est la taille de l'ensemble.
  */
 
-__global__ void isInEnsembleG(ensemble ens, int y,int size, int *res){
+__device__ void isInEnsembleG(ensemble ens, int y,int size, int *res){
 	int i =threadIdx.x;
 	volatile __shared__ bool found;
 	if(i == 0 ){
@@ -127,7 +128,8 @@ __global__ void isInEnsembleG(ensemble ens, int y,int size, int *res){
 /**
  * Construit l'ensemble R. (version CPU)
  */
-void fillEnsemble(ensemble r,int nbr,int borne,ensemble div,int sizeDiv){
+void fillEnsemble(ensemble r,int nbr,int borne,ensemble div
+		,int sizeDiv){
 	int m=0;
 	int k;
 	int *p = generatePrimeList(borne,&k);
@@ -148,6 +150,31 @@ void fillEnsemble(ensemble r,int nbr,int borne,ensemble div,int sizeDiv){
 			addCouple(r,x,y,&m);
 
 		}
+	}
+}
+
+__global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne,ensemble div
+		,int sizeDiv,int *sizeR){
+	int i = blockIdx.x;
+	curandGenerator_t gen;
+	int m=0;
+	r = initEns(&m);
+
+	int x;
+	int y;
+	int racN=sqrtf(nbr);
+	int *res,*result;
+	float rnd_number = curand_uniform();
+
+	if(i <= k+1){
+		int x = racN + rnd_number * (racN-nbr);
+
+		x = racN+(curand() % ((nbr-1) - racN));
+		y = powf(x,2);
+		y=y%nbr;
+		isBSmoothG(p,k,y,res);
+		isInEnsembleG(div,y,sizeDiv,result);
+
 	}
 }
 
