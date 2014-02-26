@@ -25,21 +25,21 @@ int testInitEns(){
 int testAddVal(int val){
 	int size;
 	ensemble e = (ensemble) initEns(&size);
-	int res =	addVal(&e,val,&size);
+	int res =	addVal(e,val,&size);
 	
 	assert(res == 1);
 
 	assert(e[0].ind.val == val);
 	assert(size == 1);
 	val++;
-	res =	addVal(&e,val,&size);
+	res =	addVal(e,val,&size);
 	
 	assert(res == 1);
 	assert(e[1].ind.val == val);
 	assert(size == 2);
 	
 	val++;
-	res =	addVal(&e,val,&size);
+	res =	addVal(e,val,&size);
 
 		assert(res == 1);
 		assert(e[2].ind.val == val);
