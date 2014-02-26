@@ -142,6 +142,7 @@ int TestIsBSmoothG(){
 __global__ void IsInEnsembleKernel(ensemble ens,int size, int y,int *result){
 
 	isInEnsembleG(ens,size,y,result);
+	//*result = 1;
 
 }
 
@@ -149,31 +150,33 @@ int TestIsInEnsembleG(){
 
 	int size;
 	ensemble ens = initEns(&size);
-	ensemble dev_ens;
+ensemble dev_ens;
 	int val = 22;
-	int *result = (int *)malloc(sizeof(int));
+
 	int *dev_result;
 	int i;
 	for (i = 0; i < 32; i++){
 		addVal(ens,i,&size);
 	}
-	cudaMalloc(&dev_ens,sizeof(ensemble));
-	cudaMalloc(&dev_result,sizeof(int));
-	cudaMemcpy(dev_ens,ens,sizeof(ens),cudaMemcpyHostToDevice);
-	printf("res = %i\n e[0] : %i\n",*result,ens[5].ind.val);
-	IsInEnsembleKernel<<<1,size>>>(dev_ens,size,val,dev_result);
-	cudaMemcpy(result,dev_result,sizeof(int),cudaMemcpyDeviceToHost);
-	printf("res = %i\n",*result);
+
+	int *result=(int *) malloc(size*sizeof(int));
+
+		cudaMalloc(&dev_ens,size*sizeof(struct cell));
+		cudaMalloc(&dev_result,size*sizeof(int));
+		cudaMemcpy(dev_ens,ens,size*sizeof(struct cell),cudaMemcpyHostToDevice);
+
+		IsInEnsembleKernel<<<1,size>>>(dev_ens,size,val,dev_result);
+		cudaMemcpy(result,dev_result,size*sizeof(int),cudaMemcpyDeviceToHost);
+
 	assert(*result == 1);
-
-	cudaFree(dev_result);
 	free(result);
-	val = 200;
+	cudaFree(dev_result);
+	val = 20045;
 	cudaMalloc(&dev_result,sizeof(int));
-	result = (int *) malloc(sizeof(int));
-	IsInEnsembleKernel<<<1,size>>>(dev_ens,size,val,dev_result);
-	cudaMemcpy(result,dev_result,sizeof(int),cudaMemcpyDeviceToHost);
-
+	int *result2 = (int *) malloc(sizeof(int));
+	IsInEnsembleKernel<<<1,size>>>(ens,size,val,dev_result);
+	cudaMemcpy(result2,dev_result,sizeof(int),cudaMemcpyDeviceToHost);
+printf("result %i\n",*result2);
 	assert(*result == 0);
 
 	return 0;
