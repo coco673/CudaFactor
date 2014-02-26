@@ -10,6 +10,7 @@
 #include "TestStructure.h"
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 
 int testInitEns(){
@@ -24,38 +25,44 @@ int testInitEns(){
 int testAddVal(int val){
 	int size;
 	ensemble e = (ensemble) initEns(&size);
-	int res =	addVal(e,val,&size);
+	int res =	addVal(&e,val,&size);
 	
 	assert(res == 1);
-	printf("%p\n",(void *)e);
 
 	assert(e[0].ind.val == val);
 	assert(size == 1);
-	
-	res =	addVal(e,val,&size);
+	val++;
+	res =	addVal(&e,val,&size);
 	
 	assert(res == 1);
 	assert(e[1].ind.val == val);
 	assert(size == 2);
 	
+	val++;
+	res =	addVal(&e,val,&size);
+
+		assert(res == 1);
+		assert(e[2].ind.val == val);
+		assert(size == 3);
 	return 0;
 }
 
 int testAddCouple(int valx,int valy){
 	int size;
 	ensemble e = (ensemble) initEns(&size);
-	int res =	addCouple(e,valx,valy,&size);
-	printf("%p\n",(void *)e);
+	int res =	addCouple(&e,valx,valy,&size);
+
 
 	assert(res == 1);
+
 	assert(e[0].ind.couple.x == valx);
 	assert(e[0].ind.couple.y == valy);
 	assert(size == 1);
 	
 	valx++;
 	valy++;
-	res =	addCouple(e,valx,valy,&size);
-	printf("%p\n",(void *)e);
+	res =	addCouple(&e,valx,valy,&size);
+
 
 	assert(res == 1);
 	assert(e[1].ind.couple.x == valx);

@@ -8,8 +8,8 @@
  */
 
 #include "TestFillEnsemble.h"
-#include "../header/prime.h"
-#include "../header/fillEnsemble.h"
+#include "../Src/header/prime.h"
+#include "../Src/header/fillEnsemble.h"
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <curand.h>
@@ -33,7 +33,7 @@ int TestIsInEnsemble(){
 	ensemble e = initEns(&size);
 
 	for (i = 0; i < 32; i++){
-		addVal(e,i,&size);
+		addVal(&e,i,&size);
 	}
 	assert(isInEnsemble(e,12,size) == 1);
 	assert(isInEnsemble(e,44,size) == 0);
@@ -42,24 +42,23 @@ int TestIsInEnsemble(){
 }
 __global__ void isInfKernel(int *dev_list,bool *result,int size,int val){
 	int i =threadIdx.x;
-	volatile __shared__ int found;
-	if(threadIdx.x == 0) found = 0;
+	volatile __shared__ bool found;
+	if(threadIdx.x == 0) found = false;
 	__syncthreads();
 
-	if(found== 0 && i < size){
+	if(found== false  && i < size){
 		bool inf = isInf(dev_list,size,val);
 		if(inf){
-			found = 1;
+			found = true;
 			*result = found;
 		}
 		__syncthreads();
 		*result = found;
 	}
-
 }
 
 int TestIsInf(){
-	int borne = 100;
+	int borne = 99;
 	int val = 20;
 	int size;
 	int *list = generatePrimeList(borne,&size);
@@ -69,10 +68,11 @@ int TestIsInf(){
 
 	cudaMalloc(&dev_list,size*sizeof(int));
 	cudaMalloc(&dev_result,sizeof(bool));
-	cudaMemcpy(&dev_list,&list,sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_list,list,size*sizeof(int),cudaMemcpyHostToDevice);
+	int i;
 
 	isInfKernel<<<1,size>>>(dev_list,dev_result,size,val);
-	cudaMemcpy(&result,&dev_result,sizeof(bool),cudaMemcpyDeviceToHost);
+	cudaMemcpy(result,dev_result,sizeof(bool),cudaMemcpyDeviceToHost);
 	assert(*result == true);
 
 	free(result);
@@ -80,13 +80,14 @@ int TestIsInf(){
 
 	val = 200;
 	cudaMalloc(&dev_result,sizeof(bool));
-	cudaMemcpy(&dev_list,&list,sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_list,list,size*sizeof(int),cudaMemcpyHostToDevice);
 
 	isInfKernel<<<1,size>>>(dev_list,dev_result,size,val);
-	cudaMemcpy(&result,&dev_result,sizeof(bool),cudaMemcpyDeviceToHost);
+	cudaMemcpy(result,dev_result,sizeof(bool),cudaMemcpyDeviceToHost);
+
 	assert(*result == false);
 
-	free(result);
+	//free(result);
 	free(list);
 	cudaFree(dev_result);
 	cudaFree(dev_list);
@@ -98,33 +99,43 @@ __global__ void IsBSmoothKernel(int *list,int size, int y,int *result){
 	isBSmoothG(list,size,y,result);
 }
 int TestIsBSmoothG(){
-	int borne = 100;
+	int borne = 99;
 	int val = 20;
 	int size;
-	int *list = generatePrimeList(borne,&size);
+	int *list = generatePrimeList(val,&size);
+
 	int *dev_list;
 	int *dev_result;
 	int *result=(int *) malloc(sizeof(int));
 
 	cudaMalloc(&dev_list,size*sizeof(int));
 	cudaMalloc(&dev_result,sizeof(int));
-	cudaMemcpy(&dev_list,&list,sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_list,list,size*sizeof(int),cudaMemcpyHostToDevice);
 
-	IsBSmoothKernel<<<1,size>>>(dev_list,size,val,dev_result);
-	cudaMemcpy(&result,&dev_result,sizeof(int),cudaMemcpyDeviceToHost);
-
-	assert(*result == 0);
-
-	cudaFree(dev_result);
-	free(result);
-	val = 200;
-	cudaMalloc(&dev_result,sizeof(int));
-	result = (int *) malloc(sizeof(int));
-	IsBSmoothKernel<<<1,size>>>(dev_list,size,val,dev_result);
-	cudaMemcpy(&result,&dev_result,sizeof(int),cudaMemcpyDeviceToHost);
+	IsBSmoothKernel<<<1,size>>>(dev_list,size,borne,dev_result);
+	cudaMemcpy(result,dev_result,sizeof(int),cudaMemcpyDeviceToHost);
 
 	assert(*result == 1);
 
+	cudaFree(dev_result);
+	free(result);
+	free(list);
+	size = 0;
+	val = 200;
+	list = generatePrimeList(val,&size);
+
+	cudaMalloc(&dev_list,size*sizeof(int));
+	cudaMalloc(&dev_result,sizeof(int));
+	cudaMemcpy(dev_list,list,size*sizeof(int),cudaMemcpyHostToDevice);
+
+	result = (int *) malloc(sizeof(int));
+	IsBSmoothKernel<<<1,size>>>(dev_list,size,borne,dev_result);
+	cudaMemcpy(result,dev_result,sizeof(int),cudaMemcpyDeviceToHost);
+
+	assert(*result == 0);
+	cudaFree(dev_result);
+	free(result);
+	free(list);
 	return 0;
 }
 
@@ -143,15 +154,15 @@ int TestIsInEnsembleG(){
 	int *dev_result;
 	int i;
 	for (i = 0; i < 32; i++){
-		addVal(ens,i,&size);
+		addVal(&ens,i,&size);
 	}
 	cudaMalloc(&dev_ens,sizeof(ensemble));
 	cudaMalloc(&dev_result,sizeof(int));
-	cudaMemcpy(&dev_ens,ens,sizeof(ens),cudaMemcpyHostToDevice);
-
+	cudaMemcpy(dev_ens,ens,sizeof(ens),cudaMemcpyHostToDevice);
+	printf("res = %i\n e[0] : %i\n",*result,ens[0].ind.val);
 	IsInEnsembleKernel<<<1,size>>>(dev_ens,size,val,dev_result);
-	cudaMemcpy(&result,&dev_result,sizeof(dev_result),cudaMemcpyDeviceToHost);
-
+	cudaMemcpy(result,dev_result,sizeof(int),cudaMemcpyDeviceToHost);
+	printf("res = %i\n",*result);
 	assert(*result == 1);
 
 	cudaFree(dev_result);
@@ -160,7 +171,7 @@ int TestIsInEnsembleG(){
 	cudaMalloc(&dev_result,sizeof(int));
 	result = (int *) malloc(sizeof(int));
 	IsInEnsembleKernel<<<1,size>>>(dev_ens,size,val,dev_result);
-	cudaMemcpy(&result,&dev_result,sizeof(int),cudaMemcpyDeviceToHost);
+	cudaMemcpy(result,dev_result,sizeof(int),cudaMemcpyDeviceToHost);
 
 	assert(*result == 0);
 
@@ -187,7 +198,7 @@ int TestfillEnsembleG(){
 	ensemble div = initEns(&sizediv);
 	ensemble e ;
 	int *p =generatePrimeList(borne,&k);
-int *x=(int *)malloc(5*sizeof(int));
+	int *x=(int *)malloc(5*sizeof(int));
 	fillEnsembleG<<<5,1>>>(e,p,k,nbr,borne,div,sizediv,size);
 	cudaMemcpy(x,size,5*sizeof(int),cudaMemcpyDeviceToHost);
 	printf("x :%i\n",x[0]);
