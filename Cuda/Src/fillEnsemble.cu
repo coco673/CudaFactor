@@ -8,9 +8,10 @@
 #include "header/fillEnsemble.h"
 #include "header/prime.h"
 #include <string.h>
-#include <curand.h>
 #include <curand_kernel.h>
-
+#include <curand.h>
+#include <cuda.h>
+#include <cuda_runtime.h>
 
 /**
  * retourne true si l'entier est B-friable false sinon. (Version cpu)
@@ -25,8 +26,7 @@ bool isBSmooth(int *list,int size, int y){
 	}
 	while(i < size){
 		if(list[i] > y){
-			val = false;
-			break;
+			return false;
 		}
 		i++;
 	}
@@ -140,12 +140,14 @@ void fillEnsemble(ensemble r,int nbr,int borne,ensemble div
 	int racN=sqrt(nbr);
 
 	srand(time(NULL));
-
+	printf("m : %i\n",m);
 	while(m <= k+1){
 		x = racN+(rand() % ((nbr-1) - racN));
 		y = pow(x,2);
 		y=y%nbr;
+		printf("k : %i\n",isInEnsemble(div,y,sizeDiv));
 
+		printf("m : %i\n",isBSmooth(p,k,y));
 		if(isBSmooth(p,k,y) && !isInEnsemble(div,y,sizeDiv)){
 			addCouple(r,x,y,&m);
 
@@ -153,27 +155,47 @@ void fillEnsemble(ensemble r,int nbr,int borne,ensemble div
 	}
 }
 
-__global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne,ensemble div
-		,int sizeDiv,int *sizeR){
-	int i = blockIdx.x;
-	curandGenerator_t gen;
-	int m=0;
-	r = initEns(&m);
+__device__ ensemble *generateTab(int borne, int k,int *p,int nbr){
+	int i = threadIdx.x;
+	int size;
 
-	int x;
-	int y;
-	int racN=sqrtf(nbr);
-	int *res,*result;
-	float rnd_number = curand_uniform();
+	size = k+1;
+	if(i <= size ){
+		int x;
+		int y;
+		int racN=sqrtf(nbr);
 
-	if(i <= k+1){
-		int x = racN + rnd_number * (racN-nbr);
-
-		x = racN+(curand() % ((nbr-1) - racN));
+		//x = racN+(rand_r(srand(i)) % ((nbr-1) - racN));
 		y = powf(x,2);
 		y=y%nbr;
-		isBSmoothG(p,k,y,res);
-		isInEnsembleG(div,y,sizeDiv,result);
+
+
+	}
+	return NULL;
+}
+
+__global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne
+		,ensemble div,int sizeDiv,int *sizeR){
+	int i = blockIdx.x;
+    curandState s;
+	int m=0;
+
+
+	int y;
+	int racN=sqrtf(nbr);
+	int *result;
+    curand_init(1234+i, i, 0, &s);
+
+    int x = curand(&s);
+sizeR[i] = x;
+    if(i <= k+1){
+
+
+
+		//y = powf(x,2);
+		//y=y%nbr;
+		//isBSmoothG(p,k,y,result);
+		//isInEnsembleG(div,y,sizeDiv,result);
 
 	}
 }
