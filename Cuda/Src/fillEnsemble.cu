@@ -59,16 +59,16 @@ __device__ bool isInf(int *list, int size, int y){
 	int i = threadIdx.x;
 	volatile __shared__ bool res;
 	if(i == 0){
-		res = true;
+		res = false;
 	}
 	__syncthreads();
 	if(i < size){
 
 		if(list[i] > y){
-			res=false;
+			res=true;
 		}
 		__syncthreads();
-		if(!res){
+		if(res){
 			return res;
 		}
 	}
@@ -89,7 +89,7 @@ __device__ void isBSmoothG(int *list,int size, int y,int *result){
 
 	if(found== 0 && i < size){
 		bool inf = isInf(list,size,y);
-		if(inf){
+		if(!inf){
 			found = 1;
 			*result = found;
 		}
@@ -107,21 +107,18 @@ __device__ void isBSmoothG(int *list,int size, int y,int *result){
 
 __device__ void isInEnsembleG(ensemble ens, int y,int size, int *res){
 	int i =threadIdx.x;
-	volatile __shared__ bool found;
-	if(i == 0 ){
-		found = false;
+	__shared__ volatile int found;
+
+	if (i == 0){
+		found = 0;
 	}
 	__syncthreads();
-
-	if(i <size ){
-		if(ens[i].ind.val == y){
-			found = true;
-			*res=found;
-		}
-		__syncthreads();
+	if(ens[i].ind.val == y){
+		found = 1;
 		*res = found;
 	}
-
+	__syncthreads();
+	*res = found;
 }
 
 
@@ -149,54 +146,41 @@ void fillEnsemble(ensemble r,int nbr,int borne,ensemble div
 
 		printf("m : %i\n",isBSmooth(p,k,y));
 		if(isBSmooth(p,k,y) && !isInEnsemble(div,y,sizeDiv)){
-			addCouple(r,x,y,&m);
+			addCouple(&r,x,y,&m);
 
 		}
 	}
 }
-
-__device__ ensemble *generateTab(int borne, int k,int *p,int nbr){
-	int i = threadIdx.x;
-	int size;
-
-	size = k+1;
-	if(i <= size ){
-		int x;
-		int y;
-		int racN=sqrtf(nbr);
-
-		//x = racN+(rand_r(srand(i)) % ((nbr-1) - racN));
-		y = powf(x,2);
-		y=y%nbr;
-
-
-	}
-	return NULL;
-}
-
-__global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne
-		,ensemble div,int sizeDiv,int *sizeR){
+__device__ int generateRonce(ensemble r,int *p,int k,int nbr, int borne,ensemble div,int sizeDiv, int *sizeR){
 	int i = blockIdx.x;
-    curandState s;
-	int m=0;
-
+	curandState s;
 
 	int y;
 	int racN=sqrtf(nbr);
-	int *result;
-    curand_init(1234+i, i, 0, &s);
+	int *bsmooth = (int *)malloc(sizeof(int));
+	int *present = (int *)malloc(sizeof(int));
+	curand_init(1234+i, i, 0, &s);
 
-    int x = curand(&s);
-sizeR[i] = x;
-    if(i <= k+1){
+	int x = curand(&s);
+	sizeR[i] = x;
+	if(i < k+1){
 
+		y = powf(x,2);
+		y=y%nbr;
+		isBSmoothG(p,k,y,bsmooth);
+		isInEnsembleG(div,y,sizeDiv,present);
 
-
-		//y = powf(x,2);
-		//y=y%nbr;
-		//isBSmoothG(p,k,y,result);
-		//isInEnsembleG(div,y,sizeDiv,result);
-
+		if((*bsmooth) && !(*present)){
+			addCouple(&r,x,y,sizeR);
+		}
 	}
+}
+__global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne
+		,ensemble div,int sizeDiv,int *sizeR){
+
+	while(*sizeR<k+1){
+		int res = generateRonce(r,p,k,nbr,borne,div,sizeDiv,sizeR);
+	}
+
 }
 
