@@ -7,22 +7,25 @@
 
 #ifndef STRUCTURE_H_
 #define STRUCTURE_H_
+#include <cuda.h>
+#include <cuda_runtime.h>
 
-typedef struct couple {
+struct couple {
   int x;
   int y;
-} couple;
+};
+typedef struct couple couple;
 
-union nb{
-   int val;
-   couple couple;
- };
+union nb {
+		int val;
+		couple couple;
+};
 struct cell {
- nb ind ;
+		union nb ind;
 };
 typedef struct cell* ensemble;
 
- ensemble initEns(int *size);
+__host__ __device__ ensemble initEns(int *size);
  __host__ __device__ int addCouple(ensemble ens, int x, int y,int *size);
 __host__ __device__ int addVal(ensemble ens, int x,int *size);
 #endif /* STRUCTURE_H_ */
