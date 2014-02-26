@@ -27,7 +27,7 @@ __host__ __device__ ensemble initEns(int *size){
  * l'ensemble si tout c'est bien passé sinon retourne NULL. !!ATTENTION POSSIBLE
  * FUITE MEMOIRE!!
  */
-__host__ __device__ int addCouple(ensemble ens, int x, int y,int *size){
+__host__ __device__ int addCouple(ensemble *ens, int x, int y,int *size){
 	*size = *size+1;
 
 	ensemble tp = (ensemble) malloc((*size)*sizeof(struct cell));
@@ -37,14 +37,8 @@ __host__ __device__ int addCouple(ensemble ens, int x, int y,int *size){
 			printf("malloc nok size:= %i\n",*size);
 			return -1;
 		}
-		if( memcpy(&tp,&ens,(*size-1)*sizeof(ens)) == NULL){
+		if( memcpy(&tp,ens,(*size-1)*sizeof(ens)) == NULL){
 			printf("erreur de recopie d'ensemble\n");
-			return -1;
-		}
-		free(ens);
-		ens =(ensemble)malloc((*size)*sizeof(struct cell));
-		if(ens ==NULL){
-			printf("erreur malloc nouvel ensemble\n");
 			return -1;
 		}
 
@@ -52,21 +46,11 @@ __host__ __device__ int addCouple(ensemble ens, int x, int y,int *size){
 
 	tp[*size-1].ind.couple.x =x;
 	tp[*size-1].ind.couple.y = y;
-	printf("%i\n",*size*sizeof(tp));
-	printf("%i\n",ens[*size-1].ind.couple.y);
 
-	if(memcpy(ens,tp,sizeof(tp)) == NULL){
-		printf("erreur de recopie d'ensemble\n");
-		return -1;
-	}
+	*ens =tp;
 
 
-	printf("tp[%i].ind.couple.x =%i\n",*size-1,tp[(*size)-1].ind.couple.x );
-	printf("tp[%i].ind.couple.y =%i\n",*size-1,tp[(*size)-1].ind.couple.y );
 
-	printf("ens[%i].ind.couple.x =%i\n",*size-1,ens[(*size)-1].ind.couple.x );
-	printf("ens[%i].ind.couple.y =%i\n",*size-1,ens[(*size)-1].ind.couple.y );
-	printf("%p\n",(void *)ens);
 	return 1;
 }
 /**
@@ -82,6 +66,7 @@ __host__ __device__ int addVal(ensemble ens, int x,int *size){
 	memcpy(&tp,&ens,sizeof(ens));
 	tp[*size-1].ind.val=x;
 	ens =(ensemble)malloc((*size)*sizeof(struct cell));
+
 	if(ens ==NULL){
 		printf("erreur malloc nouvel ensemble\n");
 		return -1;

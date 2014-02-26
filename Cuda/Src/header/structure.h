@@ -26,6 +26,6 @@ struct cell {
 typedef struct cell* ensemble;
 
 __host__ __device__ ensemble initEns(int *size);
- __host__ __device__ int addCouple(ensemble ens, int x, int y,int *size);
+ __host__ __device__ int addCouple(ensemble *ens, int x, int y,int *size);
 __host__ __device__ int addVal(ensemble ens, int x,int *size);
 #endif /* STRUCTURE_H_ */
