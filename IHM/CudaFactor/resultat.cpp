@@ -1,4 +1,5 @@
 #include "resultat.h"
+#include <sstream>
 
 Resultat::Resultat(Model *m)
 {
@@ -7,11 +8,6 @@ Resultat::Resultat(Model *m)
     label = new QLabel("Resultat", this);
     label->move(310, 70);
     label->setStyleSheet("color: white; font-family:\"Arial\",Georgia,Serif; font-size: 50px;");
-
-    QString titre = "xml/exemple.xml"; //A remplacer
-    //QString titre = "xml/"+model->getTitre(); //par ca
-
-    lecturefichierXML(titre);
 
     text = new QTextEdit(this);
 
@@ -25,98 +21,55 @@ Resultat::Resultat(Model *m)
 }
 
 void Resultat::actualiser() {
-    lecturefichierXML("xml/exemple.xml");
     remplirText();
 }
 
 void Resultat::remplirText() {
 
-    QString s = "";
-    if (nombre != "") {
-        s += "nombre = "+nombre+"\n";
+    std::stringstream stream;
+    stream << model->getNombre();
+    QString nbr = QString::fromStdString(stream.str());
+
+    QString meth = "";
+    if (model->getMethode() == SAGE) {
+        meth = "SAGE";
+    } else {
+        meth = "CUDA";
     }
-    if (methode != "") {
-        s += "methode = "+methode+"\n";
-    }
-    if (temps != "") {
-        s += "temps = "+temps+"\n";
-    }
-    if (nbInstr != "") {
-        s += "nombre d'intructions = "+nbInstr+"\n";
-    }
-    if (nbInstrSec != "") {
-        s += "nombre d'intructions par seconde = "+nbInstrSec+"\n";
-    }
-    if (listFacteursPremiers.length() != 0) {
-        s += "liste des facteurs : ";
-        for (int i=0; i<listFacteursPremiers.length()-1; i++) {
-            s += listFacteursPremiers[i]+", ";
+
+    stream.str("");
+    stream << model->getTempsExecution();
+    QString tps = QString::fromStdString(stream.str());
+
+    stream.str("");
+    stream << model->getNbreInstruction();
+    QString nbinst = QString::fromStdString(stream.str());
+
+    stream.str("");
+    stream << model->getNbreInstrParSec();
+    QString nbinstsec = QString::fromStdString(stream.str());
+
+    QString listfact = "aucun";
+    if (model->getListFacteursPremiers().length() > 0) {
+        listfact = "";
+        int i=0;
+        for (i=0; i < model->getListFacteursPremiers().length()-1; i++) {
+            stream.str("");
+            stream << model->getListFacteursPremiers()[i];
+            listfact += QString::fromStdString(stream.str());
+            listfact +=+", ";
+
         }
-        s += listFacteursPremiers[listFacteursPremiers.length()-1];
+        stream.str("");
+        stream << model->getListFacteursPremiers()[i];
+        listfact += QString::fromStdString(stream.str());
     }
+    QString s = "nombre = "+nbr+"\n"
+            +"methode = "+meth+"\n"
+            +"temps = "+tps+"\n"
+            +"nombre d'intructions = "+nbinst+"\n"
+            +"nombre d'intructions par seconde = "+nbinstsec+"\n"
+            +"liste des facteurs : "+listfact;
+
     text->setPlainText(s);
-}
-
-void Resultat::lecturefichierXML(QString fileName) {
-
-    QXmlStreamReader reader;//Objet servant à la navigation
-    QFile file(fileName);
-    file.open(QFile::ReadOnly | QFile::Text); //Ouverture du fichier XML en lecture seul et en mode texte
-    reader.setDevice(&file);//Initialise l'instance reader avec le flux XML venant de file
-
-
-//Le but de cette boucle est de parcourir le fichier et de vérifier si l'on est au debut d'un element.
-QString derniereBaliseOuverte = "";
-while (!reader.atEnd())
-    {
-        QXmlStreamReader::TokenType t = reader.readNext();
-        QString name = reader.name().toString ();
-        switch (t) {
-        case QXmlStreamReader::StartElement :
-            derniereBaliseOuverte = name;
-            break;
-
-        case QXmlStreamReader::EndElement :
-            break;
-
-        case QXmlStreamReader::Characters :
-            QString t = "";
-            t+= reader.text();
-            t.remove(QChar(' '), Qt::CaseInsensitive);
-            t.remove(QChar('\n'), Qt::CaseInsensitive);
-            if (derniereBaliseOuverte == "nombre") {
-                if (t != "") {
-                    nombre = t;
-                }
-            }
-            else if (derniereBaliseOuverte == "methode") {
-                if (t != "") {
-                    methode = t;
-                }
-            }
-            else if (derniereBaliseOuverte == "temps") {
-                if (t != "") {
-                    temps = t;
-                }
-            }
-            else if (derniereBaliseOuverte == "nb_instr") {
-                if (t != "") {
-                    nbInstr = t;
-                }
-            }
-            else if (derniereBaliseOuverte == "nb_instr_sec") {
-                if (t != "") {
-                    nbInstrSec = t;
-                }
-            }
-            else if (derniereBaliseOuverte == "listfacteurs" ) {
-            }
-            else if (derniereBaliseOuverte == "facteur" ) {
-                if (t != "") {
-                    listFacteursPremiers.append(t);
-                }
-            }
-            break;
-        }
-    }
 }

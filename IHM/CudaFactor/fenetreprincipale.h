@@ -4,6 +4,7 @@
 #include <QFrame>
 #include <QList>
 #include <QPushButton>
+#include <QLabel>
 
 #include "model.h"
 #include "choixnombre.h"
@@ -32,10 +33,13 @@ public slots:
     void prev();
 
 private:
+    void foo();
     QPushButton * precedent;
     QPushButton * suivant;
     QIcon * suivantIcon;
     QIcon * precedentIcon;
+    QPixmap * bulleIcon;
+    QLabel * bulle;
     Model * model;
     int page;
     ChoixNombre * choixNombre;

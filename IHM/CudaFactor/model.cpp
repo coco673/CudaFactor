@@ -48,6 +48,9 @@ void Model::setNbreInstruction(int nbrInstruction) {
 }
 
 double Model::getNbreInstrParSec() {
+    if (temps == 0) {
+        return 0;
+    }
     return (nbre_instructions/temps);
 }
 
@@ -63,6 +66,9 @@ void Model::setTitre(QString titre) {
 void Model::reinitialiser() {
     methode = CUDA;
     nombre = 0;
-    temps = -1;
+    temps = 0;
+    nbre_instructions = 0;
     listFacteursPremiers.clear();
+    //listFacteursPremiers.append(5);
+    //listFacteursPremiers.append(2);
 }

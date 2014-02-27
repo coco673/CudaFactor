@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     choixnombre.cpp \
     choixmethode.cpp \
     attente.cpp \
-    resultat.cpp
+    resultat.cpp \
+    comparaisonxml.cpp
 
 HEADERS  += mainwindow.h \
     fenetreprincipale.h \
@@ -27,7 +28,8 @@ HEADERS  += mainwindow.h \
     choixnombre.h \
     choixmethode.h \
     attente.h \
-    resultat.h
+    resultat.h \
+    comparaisonxml.h
 
 FORMS    += mainwindow.ui
 
