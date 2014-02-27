@@ -12,7 +12,7 @@ int main(){
 	int valx = 44;
 	int valy = 32;
 
-	testInitEns();
+	/*testInitEns();
 	printf("Test InitEns -> passed\n");
 
 	testAddVal(val);
@@ -37,7 +37,7 @@ int main(){
 	printf("Test IsInEnsembleG -> passed\n");
 
 	TestfillEnsemble();
-	printf("Test fillEnsemble -> passed\n");
+	printf("Test fillEnsemble -> passed\n");*/
 
 	TestfillEnsembleG();
 	printf("Test fillEnsembleG -> passed\n");
