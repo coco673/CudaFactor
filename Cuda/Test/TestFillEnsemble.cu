@@ -20,12 +20,12 @@ int TestIsBSmooth(){
 	int borne = 100;
 	int val = 200;
 	int *list = generatePrimeList(borne,&size);
-
+	size--;
 	assert(isBSmooth(list, size, val));
 
 	val = 10;
 	assert(!isBSmooth(list, size, val));
-
+	free(list);
 	return 0;
 }
 int TestIsInEnsemble(){
@@ -37,7 +37,7 @@ int TestIsInEnsemble(){
 	}
 	assert(isInEnsemble(e,12,size) == 1);
 	assert(isInEnsemble(e,44,size) == 0);
-
+free(e);
 	return 0;
 }
 __global__ void isInfKernel(int *dev_list,bool *result,int size,int val){
@@ -88,11 +88,11 @@ int TestIsInf(){
 	cudaMemcpy(result,dev_result,sizeof(bool),cudaMemcpyDeviceToHost);
 	assert(*result == false);
 
-	//free(result);
-	free(list);
+
 	cudaFree(dev_result);
 	cudaFree(dev_list);
-
+	free(result);
+	free(list);
 	return 0;
 }
 __global__ void IsBSmoothKernel(int *list,int size, int y,int *result){
@@ -104,7 +104,8 @@ int TestIsBSmoothG(){
 	int val = 20;
 	int size;
 	int *list = generatePrimeList(val,&size);
-
+	//Rectification temporaire
+	size--;
 	int *dev_list;
 	int *dev_result;
 	int *result=(int *) malloc(sizeof(int));
@@ -118,13 +119,15 @@ int TestIsBSmoothG(){
 
 	assert(*result == 1);
 
+	cudaFree(dev_list);
 	cudaFree(dev_result);
 	free(result);
 	free(list);
 	size = 0;
 	val = 200;
 	list = generatePrimeList(val,&size);
-
+	//Rectification temporaire
+		size--;
 	cudaMalloc(&dev_list,size*sizeof(int));
 	cudaMalloc(&dev_result,sizeof(int));
 	cudaMemcpy(dev_list,list,size*sizeof(int),cudaMemcpyHostToDevice);
@@ -134,6 +137,8 @@ int TestIsBSmoothG(){
 	cudaMemcpy(result,dev_result,sizeof(int),cudaMemcpyDeviceToHost);
 
 	assert(*result == 0);
+
+	cudaFree(dev_list);
 	cudaFree(dev_result);
 	free(result);
 	free(list);
@@ -161,9 +166,11 @@ int TestIsInEnsembleG(){
 	}
 	printf("size %i\n",size);
 	int *result=(int *) malloc(size*sizeof(int));
-
-	cudaMalloc(&dev_ens,size*sizeof(struct cell));
+	printf("size : %i\n",size);
+	cudaMalloc(&dev_ens,sizeof(struct cell));
+	printf("size3 %i\n",size);
 	cudaMalloc(&dev_result,size*sizeof(int));
+	printf("size4 %i\n",size);
 	cudaMemcpy(dev_ens,ens,size*sizeof(struct cell),cudaMemcpyHostToDevice);
 	printf("val : %i\n",val);
 	IsInEnsembleKernel<<<1,size>>>(dev_ens,size,val,dev_result);
@@ -183,6 +190,11 @@ int TestIsInEnsembleG(){
 	cudaMemcpy(result,dev_result,size*sizeof(int),cudaMemcpyDeviceToHost);
 	printf("%i\n",*result);
 	assert(*result == 0);
+
+
+	cudaFree(dev_result);
+	free(ens);
+	cudaFree(dev_ens);
 
 	return 0;
 }
