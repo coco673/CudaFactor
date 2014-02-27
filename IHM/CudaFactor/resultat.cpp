@@ -6,7 +6,7 @@ Resultat::Resultat(Model *m)
     model = m;
 
     label = new QLabel("Resultat", this);
-    label->move(310, 70);
+    label->move(300, 70);
     label->setStyleSheet("color: white; font-family:\"Arial\",Georgia,Serif; font-size: 50px;");
 
     text = new QTextEdit(this);
