@@ -37,7 +37,7 @@ int TestIsInEnsemble(){
 	}
 	assert(isInEnsemble(e,12,size) == 1);
 	assert(isInEnsemble(e,44,size) == 0);
-free(e);
+	free(e);
 	return 0;
 }
 __global__ void isInfKernel(int *dev_list,bool *result,int size,int val){
@@ -91,7 +91,7 @@ int TestIsInf(){
 
 	cudaFree(dev_result);
 	cudaFree(dev_list);
-	free(result);
+	//free(result);
 	free(list);
 	return 0;
 }
@@ -127,7 +127,7 @@ int TestIsBSmoothG(){
 	val = 200;
 	list = generatePrimeList(val,&size);
 	//Rectification temporaire
-		size--;
+	size--;
 	cudaMalloc(&dev_list,size*sizeof(int));
 	cudaMalloc(&dev_result,sizeof(int));
 	cudaMemcpy(dev_list,list,size*sizeof(int),cudaMemcpyHostToDevice);
@@ -149,7 +149,6 @@ __global__ void IsInEnsembleKernel(ensemble ens,int size, int y,int *result){
 
 	isInEnsembleG(ens,y,size,result);
 
-
 }
 
 int TestIsInEnsembleG(){
@@ -161,25 +160,23 @@ int TestIsInEnsembleG(){
 
 	int *dev_result;
 	int i;
-	for (i = 0; i < 32; i++){
+//TODO revoir addVall
+	for (i = 0; i < 16; i++){
 		addVal(ens,i,&size);
+		printf("sizeof %i ::ens[%i] = %i :: size = %i :: i = %i\n",sizeof(ens),i,ens[i].ind.val,size,i);
+
 	}
-	printf("size %i\n",size);
-	int *result=(int *) malloc(size*sizeof(int));
-	printf("size : %i\n",size);
-	cudaMalloc(&dev_ens,sizeof(struct cell));
-	printf("size3 %i\n",size);
-	cudaMalloc(&dev_result,size*sizeof(int));
-	printf("size4 %i\n",size);
+	int *result=(int *) malloc(sizeof(int));
+	cudaMalloc(&dev_ens,size*sizeof(struct cell));
+	cudaMalloc(&dev_result,sizeof(int));
 	cudaMemcpy(dev_ens,ens,size*sizeof(struct cell),cudaMemcpyHostToDevice);
-	printf("val : %i\n",val);
 	IsInEnsembleKernel<<<1,size>>>(dev_ens,size,val,dev_result);
-	cudaMemcpy(result,dev_result,size*sizeof(int),cudaMemcpyDeviceToHost);
+	cudaMemcpy(result,dev_result,sizeof(int),cudaMemcpyDeviceToHost);
 	printf("%i\n",*result);
 	assert(*result == 1);
 
 
-	free(result);
+	//free(result);
 	cudaFree(dev_result);
 	val = 20045;
 	result=(int *) malloc(size*sizeof(int));
@@ -207,25 +204,35 @@ int TestfillEnsemble(){
 	ensemble div = initEns(&size);
 	ensemble e ;
 	fillEnsemble(e,nbr,borne,div,size);
+
 	return 0;
 }
 int TestfillEnsembleG(){
 	int sizediv;
-	int *size;
-	cudaMalloc(&size,5*sizeof(int));
+	int *size=(int *)malloc(sizeof(int));
+
+	int *dev_size;
 	int k;
-	int nbr = 257;
+	int nbr = 257349;
 	int borne = 10;
 	ensemble div = initEns(&sizediv);
-	ensemble e ;
+	ensemble r =initEns(size);
+	ensemble dev_r;
 	int *p =generatePrimeList(borne,&k);
-	int *x=(int *)malloc(5*sizeof(int));
-	fillEnsembleG<<<5,1>>>(e,p,k,nbr,borne,div,sizediv,size);
-	cudaMemcpy(x,size,5*sizeof(int),cudaMemcpyDeviceToHost);
-	printf("x :%i\n",x[0]);
-	printf("x :%i\n",x[1]);
-	printf("x :%i\n",x[2]);
-	printf("x :%i\n",x[3]);
+	k--;
+
+
+	cudaMalloc(&dev_size,sizeof(int));
+	cudaMalloc(&dev_r,sizeof(struct cell));
+
+	cudaMemcpy(dev_r,r,sizeof(struct cell),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_size,size,sizeof(int),cudaMemcpyHostToDevice);
+
+	fillEnsembleG<<<5,1>>>(dev_r,p,k,nbr,borne,div,sizediv,dev_size);
+
+	cudaMemcpy(size,dev_size,sizeof(int),cudaMemcpyDeviceToHost);
+	cudaMemcpy(r,dev_r,*size*sizeof(struct cell),cudaMemcpyDeviceToHost);
+
 	return 0;
 }
 
