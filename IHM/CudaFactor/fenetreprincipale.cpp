@@ -32,23 +32,32 @@ FenetrePrincipale::FenetrePrincipale() {
 
     suivantIcon = new QIcon("images/boutonSuivant.png");
     precedentIcon = new QIcon("images/boutonRetour.png");
+    bulleIcon = new QPixmap("images/bulle.png");
 
     suivant = new QPushButton(this);
     precedent = new QPushButton(this);
 
-    suivant->setFixedSize(55, 55);
+    suivant->setFixedSize(50, 50);
     suivant->move(700, 500);
     suivant->setCursor(Qt::PointingHandCursor);
     suivant->raise(); //au premier plan
     suivant->setIcon(*suivantIcon);
-    suivant->setIconSize(QSize(55, 55));
+    suivant->setIconSize(QSize(100, 100));
 
-    precedent->setFixedSize(55, 55);
+    precedent->setFixedSize(50, 50);
     precedent->move(30, 500);
     precedent->setCursor(Qt::PointingHandCursor);
     precedent->raise(); //au premier plan
     precedent->setIcon(*precedentIcon);
-    precedent->setIconSize(QSize(55, 55));
+    precedent->setIconSize(QSize(100, 100));
+
+    bulle = new QLabel(this);
+    bulle->setPixmap(*bulleIcon);
+    bulle->move(560, 400);
+    //bulle->move(700-1.5*bulle->size().width(), 500-3.5*bulle->size().height());
+    bulle->hide();
+
+    model->reinitialiser();
 
     //Connection SLOTS-SIGNAUX
     QObject::connect(suivant, SIGNAL(clicked()), this, SLOT(next()));
@@ -100,7 +109,15 @@ void FenetrePrincipale::next() {
         attente->actualiser();
         resultat->actualiser();
     } else {
-        page++;
+        if (model->getNombre() != 0) {
+            bulle->hide();
+            page++;
+        } else {
+            bulle->show();
+        }
+    }
+    if (page == 3) {
+        resultat->actualiser();
     }
     listFrames[page]->show();
 }
