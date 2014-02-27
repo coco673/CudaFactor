@@ -12,27 +12,36 @@ int main(){
 	int valx = 44;
 	int valy = 32;
 
-//	testInitEns();
+	testInitEns();
 	printf("Test InitEns -> passed\n");
-	//testAddVal(val);
+
+	testAddVal(val);
 	printf("Test AddVal -> passed\n");
-	//testAddCouple(valx,valy);
+
+	testAddCouple(valx,valy);
 	printf("Test AddCouple -> passed\n");
 
-	//TestIsBSmooth();
+	TestIsBSmooth();
 	printf("Test BSmooth -> passed\n");
-	//TestIsInEnsemble();
+
+	TestIsInEnsemble();
 	printf("Test IsInEnsemble -> passed\n");
-	//TestIsInf();
+
+	TestIsInf();
 	printf("Test isinf -> passed\n");
-	//TestIsBSmoothG();
+
+	TestIsBSmoothG();
 	printf("Test BSmoothG -> passed\n");
-	//TestIsInEnsembleG();
+
+	TestIsInEnsembleG();
 	printf("Test IsInEnsembleG -> passed\n");
-	//TestfillEnsemble();
+
+	TestfillEnsemble();
 	printf("Test fillEnsemble -> passed\n");
+
 	TestfillEnsembleG();
 	printf("Test fillEnsembleG -> passed\n");
+
 	TestPgcd();
 	printf("Test Pgcd -> passed\n");
 	return 0;
