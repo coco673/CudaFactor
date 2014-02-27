@@ -45,9 +45,10 @@ __global__ void isInfKernel(int *dev_list,bool *result,int size,int val){
 	volatile __shared__ bool found;
 	if(threadIdx.x == 0) found = false;
 	__syncthreads();
-
-	if(found== false  && i < size){
-		bool inf = isInf(dev_list,size,val);
+	//Attention size prend une valeur de trop et bien superieur à la borne !!
+	//TODO Rectifier la fonction generatePrimeList
+	if(found== false  && i < size-1){
+		int inf = isInf(dev_list,size-1,val);
 		if(inf){
 			found = true;
 			*result = found;
@@ -58,9 +59,10 @@ __global__ void isInfKernel(int *dev_list,bool *result,int size,int val){
 }
 
 int TestIsInf(){
-	int borne = 99;
-	int val = 20;
+	int borne = 20;
+	int val = 8;
 	int size;
+
 	int *list = generatePrimeList(borne,&size);
 	int *dev_list;
 	bool *dev_result;
@@ -69,7 +71,7 @@ int TestIsInf(){
 	cudaMalloc(&dev_list,size*sizeof(int));
 	cudaMalloc(&dev_result,sizeof(bool));
 	cudaMemcpy(dev_list,list,size*sizeof(int),cudaMemcpyHostToDevice);
-	int i;
+
 
 	isInfKernel<<<1,size>>>(dev_list,dev_result,size,val);
 	cudaMemcpy(result,dev_result,sizeof(bool),cudaMemcpyDeviceToHost);
@@ -84,7 +86,6 @@ int TestIsInf(){
 
 	isInfKernel<<<1,size>>>(dev_list,dev_result,size,val);
 	cudaMemcpy(result,dev_result,sizeof(bool),cudaMemcpyDeviceToHost);
-
 	assert(*result == false);
 
 	//free(result);
@@ -141,8 +142,8 @@ int TestIsBSmoothG(){
 
 __global__ void IsInEnsembleKernel(ensemble ens,int size, int y,int *result){
 
-	isInEnsembleG(ens,size,y,result);
-	//*result = 1;
+	isInEnsembleG(ens,y,size,result);
+
 
 }
 
@@ -150,7 +151,7 @@ int TestIsInEnsembleG(){
 
 	int size;
 	ensemble ens = initEns(&size);
-ensemble dev_ens;
+	ensemble dev_ens;
 	int val = 22;
 
 	int *dev_result;
@@ -158,25 +159,29 @@ ensemble dev_ens;
 	for (i = 0; i < 32; i++){
 		addVal(ens,i,&size);
 	}
-
+	printf("size %i\n",size);
 	int *result=(int *) malloc(size*sizeof(int));
 
-		cudaMalloc(&dev_ens,size*sizeof(struct cell));
-		cudaMalloc(&dev_result,size*sizeof(int));
-		cudaMemcpy(dev_ens,ens,size*sizeof(struct cell),cudaMemcpyHostToDevice);
-
-		IsInEnsembleKernel<<<1,size>>>(dev_ens,size,val,dev_result);
-		cudaMemcpy(result,dev_result,size*sizeof(int),cudaMemcpyDeviceToHost);
-
+	cudaMalloc(&dev_ens,size*sizeof(struct cell));
+	cudaMalloc(&dev_result,size*sizeof(int));
+	cudaMemcpy(dev_ens,ens,size*sizeof(struct cell),cudaMemcpyHostToDevice);
+	printf("val : %i\n",val);
+	IsInEnsembleKernel<<<1,size>>>(dev_ens,size,val,dev_result);
+	cudaMemcpy(result,dev_result,size*sizeof(int),cudaMemcpyDeviceToHost);
+	printf("%i\n",*result);
 	assert(*result == 1);
+
+
 	free(result);
 	cudaFree(dev_result);
 	val = 20045;
-	cudaMalloc(&dev_result,sizeof(int));
-	int *result2 = (int *) malloc(sizeof(int));
-	IsInEnsembleKernel<<<1,size>>>(ens,size,val,dev_result);
-	cudaMemcpy(result2,dev_result,sizeof(int),cudaMemcpyDeviceToHost);
-printf("result %i\n",*result2);
+	result=(int *) malloc(size*sizeof(int));
+
+	cudaMalloc(&dev_result,size*sizeof(int));
+	printf("val : %i\n",val);
+	IsInEnsembleKernel<<<1,size>>>(dev_ens,size,val,dev_result);
+	cudaMemcpy(result,dev_result,size*sizeof(int),cudaMemcpyDeviceToHost);
+	printf("%i\n",*result);
 	assert(*result == 0);
 
 	return 0;

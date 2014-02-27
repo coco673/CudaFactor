@@ -55,22 +55,19 @@ bool isInEnsemble(ensemble ens, int y,int size){
  * Verifie si chaque valeur contenue dans la liste des premiers (de taille size)
  * est inférieur a la valeur y.
  */
-__device__ bool isInf(int *list, int size, int y){
+__device__ int isInf(int *list, int size, int y){
 	int i = threadIdx.x;
-	volatile __shared__ bool res;
+	volatile __shared__ int res;
 	if(i == 0){
-		res = false;
+		res = 0;
 	}
 	__syncthreads();
 	if(i < size){
 
 		if(list[i] > y){
-			res=true;
+			res=1;
 		}
 		__syncthreads();
-		if(res){
-			return res;
-		}
 	}
 	return res;
 }
@@ -107,20 +104,21 @@ __device__ void isBSmoothG(int *list,int size, int y,int *result){
 
 __device__ void isInEnsembleG(ensemble ens, int y,int size, int *res){
 	int i =threadIdx.x;
-	__shared__ volatile int found;
+	volatile __shared__ int found;
 
 	if (i == 0){
 		found = 0;
 	}
-	__syncthreads();
-	if(ens[i].ind.val == y){
-		found = 1;
+	if(i < size){
+		__syncthreads();
+		if(ens[i].ind.val == y){
+			found = 1;
+			*res = found;
+		}
+		__syncthreads();
 		*res = found;
 	}
-	__syncthreads();
-	*res = found;
 }
-
 
 /**
  * Construit l'ensemble R. (version CPU)
@@ -151,15 +149,45 @@ void fillEnsemble(ensemble r,int nbr,int borne,ensemble div
 		}
 	}
 }
+__global__ void setup_kernel ( curandState * state, unsigned long seed )
+{
+	int id = threadIdx.x;
+	curand_init ( seed, id, 0, &state[id] );
+}
+
+__global__ void generate( curandState* globalState )
+{
+	int ind = threadIdx.x;
+	curandState localState = globalState[ind];
+	float RANDOM = curand_uniform( &localState );
+	globalState[ind] = localState;
+}
+
+int generateRandom( int argc, char** argv)
+{
+	int N = 2;
+	dim3 tpb(N,1,1);
+	curandState* devStates;
+	cudaMalloc ( &devStates, N*sizeof( curandState ) );
+
+	// setup seeds
+	setup_kernel <<< 1, tpb >>> ( devStates, time(NULL) );
+
+	// generate random numbers
+	generate <<< 1, tpb >>> ( devStates );
+
+	return 0;
+}
+
 __device__ int generateRonce(ensemble r,int *p,int k,int nbr, int borne,ensemble div,int sizeDiv, int *sizeR){
 	int i = blockIdx.x;
 	curandState s;
-
+	//TODO ajouter l'aléa
 	int y;
 	int racN=sqrtf(nbr);
 	int *bsmooth = (int *)malloc(sizeof(int));
 	int *present = (int *)malloc(sizeof(int));
-	curand_init(1234+i, i, 0, &s);
+	//curand_init(1234+i, i, 0, &s);
 
 	int x = curand(&s);
 	sizeR[i] = x;
@@ -174,13 +202,14 @@ __device__ int generateRonce(ensemble r,int *p,int k,int nbr, int borne,ensemble
 			addCouple(&r,x,y,sizeR);
 		}
 	}
+	return 0;
 }
 __global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne
 		,ensemble div,int sizeDiv,int *sizeR){
 
-	while(*sizeR<k+1){
-		int res = generateRonce(r,p,k,nbr,borne,div,sizeDiv,sizeR);
-	}
+	//TODO la boucle.
+	int res = generateRonce(r,p,k,nbr,borne,div,sizeDiv,sizeR);
+
 
 }
 
