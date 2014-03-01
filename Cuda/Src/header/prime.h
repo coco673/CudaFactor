@@ -8,6 +8,8 @@
 #ifndef PRIME_H_
 #define PRIME_H_
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
 
@@ -15,7 +17,7 @@ __global__ void eratosthene(int *list, int borne);
 __global__ void listNumbers(int *list);
 __global__ void copyTab(int *src, int *dest, int size);
 int primeList(int *list, int *result, int borne);
-int *generatePrimeList(int borne, int *tailleResult);
+int *generatePrimeList(int borne, int *size);
 
 
 #endif /* PRIME_H_ */
