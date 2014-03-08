@@ -12,6 +12,8 @@
 #include <curand.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
+//nombre de bits à générer
+#define N 1000
 
 /**
  * retourne true si l'entier est B-friable false sinon. (Version cpu)
@@ -149,71 +151,73 @@ void fillEnsemble(ensemble r,int nbr,int borne,ensemble div
 	}
 }
 
-__device__ void setup_kernel ( curandState * state, unsigned long seed )
+__device__ void setup_kernel ( curandState_t *state )
 {
-	int id = threadIdx.x;
-	int racN=sqrtf(seed);
+	int id = threadIdx.x + blockIdx.x+ blockDim.x;
 
 	curand_init ( seed+id, id, racN, &state[id] );
 }
 
-__device__ void generate( curandState* globalState, int *rand)
+__device__ void generate( curandState_t *globalState, int *rand, int nbr, int racN)
 {
-	int ind = threadIdx.x;
-	curandState localState = globalState[ind];
-	*rand =(int) curand_uniform( &localState );
+	int id = threadIdx.x + blockIdx.x+ blockDim.x;
+    float x;
+    
+	curandState_t localState = globalState[ind];
+    for(int n = 0; n < N; n++) {
+        x = fmodf(curand(&localState),(nbr-racN)) + racN;
+    }
 	globalState[ind] = localState;
+    rand[id] = (int) x;
 }
 
-/*int generateRandom(int n)
-{
-	dim3 tpb(n,1,1);
-	curandState* devStates;
-	cudaMalloc ( &devStates, N*sizeof( curandState ) );
-
-	// setup seeds
-	//setup_kernel <<< 1, tpb >>> ( devStates, time(NULL) );
-
-	// generate random numbers
-	//generate <<< 1, tpb >>> ( devStates );
-
-	return 0;
-}*/
 
 __device__ int generateRonce(ensemble r,int *p,int k,int nbr,ensemble div,int sizeDiv, int *sizeR){
-	int i = blockIdx.x;
-
-	//TODO ajouter l'aléa
+	int i =  threadIdx.x;
+    __shared__ volatile int ret = -1;
+    
+    int x;
 	int y;
-	int *x=(int*)malloc(sizeof(int));
+    int racN = sqrtf(nbr);
+	int *rand=(int*)malloc((blockDim.x*gridDim.x)*sizeof(int));
 	int *bsmooth = (int *)malloc(sizeof(int));
 	int *present = (int *)malloc(sizeof(int));
 
-	curandState* devStates;
-	devStates=(curandState*) malloc (k*sizeof( curandState ) );
+	curandState_t *devStates;
+	devStates=(curandState_t *) malloc ((blockDim.x*gridDim.x)*sizeof( curandState_t ) );
+
 	// setup seeds
-	setup_kernel( devStates, nbr );
+	setup_kernel( devStates);
 
 	// generate random numbers
-	generate( devStates, x);
+	generate( devStates, rand,nbr,racN);
 
 	if(i < k+1){
-
-		y = powf(*x,2);
+        x = rand[i];
+		y = powf(x,2);
 		y=y%nbr;
 		isBSmoothG(p,k,y,bsmooth);
 		isInEnsembleG(div,y,sizeDiv,present);
-
+        
+        __syncthreads();
+        
 		if((*bsmooth) && !(*present)){
-			addCouple(&r,*x,y,sizeR);
-			return 0;
+			addCouple(&r,x,y,sizeR);
+			ret = 0;
+
 		}
+        __syncthreads();
+
 	}
-	return -1;
+    return ret;
 }
 __global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne
 		,ensemble div,int sizeDiv,int *sizeR){
 	int res;
+    if( blockIdx.x == 0) {
+        r = initEns(sizeR);
+    }
+
 	//TODO la boucle.
 	do{
 		res = generateRonce(r,p,k,nbr,div,sizeDiv,sizeR);

@@ -21,6 +21,9 @@ __global__ void fillEnsembleG(ensemble ens,int *p,int k,int n,int base,ensemble 
 __device__ void isBSmoothG(int *list,int size, int y, int *result);
 __device__ int isInf(int *list, int size, int y);
 
+__device__ void generate( curandState_t *globalState, int *rand, int nbr, int racN);
+__device__ void setup_kernel ( curandState_t *state );
+
 bool isBSmooth(int *list,int size, int y);
 bool isInEnsemble(ensemble ens, int y,int size);
 void fillEnsemble(ensemble ens,int n,int base,ensemble div,int sizeDiv);
