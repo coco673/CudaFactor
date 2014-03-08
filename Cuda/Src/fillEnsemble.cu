@@ -218,9 +218,8 @@ __global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne
         r = initEns(sizeR);
     }
 
-	//TODO la boucle.
 	do{
 		res = generateRonce(r,p,k,nbr,div,sizeDiv,sizeR);
-	}while(res != 0);
+	}while(sizeR < k+1);
 }
 
