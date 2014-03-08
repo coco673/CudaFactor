@@ -155,7 +155,7 @@ __device__ void setup_kernel ( curandState_t *state )
 {
 	int id = threadIdx.x + blockIdx.x+ blockDim.x;
 
-	curand_init ( seed+id, id, racN, &state[id] );
+	curand_init ( id, id, 0, &state[id] );
 }
 
 __device__ void generate( curandState_t *globalState, int *rand, int nbr, int racN)
@@ -163,19 +163,21 @@ __device__ void generate( curandState_t *globalState, int *rand, int nbr, int ra
 	int id = threadIdx.x + blockIdx.x+ blockDim.x;
     float x;
     
-	curandState_t localState = globalState[ind];
+	curandState_t localState = globalState[id];
     for(int n = 0; n < N; n++) {
         x = fmodf(curand(&localState),(nbr-racN)) + racN;
     }
-	globalState[ind] = localState;
+	globalState[id] = localState;
     rand[id] = (int) x;
 }
 
 
 __device__ int generateRonce(ensemble r,int *p,int k,int nbr,ensemble div,int sizeDiv, int *sizeR){
 	int i =  threadIdx.x;
-    __shared__ volatile int ret = -1;
-    
+    volatile __shared__ int ret;
+    if (i == 0) {
+        ret = -1;
+    }
     int x;
 	int y;
     int racN = sqrtf(nbr);
@@ -220,6 +222,6 @@ __global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne
 
 	do{
 		res = generateRonce(r,p,k,nbr,div,sizeDiv,sizeR);
-	}while(sizeR < k+1);
+	}while(*sizeR < k+1);
 }
 
