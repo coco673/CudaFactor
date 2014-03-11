@@ -15,6 +15,8 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "structure.h"
+#include <curand.h>
+#include <curand_kernel.h>
 
 __device__ void isInEnsembleG(ensemble ens, int y,int size,int *res);
 __global__ void fillEnsembleG(ensemble ens,int *p,int k,int n,int base,ensemble div,int sizeDiv,int *sizeR);

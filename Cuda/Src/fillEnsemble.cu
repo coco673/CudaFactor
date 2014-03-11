@@ -153,14 +153,15 @@ void fillEnsemble(ensemble r,int nbr,int borne,ensemble div
 
 __device__ void setup_kernel ( curandState_t *state )
 {
-	int id = threadIdx.x + blockIdx.x+ blockDim.x;
-
+	//int id = threadIdx.x + blockIdx.x+ blockDim.x;
+	int id = threadIdx.x + blockIdx.x;
 	curand_init ( id, id, 0, &state[id] );
 }
 
 __device__ void generate( curandState_t *globalState, int *rand, int nbr, int racN)
 {
-	int id = threadIdx.x + blockIdx.x+ blockDim.x;
+	//int id = threadIdx.x + blockIdx.x+ blockDim.x;
+	int id = threadIdx.x + blockIdx.x;
     float x;
     
 	curandState_t localState = globalState[id];
