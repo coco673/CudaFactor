@@ -1,17 +1,17 @@
 #ifndef FENETREPRINCIPALE_H
 #define FENETREPRINCIPALE_H
 
-#include <QFrame>
-#include <QList>
 #include <QPushButton>
 #include <QLabel>
 
-#include "model.h"
+#include "modelfenprinc.h"
+
 #include "choixnombre.h"
 #include "choixmethode.h"
 #include "attente.h"
 #include "resultat.h"
-
+#include "comparaisonxml.h"
+#include "choixcompa_facto.h"
 
 class FenetrePrincipale: public QWidget {
 
@@ -19,34 +19,40 @@ class FenetrePrincipale: public QWidget {
 
 public:
     FenetrePrincipale();
-    Model getModel();
-    int getPage();
-    QFrame * getFrameCourante();
-    QList<QFrame *> getListeFrames();
+    ModelFenPrinc* getModelFenPrinc();
+    Frame * getFrameCourante();
+    choixCompa_facto* getChoixCompFact();
     ChoixNombre* getChoixNombre();
     ChoixMethode* getChoixMethode();
     Attente* getAttente();
     Resultat* getResultat();
+    comparaisonXml* getComparaisonXml();
+    QList<Frame *> getListeFramesAvant();
+    QList<Frame *> getListeFramesFact();
+    QList<Frame *> getListeFramesComp();
 
 public slots:
     void next();
     void prev();
 
 private:
-    void foo();
     QPushButton * precedent;
     QPushButton * suivant;
     QIcon * suivantIcon;
     QIcon * precedentIcon;
     QPixmap * bulleIcon;
     QLabel * bulle;
-    Model * model;
-    int page;
+    ModelFenPrinc * modelFen;
+    choixCompa_facto * choixCompFact;
     ChoixNombre * choixNombre;
     ChoixMethode * choixMethode;
     Attente * attente;
     Resultat * resultat;
-    QList<QFrame *> listFrames;
+    comparaisonXml* compXml;
+    QList<Frame *> listFramesAvant;
+    QList<Frame *> listFramesFact;
+    QList<Frame *> listFramesComp;
+
 };
 
 #endif // FENETREPRINCIPALE_H

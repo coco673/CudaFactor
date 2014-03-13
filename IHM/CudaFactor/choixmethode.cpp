@@ -1,8 +1,10 @@
 #include "choixmethode.h"
 
-ChoixMethode::ChoixMethode(Model *m)
+ChoixMethode::ChoixMethode(Model *m, ModelFenPrinc *mfp)
 {
     model = m;
+    modelFen = mfp;
+
     setStyleSheet("background-color: rgb(1,74,111);");
 
     //Taille de la fenetre
@@ -15,19 +17,19 @@ ChoixMethode::ChoixMethode(Model *m)
     // Construction des boutons
 
     cudaIcon = new QIcon("images/boutonCUDA.png");
-    cudaIconSelect = new QIcon("images/boutonCUDASelect.png");
     sageIcon = new QIcon("images/boutonSAGE.png");
-    sageIconSelect = new QIcon("images/boutonSAGESelect.png");
 
     cudaButton = new QPushButton(this);
     sageButton = new QPushButton(this);
+
+    model->setMethode(CUDA);
 
     cudaButton->setFixedSize(190, 150);
     cudaButton->move(171, 250);
     cudaButton->setCursor(Qt::PointingHandCursor);
     cudaButton->raise(); //au premier plan
     cudaButton->setStyleSheet("border-radius: 10px;");
-    cudaButton->setIcon(*cudaIconSelect);
+    cudaButton->setIcon(*cudaIcon);
     cudaButton->setIconSize(QSize(190, 150));
 
     sageButton->setFixedSize(190, 150);
@@ -45,26 +47,24 @@ ChoixMethode::ChoixMethode(Model *m)
 }
 
 void ChoixMethode::actualiser() {
-    switch(model->getMethode()) {
-    case SAGE:
-        cudaButton->setIcon(*cudaIcon);
-        sageButton->setIcon(*sageIconSelect);
-        break;
-    default:
-        sageButton->setIcon(*sageIcon);
-        cudaButton->setIcon(*cudaIconSelect);
-    }
+
+}
+
+void ChoixMethode::check() {
+
+}
+
+bool ChoixMethode::boutonSuivant() {
+    return false;
 }
 
 
 void ChoixMethode::pressCUDA() {
     model->setMethode(CUDA);
-    sageButton->setIcon(*sageIcon);
-    cudaButton->setIcon(*cudaIconSelect);
+    modelFen->next();
 }
 
 void ChoixMethode::pressSAGE() {
     model->setMethode(SAGE);
-    cudaButton->setIcon(*cudaIcon);
-    sageButton->setIcon(*sageIconSelect);
+    modelFen->next();
 }

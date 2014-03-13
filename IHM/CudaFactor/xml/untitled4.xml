@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rapport>
+    <nombre>74</nombre>
+    <methode>SAGE</methode>
+    <temps>20</temps>
+    <nb_instr>40</nb_instr>
+    <nb_instr_sec>2</nb_instr_sec>
+    <listfacteurs>
+        <facteur>2</facteur>
+        <facteur>37</facteur>
+    </listfacteurs>
+</rapport>
