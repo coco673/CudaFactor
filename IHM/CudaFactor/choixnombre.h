@@ -1,22 +1,23 @@
 #ifndef CHOIXNOMBRE_H
 #define CHOIXNOMBRE_H
 
-#include <QFrame>
 #include <QTextEdit>
 #include <QRadioButton>
 #include <QLabel>
 #include "model.h"
+#include "Frame.h"
 
-class ChoixNombre: public QFrame
+class ChoixNombre: public Frame
 {
     Q_OBJECT
 
 public:
     ChoixNombre(Model *m);
     void actualiser();
+    bool boutonSuivant();
+    void check();
 
 private slots:
-    void changerNombre();
     void boutonClique();
 
 private:

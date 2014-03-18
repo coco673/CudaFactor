@@ -20,4 +20,4 @@ int TestIsBSmoothG();
 int TestIsInEnsembleG();
 int TestfillEnsemble();
 int TestfillEnsembleG();
-
+int TestGenerateOnce();

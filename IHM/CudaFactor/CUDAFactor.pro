@@ -20,7 +20,10 @@ SOURCES += main.cpp\
     choixmethode.cpp \
     attente.cpp \
     resultat.cpp \
-    comparaisonxml.cpp
+    comparaisonxml.cpp \
+    choixcompa_facto.cpp \
+    modelcomparaison.cpp \
+    modelfenprinc.cpp
 
 HEADERS  += mainwindow.h \
     fenetreprincipale.h \
@@ -29,7 +32,11 @@ HEADERS  += mainwindow.h \
     choixmethode.h \
     attente.h \
     resultat.h \
-    comparaisonxml.h
+    comparaisonxml.h \
+    choixcompa_facto.h \
+    modelcomparaison.h \
+    modelfenprinc.h \
+    Frame.h
 
 FORMS    += mainwindow.ui
 

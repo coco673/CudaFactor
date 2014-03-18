@@ -12,8 +12,7 @@
 #include "../Src/header/fillEnsemble.h"
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include <curand.h>
-#include <curand_kernel.h>
+
 
 int TestIsBSmooth(){
 	int size;
@@ -236,3 +235,32 @@ int TestfillEnsembleG(){
 	return 0;
 }
 
+__global__ void setup_kernelGen(int *rand){
+	int id = threadIdx.x;
+	int nbr = 29;
+	int racN = 12;
+	int *tprand = (int*) malloc(gridDim.x*sizeof(int));
+	curandState_t *local = (curandState_t*)malloc((blockDim.x*gridDim.x)*sizeof(curandState_t));
+	setup_kernel(local);
+	generate(local,tprand,nbr,racN);
+	rand[id] = tprand[id];
+	for (int i= 0;i<10;i++){
+			printf("%i\n",rand[i]);
+
+		}
+}
+int TestGenerateOnce(){
+	int *rand = (int *)malloc(10*sizeof(int));
+	int *dev_rand;
+
+	cudaMalloc(&dev_rand,10*sizeof(int));
+
+
+	setup_kernelGen<<<1,10>>>(dev_rand);
+	cudaMemcpy(rand,dev_rand,10*sizeof(int),cudaMemcpyDeviceToHost);
+
+	for (int i= 0;i<10;i++){
+		printf("%i\n",rand[i]);
+
+	}
+}

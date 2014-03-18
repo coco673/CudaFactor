@@ -1,18 +1,21 @@
 #ifndef CHOIXMETHODE_H
 #define CHOIXMETHODE_H
 
-#include"model.h"
+#include "model.h"
+#include "Frame.h"
+#include "modelfenprinc.h"
 #include <QPushButton>
-#include <QFrame>
 #include <QLabel>
 
-class ChoixMethode: public QFrame
+class ChoixMethode: public Frame
 {
     Q_OBJECT
 
 public:
-    ChoixMethode(Model *m);
+    ChoixMethode(Model *m, ModelFenPrinc *mfp);
     void actualiser();
+    bool boutonSuivant();
+    void check();
 
 public slots:
     void pressCUDA();
@@ -20,11 +23,10 @@ public slots:
 
 private:
     Model * model;
+    ModelFenPrinc* modelFen;
     QLabel * label;
     QIcon * cudaIcon;
-    QIcon * cudaIconSelect;
     QIcon * sageIcon;
-    QIcon * sageIconSelect;
     QPushButton * cudaButton;
     QPushButton * sageButton;
 

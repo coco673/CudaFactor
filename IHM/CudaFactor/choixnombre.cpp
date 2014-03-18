@@ -1,6 +1,7 @@
 #include "choixnombre.h"
 #include <sstream>
 #include <QButtonGroup>
+#include <QDebug>
 
 ChoixNombre::ChoixNombre(Model * m)
 {
@@ -33,18 +34,17 @@ ChoixNombre::ChoixNombre(Model * m)
     group->addButton(hexa, 3);
     decimal->setChecked(true);
 
-    QObject::connect(nombre, SIGNAL(textChanged()), this, SLOT(changerNombre()));
+    //QObject::connect(nombre, SIGNAL(textChanged()), this, SLOT(changerNombre()));
     QObject::connect(group, SIGNAL(buttonClicked(int)), this, SLOT(boutonClique()));
 
     setStyleSheet("background-color: rgb(1,74,111);");
 }
 
 void ChoixNombre::boutonClique() {
-    changerNombre();
+    check();
 }
 
-void ChoixNombre::changerNombre() {
-
+void ChoixNombre::check() {
     QStringList listString = nombre->toPlainText().split("\n");
 
     if (listString.length() > 1) {
@@ -59,7 +59,8 @@ void ChoixNombre::changerNombre() {
 
     long double chiffre = 0;
     if (decimal->isChecked()) {
-        chiffre = nombre->toPlainText().toDouble();
+        bool ok;
+        chiffre = nombre->toPlainText().toUInt(&ok,10);
     } else if (hexa->isChecked()) {
         bool ok;
         chiffre = nombre->toPlainText().toUInt(&ok,16);
@@ -80,4 +81,8 @@ void ChoixNombre::actualiser() {
         nombre->setText(s);
     }
     decimal->setChecked(true);
+}
+
+bool ChoixNombre::boutonSuivant() {
+    return true;
 }

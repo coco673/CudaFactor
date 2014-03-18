@@ -2,28 +2,22 @@
 #define ATTENTE_H
 
 #include "model.h"
-#include <QFrame>
+#include "Frame.h"
 #include <QLabel>
-#include <QXmlStreamWriter>
-#include <QPushButton>
 
-class Attente: public QFrame
+class Attente: public Frame
 {
     Q_OBJECT
 public:
     Attente(Model *m);
     void actualiser();
-    void creerXml();
-
-public slots:
-    void enregistrer();
+    bool boutonSuivant();
+    void check();
 
 private:
     Model * model;
     QLabel * label;
-    QString fileName;
-    QPushButton * sauvegarder;
-    QIcon * icon;
+
 
 };
 
