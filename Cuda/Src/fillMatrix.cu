@@ -27,13 +27,18 @@ __device__ __host__ void intToBinWithSize(int *tab, int n, int size) {
  *     premList : La liste des premiers construite au départ
  *     size : La taille de la representation binaire du thread le plus grand
  *     result : le vecteur trouvé, NULL s'il est pas trouvé
+ * Contraintes :
+ *     A lancer avec taille(yList) blocks et 2^(taille(premList)) threads
+ * Resultat :
+ *     La matrice des vecteurs qui sont décomposition des y de yList en facteurs premiers stockée dans result
  */
-__global__ void fillMatrix(int *yList, int *premList, int size, int *result) {
+__global__ void fillMatrix(int *yList, int *premList, int size, int **result) {
 	__shared__ volatile int found;
 	int blockId = blockIdx.x;
 	int threadId = threadIdx.x;
 	if (threadId == 0) {
 		found = 0;
+		//result[blockId] = (int *) malloc(size * sizeof(int));
 	}
 	__syncthreads();
 	int *listCoeff = (int *) malloc(size * sizeof(int));
@@ -44,11 +49,11 @@ __global__ void fillMatrix(int *yList, int *premList, int size, int *result) {
 	}
 	if (yList[blockId] == res) {
 		found = 1;
-		result = listCoeff;
+		result[blockId] = listCoeff;
 	}
 	__syncthreads();
 	if (found == 0) {
-		result = NULL;
+		result[blockId] = NULL;
 	}
 }
 
