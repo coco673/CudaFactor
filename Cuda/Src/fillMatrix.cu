@@ -1,5 +1,12 @@
 #include "header/fillMatrix.h"
 
+/*
+ * Calcul la representation binaire d'un int avec une taille fixée
+ * Parametres :
+ *     tab : Le tableau contenant la representation binaire
+ *     n : le nombre a decomposer
+ *     size : la taille de la representation binaire
+ */
 __device__ __host__ void intToBinWithSize(int *tab, int n, int size) {
     int i;
     for(i = 0; i < size; i++)
@@ -14,6 +21,13 @@ __device__ __host__ void intToBinWithSize(int *tab, int n, int size) {
 	return tab;
 }*/
 
+/*
+ * Parametres :
+ *     yList : La liste des y de l'ensemble des couples
+ *     premList : La liste des premiers construite au départ
+ *     size : La taille de la representation binaire du thread le plus grand
+ *     result : le vecteur trouvé, NULL s'il est pas trouvé
+ */
 __global__ void fillMatrix(int *yList, int *premList, int size, int *result) {
 	__shared__ volatile int found;
 	int blockId = blockIdx.x;
