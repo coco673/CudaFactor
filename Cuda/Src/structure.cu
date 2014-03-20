@@ -57,25 +57,43 @@ __host__ __device__ int addCouple(ensemble *ens, int x, int y,int *size){
  * Ajoute (en tete) une valeur dans l'ensemble ens et retourne la taille de
  * l'ensemble si tout c'est bien passé sinon retourne NULL
  */
-__host__ __device__ int addVal(ensemble ens, int x,int *size){
-	*size = *size+1;
+__host__ __device__ int addVal(ensemble *ens, int x,int *size){
+	/*	*size = (*size)+1;
+
 	ensemble tp = (ensemble) malloc((*size)*sizeof(struct cell));
 	if(tp == NULL){
 		return -1;
 	}
-	memcpy(&tp,&ens,sizeof(ens));
-	tp[*size-1].ind.val=x;
-	ens =(ensemble)malloc((*size)*sizeof(struct cell));
+	if(*size > 1){
+	tp = ens;
+	}
+	tp[(*size) - 1].ind.val=x;
+	printf("%i :: %i\n",tp[*size-1].ind.val,tp[*size-2].ind.val);
 
-	if(ens ==NULL){
-		printf("erreur malloc nouvel ensemble\n");
-		return -1;
-	}
-	if(memcpy(ens,tp,sizeof(tp)) == NULL){
-		printf("erreur de recopie d'ensemble\n");
-		return -1;
-	}
+	ens = tp;
+
 
 	return 1;
+	 */
+	*size = *size+1;
 
+	ensemble tp = (ensemble) malloc((*size)*sizeof(struct cell));
+	if(*size > 1){
+
+		tp=*ens;
+		/*if( memcpy(&tp,ens,(*size-1)*sizeof(ens)) == NULL){
+				printf("erreur de recopie d'ensemble\n");
+				return -1;
+			}*/
+
+	}
+
+	tp[*size-1].ind.val =x;
+
+
+	*ens =tp;
+
+
+
+	return 1;
 }
