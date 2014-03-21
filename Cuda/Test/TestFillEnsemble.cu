@@ -32,8 +32,9 @@ int TestIsInEnsemble(){
 	ensemble e = initEns(&size);
 
 	for (i = 0; i < 32; i++){
-		addVal(e,i,&size);
+		addVal(&e,i,&size);
 	}
+
 	assert(isInEnsemble(e,12,size) == 1);
 	assert(isInEnsemble(e,44,size) == 0);
 	free(e);
@@ -90,7 +91,7 @@ int TestIsInf(){
 
 	cudaFree(dev_result);
 	cudaFree(dev_list);
-	//free(result);
+
 	free(list);
 	return 0;
 }
@@ -147,7 +148,6 @@ int TestIsBSmoothG(){
 __global__ void IsInEnsembleKernel(ensemble ens,int size, int y,int *result){
 
 	isInEnsembleG(ens,y,size,result);
-
 }
 
 int TestIsInEnsembleG(){
@@ -155,38 +155,34 @@ int TestIsInEnsembleG(){
 	int size;
 	ensemble ens = initEns(&size);
 	ensemble dev_ens;
-	int val = 22;
+	int val = 12;
 
 	int *dev_result;
 	int i;
-//TODO revoir addVall
 	for (i = 0; i < 16; i++){
-		addVal(ens,i,&size);
-		printf("sizeof %i ::ens[%i] = %i :: size = %i :: i = %i\n",sizeof(ens),i,ens[i].ind.val,size,i);
+		addVal(&ens,i,&size);
 
 	}
+
 	int *result=(int *) malloc(sizeof(int));
 	cudaMalloc(&dev_ens,size*sizeof(struct cell));
 	cudaMalloc(&dev_result,sizeof(int));
+
 	cudaMemcpy(dev_ens,ens,size*sizeof(struct cell),cudaMemcpyHostToDevice);
 	IsInEnsembleKernel<<<1,size>>>(dev_ens,size,val,dev_result);
 	cudaMemcpy(result,dev_result,sizeof(int),cudaMemcpyDeviceToHost);
-	printf("%i\n",*result);
+
 	assert(*result == 1);
 
-
-	//free(result);
 	cudaFree(dev_result);
 	val = 20045;
 	result=(int *) malloc(size*sizeof(int));
 
 	cudaMalloc(&dev_result,size*sizeof(int));
-	printf("val : %i\n",val);
 	IsInEnsembleKernel<<<1,size>>>(dev_ens,size,val,dev_result);
 	cudaMemcpy(result,dev_result,size*sizeof(int),cudaMemcpyDeviceToHost);
-	printf("%i\n",*result);
-	assert(*result == 0);
 
+	assert(*result == 0);
 
 	cudaFree(dev_result);
 	free(ens);
@@ -215,23 +211,31 @@ int TestfillEnsembleG(){
 	int nbr = 257349;
 	int borne = 10;
 	ensemble div = initEns(&sizediv);
-	ensemble r =initEns(size);
+	ensemble dev_div;
+	ensemble r ;
 	ensemble dev_r;
 	int *p =generatePrimeList(borne,&k);
 	k--;
+	int *dev_p;
 
-
+	cudaMalloc(&dev_p,k*sizeof(int));
 	cudaMalloc(&dev_size,sizeof(int));
 	cudaMalloc(&dev_r,sizeof(struct cell));
+	cudaMalloc(&dev_div,sizediv*sizeof(struct cell));
 
-	cudaMemcpy(dev_r,r,sizeof(struct cell),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_p,p,k*sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_div,div,sizediv*sizeof(struct cell),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_size,size,sizeof(int),cudaMemcpyHostToDevice);
 
-	fillEnsembleG<<<5,1>>>(dev_r,p,k,nbr,borne,div,sizediv,dev_size);
+	fillEnsembleG<<<1,k>>>(dev_r,dev_p,k,nbr,borne,dev_div,sizediv,dev_size);
 
 	cudaMemcpy(size,dev_size,sizeof(int),cudaMemcpyDeviceToHost);
-	cudaMemcpy(r,dev_r,*size*sizeof(struct cell),cudaMemcpyDeviceToHost);
+	cudaMemcpy(r,dev_r,(*size)*sizeof(struct cell),cudaMemcpyDeviceToHost);
+printf("size %i\n",*size);
+for (int i =0; i<(*size);i++){
+	printf("x = %i ; y= %i\n",r[i].ind.couple.x,r[i].ind.couple.y);
 
+}
 	return 0;
 }
 
@@ -240,14 +244,12 @@ __global__ void setup_kernelGen(int *rand){
 	int nbr = 29;
 	int racN = 12;
 	int *tprand = (int*) malloc(gridDim.x*sizeof(int));
+
 	curandState_t *local = (curandState_t*)malloc((blockDim.x*gridDim.x)*sizeof(curandState_t));
 	setup_kernel(local);
 	generate(local,tprand,nbr,racN);
 	rand[id] = tprand[id];
-	for (int i= 0;i<10;i++){
-			printf("%i\n",rand[i]);
 
-		}
 }
 int TestGenerateOnce(){
 	int *rand = (int *)malloc(10*sizeof(int));
@@ -259,8 +261,4 @@ int TestGenerateOnce(){
 	setup_kernelGen<<<1,10>>>(dev_rand);
 	cudaMemcpy(rand,dev_rand,10*sizeof(int),cudaMemcpyDeviceToHost);
 
-	for (int i= 0;i<10;i++){
-		printf("%i\n",rand[i]);
-
-	}
 }
