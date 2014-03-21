@@ -222,7 +222,9 @@ int TestfillEnsembleG(){
 	cudaMalloc(&dev_size,sizeof(int));
 	cudaMalloc(&dev_r,sizeof(struct cell));
 	cudaMalloc(&dev_div,sizediv*sizeof(struct cell));
+	cudaMalloc(&dev_div,sizediv*sizeof(struct cell));
 
+	cudaMemcpy(dev_p,p,k*sizeof(int),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_p,p,k*sizeof(int),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_div,div,sizediv*sizeof(struct cell),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_size,size,sizeof(int),cudaMemcpyHostToDevice);
