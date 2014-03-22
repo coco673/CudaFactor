@@ -32,7 +32,7 @@ __device__ __host__ void intToBinWithSize(int *tab, int n, int size) {
  * Resultat :
  *     La matrice des vecteurs qui sont décomposition des y de yList en facteurs premiers stockée dans result
  */
-__global__ void fillMatrix(int *yList, int *premList, int size, int **result) {
+__global__ void fillMatrix(int *yList, int *premList, int size, int *result) {
 	__shared__ volatile int found;
 	int blockId = blockIdx.x;
 	int threadId = threadIdx.x;
@@ -49,11 +49,17 @@ __global__ void fillMatrix(int *yList, int *premList, int size, int **result) {
 	}
 	if (yList[blockId] == res) {
 		found = 1;
-		result[blockId] = listCoeff;
+		//result[blockId] = listCoeff;
+		for (int i = 0; i < size; i++) {
+			result[blockId * size + i] = listCoeff[i];
+		}
 	}
 	__syncthreads();
 	if (found == 0) {
-		result[blockId] = NULL;
+		//result[blockId] = NULL;
+		for (int i = 0; i < size; i++) {
+			result[blockId * size + i] = -1;
+		}
 	}
 }
 
