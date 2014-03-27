@@ -159,7 +159,7 @@ __device__ void setup_kernel ( curandState_t *state )
 {
 	//int id = threadIdx.x + blockIdx.x+ blockDim.x;
 	int id = threadIdx.x + blockIdx.x;
-	curand_init ( id, id, 0, &state[id] );
+	curand_init ( clock64()+id, id, 0, &state[id] );
 }
 
 __device__ void generate( curandState_t *globalState, int *rand, int nbr, int racN)
@@ -179,18 +179,20 @@ __device__ void generate( curandState_t *globalState, int *rand, int nbr, int ra
 
 __device__ int generateRonce(ensemble r,int *p,int k,int nbr,ensemble div,int sizeDiv, int *sizeR){
 	int i =  threadIdx.x;
+	uint x;
+	uint y;
+
 	volatile __shared__ int ret;
 	if (i == 0) {
 		ret = -1;
 	}
 	__syncthreads();
-	int x;
-	int y;
-	int racN = sqrtf(nbr);
+
+	int racN = (int)sqrtf(nbr);
+
 	int *rand=(int*)malloc((blockDim.x*gridDim.x)*sizeof(int));
 	int *bsmooth = (int *)malloc(sizeof(int));
 	int *present = (int *)malloc(sizeof(int));
-
 	curandState_t *devStates;
 	devStates=(curandState_t *) malloc ((blockDim.x*gridDim.x)*sizeof( curandState_t ) );
 
@@ -202,43 +204,46 @@ __device__ int generateRonce(ensemble r,int *p,int k,int nbr,ensemble div,int si
 
 	if(i < k+1){
 		x = rand[i];
-		y = powf(x,2);
-		y=y%nbr;
+		y= (uint)(x*x)%nbr;
+
 		isBSmoothG(p,k,y,bsmooth);
 		isInEnsembleG(div,y,sizeDiv,present);
 
 		__syncthreads();
 		if((*bsmooth) && !(*present)){
-printf("x %i :: y %i\n",x,y);
-			addCouple(&r,x,y,sizeR);
-			ret = 0;
+			r[i].ind.couple.x = x;
+			r[i].ind.couple.y = y;
 
+			ret = 0;
 		}
 		__syncthreads();
-
 	}
+
+
+	free(rand);
+	free(bsmooth);
+	free(present);
+	free(devStates);
+
 	return ret;
 }
 __global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne
 		,ensemble div,int sizeDiv,int *sizeR){
-	int res;
+	int res = 0;
 	__shared__ int i;
+	int size = 0;
 	int tid=threadIdx.x;
 
 	if( tid == 0) {
 		i = 0;
+		size = 0;
 	}
 	__syncthreads();
+	res = generateRonce(r,p,k,nbr,div,sizeDiv,&size);
+	if(res == 0){
+		atomicAdd(&i,1);
 
-
-		res = generateRonce(r,p,k,nbr,div,sizeDiv,sizeR);
-		if(res == 0){
-			atomicAdd(&i,1);
-		}
-
-		__syncthreads();
-printf("x = %i ; y= %i; %i\n",r[tid].ind.couple.x,r[tid].ind.couple.y,tid);
-		*sizeR = i;
-
+	}
+	*sizeR=i;
 }
 
