@@ -9,20 +9,14 @@
 
 #include "header/pgcd.h"
 #include <string.h>
-#include <vector_functions.h>
-#include <cuComplex.h>
 
-#include <math.h>
 #include <time.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-//#include <cuda.h>
-#include <curand.h>
-
 typedef unsigned long long uint64;
-#define PI 3.14
+
 /*
  * Debut d'algorithme de Kannan-Miller-Rudolph pour obtenir le pgcd de manière parallelisée
  */
