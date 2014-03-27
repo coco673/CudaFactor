@@ -9,6 +9,14 @@
 
 #include "header/pgcd.h"
 #include <string.h>
+
+#include <time.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+typedef unsigned long long uint64;
+
 /*
  * Debut d'algorithme de Kannan-Miller-Rudolph pour obtenir le pgcd de manière parallelisée
  */
@@ -119,4 +127,36 @@ int pgcd(int a,int b){
 	}
 	q = b;
 return q;
+}
+
+uint64 pgcdUint(uint64 u, uint64 v) {
+	int shift;
+	if (u == 0) {
+		return v;
+	}
+	if (v == 0) {
+		return u;
+	}
+	for (shift = 0; ((u | v) & 1) == 0; ++shift) {
+		u >>= 1;
+		v >>= 1;
+	}
+
+	while ((u & 1) == 0) {
+		u >>= 1;
+	}
+
+	do {
+		while ((v & 1) == 0)
+			v >>= 1;
+		if (u > v) {
+			uint64 t = v;
+			v = u;
+			u = t;
+		}
+		v = v - u;
+	} while (v != 0);
+
+  uint64 res = u << shift;
+  return res;
 }
