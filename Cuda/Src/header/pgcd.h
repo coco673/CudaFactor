@@ -20,6 +20,7 @@
  int pgcd(int a, int b);
  char *convert(int a);
  char *equalNBit(char *res,int size);
+ uint64 pgcdUint(uint64 u, uint64 v);
 
 
 #endif /* PGCD_H_ */
