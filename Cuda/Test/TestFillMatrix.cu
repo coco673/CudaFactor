@@ -15,7 +15,10 @@ int main(int argc, char **argv) {
 	int sizeYList = 3;
 	int sizePrimeList;
 	int *primeList = generatePrimeList(10, &sizePrimeList);
-	int nbVect = pow(2, sizePrimeList);
+    for (int i = 0; i < sizePrimeList; i++) {
+        printf("%d\n", primeList[i]);
+    }
+	/*int nbVect = pow(2, sizePrimeList);
 	//taille des vecteurs
 	int sizeVect = floor((double) log(sizePrimeList)/ (double) log(2)) + 1;
 	int res = (int *) malloc(sizeYList * sizeVect * sizeof(int));
@@ -42,5 +45,17 @@ int main(int argc, char **argv) {
 	assert(res[2 * sizeVect + 1] == 1);
 	for (int i = 2 * sizeVect + 2; i < 3 * sizeVect; i++) {
 		assert(res[i] == 0);
-	}
+	}*/
+    int **result = fillMatrixNaif(yList, sizeYList, primeList, sizePrimeList);
+    for (int i = 0; i < sizeYList; i++) {
+        printf("yList[%d] : [", i);
+        for (int j = 0; j < sizePrimeList; j++) {
+            printf("%d", result[i][j]);
+            if (j != sizePrimeList - 1) {
+                printf(" : ");
+            }
+        }
+        printf("]\n");
+    }
+    return EXIT_SUCCESS;
 }

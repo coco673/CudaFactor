@@ -15,6 +15,6 @@
 
 __device__ __host__ void intToBinWithSize(int *, int, int);
 //__device__ int *intToBin(int, int *);
-__global__ void fillMatrix(int *, int *, int, int *);
-
+//__global__ void fillMatrix(int *, int *, int, int *);
+int **fillMatrixNaif(int*, int, int*, int);
 #endif /* FILLMATRIX_H_ */
