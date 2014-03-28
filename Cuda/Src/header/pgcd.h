@@ -13,6 +13,7 @@
 #include <float.h>
 #include <math.h>
 #include <string.h>
+#include <stdint.h>
 
 #define N 2000
 
@@ -20,7 +21,7 @@
  int pgcd(int a, int b);
  char *convert(int a);
  char *equalNBit(char *res,int size);
- uint64 pgcdUint(uint64 u, uint64 v);
+ uint64_t pgcdUint(uint64_t u, uint64_t v);
 
 
 #endif /* PGCD_H_ */

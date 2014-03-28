@@ -8,12 +8,11 @@
  */
 #include <stdlib.h>
 #include <assert.h>
+#include <stdint.h>
 #include "../Src/header/pgcd.h"
 
-
-typedef unsigned long long uint64;
 
 int TestPgcd();
 int TestPgcdG();
 
-uint64 pgcdUint(uint64 u, uint64 v);
+uint64_t pgcdUint(uint64_t u, uint64_t v);

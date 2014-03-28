@@ -14,8 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-typedef unsigned long long uint64;
+#include <stdint.h>
 
 /*
  * Debut d'algorithme de Kannan-Miller-Rudolph pour obtenir le pgcd de manière parallelisée
@@ -129,7 +128,7 @@ int pgcd(int a,int b){
 return q;
 }
 
-uint64 pgcdUint(uint64 u, uint64 v) {
+uint64_t pgcdUint(uint64_t u, uint64_t v) {
 	int shift;
 	if (u == 0) {
 		return v;
@@ -150,13 +149,13 @@ uint64 pgcdUint(uint64 u, uint64 v) {
 		while ((v & 1) == 0)
 			v >>= 1;
 		if (u > v) {
-			uint64 t = v;
+			uint64_t t = v;
 			v = u;
 			u = t;
 		}
 		v = v - u;
 	} while (v != 0);
 
-  uint64 res = u << shift;
+  uint64_t res = u << shift;
   return res;
 }

@@ -23,11 +23,11 @@ int TestPgcd(){
 }
 
 int TestPgcdG(){
-	uint64 a = 123456789 * 13; //1604938257
-	uint64 b = 123456789 * 12; //1481481468
-	uint64 c = pgcdUint(a,b);
+	uint64_t a = 123456789 * 13; //1604938257
+	uint64_t b = 123456789 * 12; //1481481468
+	uint64_t c = pgcdUint(a,b);
 
-	uint64 res = 123456789;
+	uint64_t res = 123456789;
 
 	assert(c == res);
 
