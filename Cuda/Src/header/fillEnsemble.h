@@ -19,7 +19,7 @@
 #include <curand_kernel.h>
 
 __device__ void isInEnsembleG(ensemble ens, int y,int size,int *res);
-__global__ void fillEnsembleG(ensemble ens,int *p,int k,int n,int base,ensemble div,int sizeDiv,int *sizeR);
+__global__ void fillEnsembleG(ensemble ens,int *p,int k,int n,int base,ensemble div,int sizeDiv,int *sizeR,int *matrix);
 __device__ void isBSmoothG(int *list,int size, int y, int *result);
 __device__ int isInf(int *list, int size, int y);
 
