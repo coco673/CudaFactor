@@ -5,7 +5,7 @@
 #include "TestFillEnsemble.h"
 #include "TestPgcd.h"
 #include "TestStructure.h"
-#include "TestFillMatrix.h"
+#include "TestInitU.h"
 
 
 int main(){
@@ -13,13 +13,22 @@ int main(){
 	int valx = 44;
 	int valy = 32;
 
-	if(TestPgcd() == 0){
+	/*if(TestPgcd() == 0){
 		printf("Test Pgcd -> passed\n");
 	} else{
 		printf(" Test Pgcd **** Not Passed\n");
+	}*/
+	if(TestPgcdG() == 0){
+		printf("Test PgcdG -> passed\n");
+	} else{
+		printf(" Test PgcdG **** Not Passed\n");
 	}
-
-	if(testInitEns()== 0){
+	if(TestInitU() == 0){
+		printf("Test InitU -> passed\n");
+	} else{
+		printf(" Test InitU **** Not Passed\n");
+	}
+	/*if(testInitEns()== 0){
 		printf("Test InitEns -> passed\n");
 	} else{
 		printf(" Test InitEns **** Not Passed\n");
@@ -43,7 +52,7 @@ int main(){
 		printf("Test IsInEnsemble -> passed\n");
 	} else{
 		printf("Test IsInEnsemble **** Not Passed\n");
-	}
+	}*/
 	if(TestIsInf()== 0){
 		printf("Test isinf -> passed\n");
 	} else{
@@ -54,12 +63,12 @@ int main(){
 	} else{
 		printf("Test BSmoothG **** Not Passed\n");
 	}
-	/*if(TestIsInEnsembleG()== 0){
+	if(TestIsInEnsembleG()== 0){
 		printf("Test IsInEnsembleG -> passed\n");
 	} else{
 		printf("Test IsInEnsembleG **** Not Passed\n");
 	}
-	if(TestfillEnsemble() == 0){
+	/*if(TestfillEnsemble() == 0){
 		printf("Test fillEnsemble -> passed\n");
 	} else{
 		printf("Test fillEnsemble **** Not Passed\n");
@@ -74,10 +83,6 @@ int main(){
 	} else{
 		printf("Test fillEnsembleG **** Not Passed\n");
 	}
-	if(TestFillMatrix() == 0){
-			printf("Test FillMatrix -> passed\n");
-		} else{
-			printf("Test FillMatrix **** Not Passed\n");
-		}
+
 	return 0;
 }
