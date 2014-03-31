@@ -135,7 +135,7 @@ void fillEnsemble(ensemble r,int nbr,int borne,ensemble div
 	int k;
 	int *p = generatePrimeList(borne,&k);
 	k--;
-	r = initEns(&m);
+	r = (ensemble) malloc(sizeof(struct cell));
 
 	int x;
 	int y;
@@ -153,6 +153,7 @@ void fillEnsemble(ensemble r,int nbr,int borne,ensemble div
 
 		}
 	}
+	free(p);
 }
 
 __device__ void setup_kernel ( curandState_t *state )
@@ -209,54 +210,54 @@ __device__ int generateRonce(ensemble r,int *p,int k,int nbr,ensemble div,int si
 			isBSmoothG(p,k,y,bsmooth);
 			isInEnsembleG(div,y,sizeDiv,present);
 		}
-		} while(!(*bsmooth) && (*present));
+	} while(!(*bsmooth) && (*present));
 
-		if(i<k+1){
-			__syncthreads();
+	if(i<k+1){
+		__syncthreads();
 
-			if((*bsmooth) && !(*present)){
-				r[i].ind.couple.x = x;
-				r[i].ind.couple.y = y;
+		if((*bsmooth) && !(*present)){
+			r[i].ind.couple.x = x;
+			r[i].ind.couple.y = y;
 
-				int y1 = y;
-				for(int j = 0;j<k;j++){
+			int y1 = y;
+			for(int j = 0;j<k;j++){
 
-					while(y1%p[j] == 0){
-						y1 = y1 / p[j];
-						matrix[(k*i)+j]=(matrix[(k*i)+j]+1)%2;
-					}
+				while(y1%p[j] == 0){
+					y1 = y1 / p[j];
+					matrix[(k*i)+j]=(matrix[(k*i)+j]+1)%2;
 				}
-				ret = 0;
 			}
-			__syncthreads();
-		}
-
-
-		free(rand);
-		free(bsmooth);
-		free(present);
-		free(devStates);
-
-		return ret;
-	}
-	__global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne
-			,ensemble div,int sizeDiv,int *sizeR,int *matrix){
-		int res = 0;
-		__shared__ int i;
-		int size = 0;
-		int tid=threadIdx.x;
-
-		if( tid == 0) {
-			i = 0;
-			size = 0;
+			ret = 0;
 		}
 		__syncthreads();
-		res = generateRonce(r,p,k,nbr,div,sizeDiv,&size,matrix);
-
-		if(res == 0){
-			atomicAdd(&i,1);
-
-		}
-		*sizeR=i;
 	}
+
+
+	free(rand);
+	free(bsmooth);
+	free(present);
+	free(devStates);
+
+	return ret;
+}
+__global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne
+		,ensemble div,int sizeDiv,int *sizeR,int *matrix){
+	int res = 0;
+	__shared__ int i;
+	int size = 0;
+	int tid=threadIdx.x;
+
+	if( tid == 0) {
+		i = 0;
+		size = 0;
+	}
+	__syncthreads();
+	res = generateRonce(r,p,k,nbr,div,sizeDiv,&size,matrix);
+
+	if(res == 0){
+		atomicAdd(&i,1);
+
+	}
+	*sizeR=i;
+}
 

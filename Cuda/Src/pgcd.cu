@@ -125,7 +125,7 @@ int pgcd(int a,int b){
 		}
 	}
 	q = b;
-return q;
+	return q;
 }
 
 uint64_t pgcdUint(uint64_t u, uint64_t v) {
@@ -156,6 +156,6 @@ uint64_t pgcdUint(uint64_t u, uint64_t v) {
 		v = v - u;
 	} while (v != 0);
 
-  uint64_t res = u << shift;
-  return res;
+	uint64_t res = u << shift;
+	return res;
 }

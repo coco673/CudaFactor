@@ -151,8 +151,8 @@ __global__ void IsInEnsembleKernel(ensemble ens,int size, int y,int *result){
 
 int TestIsInEnsembleG(){
 
-	int size;
-	ensemble ens = initEns(&size);
+	int size = 0;
+	ensemble ens = (ensemble) malloc(sizeof(struct cell));
 	ensemble dev_ens;
 	int val = 12;
 
@@ -172,6 +172,7 @@ int TestIsInEnsembleG(){
 	cudaMemcpy(result,dev_result,sizeof(int),cudaMemcpyDeviceToHost);
 
 	assert(*result == 1);
+
 
 	cudaFree(dev_result);
 	val = 20045;
@@ -195,21 +196,24 @@ int TestfillEnsemble(){
 	int size;
 	int nbr = 257;
 	int borne = 10;
-	ensemble div = initEns(&size);
+	ensemble div = (ensemble) malloc(sizeof(struct cell));
 	ensemble e ;
 	fillEnsemble(e,nbr,borne,div,size);
+
+	free(e);
+	free(div);
 
 	return 0;
 }
 int TestfillEnsembleG(){
-	int sizediv;
+	int sizediv = 0;
 	int *size=(int *)malloc(sizeof(int));
 	int *dev_size;
 	int k;
 	int nbr = 257349;
 	int borne = 21;
 
-	ensemble div = initEns(&sizediv);
+	ensemble div = (ensemble) malloc(sizeof(struct cell));
 	ensemble dev_div;
 	ensemble r ;
 	ensemble dev_r;
@@ -242,7 +246,20 @@ int TestfillEnsembleG(){
 
 	for(int i = 0;i<*size;i++){
 		assert((r[i].ind.couple.x >= 507 && r[i].ind.couple.x <= nbr) || (r[i].ind.couple.y >= 507 && r[i].ind.couple.y <= nbr));
+		printf("%i : %i\n",r[i].ind.couple.x,r[i].ind.couple.y);
 	}
+
+	free(size);
+	cudaFree(dev_size);
+	free(div);
+	free(r);
+	cudaFree(dev_div);
+	cudaFree(dev_r);
+	free(p);
+	cudaFree(dev_p);
+	free(matrix);
+	cudaFree(dev_matrix);
+
 	return 0;
 }
 
@@ -256,7 +273,7 @@ __global__ void setup_kernelGen(int *rand){
 	setup_kernel(local);
 	generate(local,tprand,nbr,racN);
 	rand[id] = tprand[id];
-
+	free(tprand);
 }
 int TestGenerateOnce(){
 	int *rand = (int *)malloc(10*sizeof(int));
@@ -264,8 +281,9 @@ int TestGenerateOnce(){
 
 	cudaMalloc(&dev_rand,10*sizeof(int));
 
-
 	setup_kernelGen<<<1,10>>>(dev_rand);
 	cudaMemcpy(rand,dev_rand,10*sizeof(int),cudaMemcpyDeviceToHost);
 
+	free(rand);
+	cudaFree(dev_rand);
 }
