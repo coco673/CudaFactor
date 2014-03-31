@@ -6,6 +6,7 @@
 #include "TestPgcd.h"
 #include "TestStructure.h"
 #include "TestFillMatrix.h"
+#include "TestInitU.h"
 
 
 int main(){
@@ -18,7 +19,16 @@ int main(){
 	} else{
 		printf(" Test Pgcd **** Not Passed\n");
 	}
-
+	if(TestPgcdG() == 0){
+		printf("Test PgcdG -> passed\n");
+	} else{
+		printf(" Test PgcdG **** Not Passed\n");
+	}
+	if(TestInitU() == 0){
+		printf("Test InitU -> passed\n");
+	} else{
+		printf(" Test InitU **** Not Passed\n");
+		}
 	if(testInitEns()== 0){
 		printf("Test InitEns -> passed\n");
 	} else{

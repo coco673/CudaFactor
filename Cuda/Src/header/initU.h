@@ -15,7 +15,9 @@
 #include <string.h>
 #include <stdint.h>
 
-int initU(int *x, int m, int *e);
+#include "structure.h"
+
+int initU(ensemble r, int m, int *e, int n);
 
 
 #endif /* INITU_H_ */
