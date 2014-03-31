@@ -54,11 +54,11 @@ int main(){
 	} else{
 		printf("Test BSmoothG **** Not Passed\n");
 	}
-	/*if(TestIsInEnsembleG()== 0){
+	if(TestIsInEnsembleG()== 0){
 		printf("Test IsInEnsembleG -> passed\n");
 	} else{
 		printf("Test IsInEnsembleG **** Not Passed\n");
-	}
+	}/*
 	if(TestfillEnsemble() == 0){
 		printf("Test fillEnsemble -> passed\n");
 	} else{
@@ -74,10 +74,6 @@ int main(){
 	} else{
 		printf("Test fillEnsembleG **** Not Passed\n");
 	}
-	if(TestFillMatrix() == 0){
-			printf("Test FillMatrix -> passed\n");
-		} else{
-			printf("Test FillMatrix **** Not Passed\n");
-		}
+
 	return 0;
 }
