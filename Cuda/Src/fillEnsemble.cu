@@ -177,7 +177,7 @@ __device__ void generate( curandState_t *globalState, int *rand, int nbr, int ra
 }
 
 
-__device__ int generateRonce(ensemble r,int *p,int k,int nbr,ensemble div,int sizeDiv, int *sizeR){
+__device__ int generateRonce(ensemble r,int *p,int k,int nbr,ensemble div,int sizeDiv, int *sizeR,int *matrix){
 	int i =  threadIdx.x;
 	uint x;
 	uint y;
@@ -198,52 +198,65 @@ __device__ int generateRonce(ensemble r,int *p,int k,int nbr,ensemble div,int si
 
 	// setup seeds
 	setup_kernel( devStates);
+	do{
+		// generate random numbers
+		generate( devStates, rand,nbr,racN);
 
-	// generate random numbers
-	generate( devStates, rand,nbr,racN);
+		if(i < k+1){
+			x = rand[i];
+			y= (uint)(x*x)%nbr;
 
-	if(i < k+1){
-		x = rand[i];
-		y= (uint)(x*x)%nbr;
+			isBSmoothG(p,k,y,bsmooth);
+			isInEnsembleG(div,y,sizeDiv,present);
+		}
+		} while(!(*bsmooth) && (*present));
 
-		isBSmoothG(p,k,y,bsmooth);
-		isInEnsembleG(div,y,sizeDiv,present);
+		if(i<k+1){
+			__syncthreads();
 
-		__syncthreads();
-		if((*bsmooth) && !(*present)){
-			r[i].ind.couple.x = x;
-			r[i].ind.couple.y = y;
+			if((*bsmooth) && !(*present)){
+				r[i].ind.couple.x = x;
+				r[i].ind.couple.y = y;
 
-			ret = 0;
+				int y1 = y;
+				for(int j = 0;j<k;j++){
+
+					while(y1%p[j] == 0){
+						y1 = y1 / p[j];
+						matrix[(k*i)+j]=(matrix[(k*i)+j]+1)%2;
+					}
+				}
+				ret = 0;
+			}
+			__syncthreads();
+		}
+
+
+		free(rand);
+		free(bsmooth);
+		free(present);
+		free(devStates);
+
+		return ret;
+	}
+	__global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne
+			,ensemble div,int sizeDiv,int *sizeR,int *matrix){
+		int res = 0;
+		__shared__ int i;
+		int size = 0;
+		int tid=threadIdx.x;
+
+		if( tid == 0) {
+			i = 0;
+			size = 0;
 		}
 		__syncthreads();
+		res = generateRonce(r,p,k,nbr,div,sizeDiv,&size,matrix);
+
+		if(res == 0){
+			atomicAdd(&i,1);
+
+		}
+		*sizeR=i;
 	}
-
-
-	free(rand);
-	free(bsmooth);
-	free(present);
-	free(devStates);
-
-	return ret;
-}
-__global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne
-		,ensemble div,int sizeDiv,int *sizeR){
-	int res = 0;
-	__shared__ int i;
-	int size = 0;
-	int tid=threadIdx.x;
-
-	if( tid == 0) {
-		i = 0;
-		size = 0;
-	}
-	__syncthreads();
-	res = generateRonce(r,p,k,nbr,div,sizeDiv,&size);
-	if(res == 0){
-		atomicAdd(&i,1);
-
-	}
-	*sizeR=i;
-}
 
