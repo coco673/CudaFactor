@@ -3,12 +3,21 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 
-void print_matrix(int **matrix, int size) {
+/*void print_matrix(int **matrix, int size) {
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
 			printf("%d\t", matrix[i][j]);
 		}
 		printf("\n");
+	}
+}*/
+
+void print_matrix(int *matrix, int size) {
+	for (int i = 0; i < size * size; i++) {
+		printf("%d\t", matrix[i]);
+		if (i % size == 0) {
+			printf("\n");
+		}
 	}
 }
 
@@ -72,7 +81,7 @@ int *kernel(int **matrix, int size) {
 	return kernel;
 }*/
 
-int *gaussjordan_noyau(int **matrix, int size) {
+/*int *gaussjordan_noyau(int **matrix, int size) {
 	int pivo,j,temp,a,k,l;
 	int nl = size;
 	int nc = size;
@@ -161,24 +170,112 @@ int *gaussjordan_noyau(int **matrix, int size) {
 		}
 	}
 	return noyau;
-}
+}*/
 
-int main(int argc, char **argv) {
-	int **matrix = (int **) malloc(4 * sizeof(int));
-	for (int i = 0; i < 4; i++) {
-		matrix[i] = (int *) malloc(4 * sizeof(int));
-		for (int j = 0; j < 4; j++) {
-			matrix[i][j] = 1;
+int *gaussjordan_noyau(int *matrix, int size) {
+	int pivo,j,temp,a,k,l;
+	int nl = size;
+	int nc = size;
+	//on met des 0 sous la diagonale
+	int jc = 0;
+	int jl = 0;
+	// on traite toutes les colonnes
+	while (jc < nc && jl < nl) {
+		//choix du pivot que l'on veut mettre en M[jl,jc]
+		k = jl;
+		while (matrix[k * size + jc] == 0 && k < nl-1) {
+			k = k+1;
+		}
+		//on ne fait la suite que si on a pivo!=0
+		if (matrix[k * size + jc] != 0) {
+			pivo = matrix[k * size + jc];
+			//echange de la ligne jl et de la ligne k
+			for (l = jc; l < nc; l++){
+				temp = matrix[jl * size + l];
+				matrix[jl * size + l] = matrix[k * size + l];
+				matrix[k * size + l] = temp;
+			}
+			//fin du choix du pivot qui est M[jl,jc]
+			//on met 1 sur la diagonale de la colonne jc
+			for (l = 0; l < nc; l++) {
+				matrix[jl * size + l] = matrix[jl * size + l] / pivo;
+			}
+			//on met des 0 au dessus de la diagonale
+			// de la colonne jc
+			for (k = 0; k < jl; k++) {
+				a = matrix[k * size + jc];
+				for (l = 0; l < nc; l++) {
+					matrix[k * size + l] = matrix[k * size + l] - matrix[jl * size + l] * a;
+				}
+			}
+			//on met des 0 sous la diag de la colonne jc
+			for (k = jl+1; k < nl; k++) {
+				a = matrix[k * size + jc];
+				for (l = jc; l < nc; l++) {
+					matrix[k * size + l] = matrix[k * size + l] - matrix[jl * size + l] * a;
+				}
+			}
+		} else {
+			//on ajoute une ligne de 0 si ce n'est pas le dernier 0
+			if (jl < nc-1) {
+				for (j = nl; j > jl; j--) {
+					//matrix[j] = matrix[j-1];
+					for (int tmp = 0; tmp < size; tmp++) {
+						matrix[j * size + tmp] = matrix[(j-1) * size + tmp];
+					}
+				}
+				//M[jl] = makelist(0,1,nc);
+				for (int tmp = 0; tmp < size; tmp++) {
+					matrix[jl * size + tmp] = 0;
+				}
+				nl = nl + 1;
+			}
+		}
+		//ds tous les cas,le numero de colonne et
+		//le numero de ligne augmente de 1
+		jc = jc + 1;
+		jl = jl + 1;
+		//il faut faire toutes les colonnes
+		if (jl == nl && jl < nc) {
+			//matrix[nl] = makelist(0,1,nc);
+			for (int tmp = 0; tmp < size; tmp++) {
+				matrix[nl * size + tmp] = 0;
+			}
+			nl = nl + 1;
 		}
 	}
-	matrix[0][1] = 0;
-	matrix[1][2] = 0;
-	matrix[2][0] = 0;
-	matrix[2][2] = 0;
+	int *noyau = (int *) malloc(size * sizeof(int));
+	//on enleve les lignes en trop pour avoir
+	//une matrice carree de dim nc
+	//on retranche la matrice identite
+	//matrix = matrix[0..nc-1] - idn(nc);
+	for (int tmp = 0; tmp < nc; tmp++) {
+		matrix[tmp * size + tmp] = matrix[tmp * size + tmp] - 1;
+	}
+	for(int j = 0; j < nc; j++){
+		if (matrix[j * size + j] == -1) {
+			//noyau = append(noyau,M[0..nc-1,j]);
+			for (int tmp = 0; tmp < nc; tmp++) {
+				noyau[tmp] = matrix[tmp * size + j];
+			}
+		}
+	}
+	return noyau;
+}
+
+
+void test() {
+	int *matrix = (int *) malloc(16 * sizeof(int));
+	for (int i = 0; i < 16; i++) {
+		matrix[i] = 1;
+	}
+	matrix[0 * 4 + 1] = 0;
+	matrix[1 * 4 + 2] = 0;
+	matrix[2 * 4 + 0] = 0;
+	matrix[2 * 4 + 2] = 0;
 	int *k = gaussjordan_noyau(matrix, 4);
 	for (int i = 0; i < 4; i++) {
 		printf("%d\n", k[i]);
 	}
-	return EXIT_SUCCESS;
 }
 
