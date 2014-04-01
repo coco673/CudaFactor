@@ -6,7 +6,7 @@
 #include "TestPgcd.h"
 #include "TestStructure.h"
 #include "TestInitU.h"
-
+#include "Dixon.h"
 
 int main(){
 	int val = 62;
@@ -17,7 +17,7 @@ int main(){
 		printf("Test Pgcd -> passed\n");
 	} else{
 		printf(" Test Pgcd **** Not Passed\n");
-	}*/
+	}
 	if(TestPgcdG() == 0){
 		printf("Test PgcdG -> passed\n");
 	} else{
@@ -28,7 +28,7 @@ int main(){
 	} else{
 		printf(" Test InitU **** Not Passed\n");
 	}
-	/*if(testInitEns()== 0){
+	if(testInitEns()== 0){
 		printf("Test InitEns -> passed\n");
 	} else{
 		printf(" Test InitEns **** Not Passed\n");
@@ -52,7 +52,7 @@ int main(){
 		printf("Test IsInEnsemble -> passed\n");
 	} else{
 		printf("Test IsInEnsemble **** Not Passed\n");
-	}*/
+	}
 	if(TestIsInf()== 0){
 		printf("Test isinf -> passed\n");
 	} else{
@@ -72,7 +72,7 @@ int main(){
 		printf("Test fillEnsemble -> passed\n");
 	} else{
 		printf("Test fillEnsemble **** Not Passed\n");
-	}*/
+	}
 	if(TestGenerateOnce()== 0){
 		printf("Test TestGenerateOnce -> passed\n");
 	} else{
@@ -82,7 +82,8 @@ int main(){
 		printf("Test fillEnsembleG -> passed\n");
 	} else{
 		printf("Test fillEnsembleG **** Not Passed\n");
-	}
+	}*/
+	Dixon(8);
 
 	return 0;
 }
