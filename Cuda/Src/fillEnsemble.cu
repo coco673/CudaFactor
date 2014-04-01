@@ -203,7 +203,7 @@ __device__ int generateRonce(ensemble r,int *p,int k,int nbr,ensemble div,int si
 		// generate random numbers
 		generate( devStates, rand,nbr,racN);
 
-		if(i < k+1){
+		if(i < k+1 || *sizeR > k){
 			x = rand[i];
 			y= (uint)(x*x)%nbr;
 
@@ -212,7 +212,7 @@ __device__ int generateRonce(ensemble r,int *p,int k,int nbr,ensemble div,int si
 		}
 	} while(!(*bsmooth) && (*present));
 
-	if(i<k+1){
+	if(i<k+1 || *sizeR > k){
 		__syncthreads();
 
 		if((*bsmooth) && !(*present)){
@@ -252,12 +252,13 @@ __global__ void fillEnsembleG(ensemble r,int *p,int k,int nbr,int borne
 		size = 0;
 	}
 	__syncthreads();
+	do {
 	res = generateRonce(r,p,k,nbr,div,sizeDiv,&size,matrix);
 
 	if(res == 0){
 		atomicAdd(&i,1);
-
 	}
+	}while(i < k);
 	*sizeR=i;
 }
 
