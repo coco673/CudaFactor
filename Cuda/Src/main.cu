@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include "TestFillEnsemble.h"
+//#include "TestFillEnsemble.h"
 #include "TestPgcd.h"
 #include "TestStructure.h"
 #include "TestInitU.h"
 #include "Dixon.h"
-
+#include "TestFill.h"
 int main(){
 	int val = 62;
 	int valx = 44;
@@ -68,7 +68,7 @@ int main(){
 	} else{
 		printf("Test IsInEnsembleG **** Not Passed\n");
 	}
-	/*if(TestfillEnsemble() == 0){
+	if(TestfillEnsemble() == 0){
 		printf("Test fillEnsemble -> passed\n");
 	} else{
 		printf("Test fillEnsemble **** Not Passed\n");
@@ -83,7 +83,16 @@ int main(){
 	} else{
 		printf("Test fillEnsembleG **** Not Passed\n");
 	}*/
-	Dixon(8);
-
+	/*if(TestfillEnsG() == 0){
+		printf("Test fillEnsemblR -> passed\n");
+	} else{
+		printf("Test fillEnsembleG **** Not Passed\n");
+	}*/
+	int size;
+	ensemble Div = Dixon2(2103,&size);
+	for(int i = 0; i< size; i++){
+		printf("%i\n",Div[i].ind.val);
+	}
+printf("goodbye my lover\n");
 	return 0;
 }

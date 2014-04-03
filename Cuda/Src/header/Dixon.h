@@ -17,10 +17,11 @@
 #include "pgcd.h"
 #include "initV.h"
 #include "initU.h"
-#include "fillEnsemble.h"
+#include "fillEns.h"
 #include "gauss.h"
 
 int produit(ensemble div, int sizeDiv);
 ensemble Dixon(int n);
+ensemble Dixon2(int n,int *sizeFinal);
 
 #endif /* DIXON_H_ */

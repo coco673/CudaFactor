@@ -137,10 +137,10 @@ int *generatePrimeList(int borne, int *size) {
 	*size = 0;
 	for (int i = 0; i < (borne - 1); i++) {
 		if (list[i] != 0) {
-			size++;
+			(*size)++;
 		}
 	}
-	int *res = (int *) malloc(size * sizeof(int));
+	int *res = (int *) malloc((*size) * sizeof(int));
 	for (int i = 0, j = 0; i < (borne - 1); i++) {
 		if (list[i] != 0) {
 			res[j] = list[i];

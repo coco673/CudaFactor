@@ -1,5 +1,12 @@
 #include "header/Dixon.h"
 
+#define CUDA_CHECK_RETURN(value) {											\
+		cudaError_t _m_cudaStat = value;										\
+		if (_m_cudaStat != cudaSuccess) {										\
+			fprintf(stderr, "Error %s at line %d in file %s\n",					\
+					cudaGetErrorString(_m_cudaStat), __LINE__, __FILE__);		\
+					exit(1);															\
+		} }
 
 int produit(ensemble div, int sizeDiv) {
 	int result = 1;
@@ -12,7 +19,7 @@ int produit(ensemble div, int sizeDiv) {
 	}
 	return result;
 }
-
+/*
 ensemble Dixon(int n) {
 	int borne = ceil(exp(sqrt(2 * log(n) * log(log(n)))));
 	printf("borne = %i \n",borne);
@@ -69,7 +76,7 @@ ensemble Dixon(int n) {
 		sizeR = 0;
 
 		m = (int *) malloc(sizeof(int));
-		*m = sizeR;
+ *m = sizeR;
 		printf("test\n");
 		//Allocation de m sur le GPU
 		cuda_result = cudaMalloc(&dev_m, sizeof(int));
@@ -158,4 +165,162 @@ ensemble Dixon(int n) {
 
 	}
 	return div;
+}
+ */
+ensemble Dixon2(int n,int *sizefinal){
+	int borne = ceil(exp(sqrt(2 * log(n) * log(log(n)))));
+	int nbr = n;
+	int sizePrimeList;
+	int *primeList = generatePrimeList(borne, &sizePrimeList);
+	printf("sizePrimeList = %i\n",sizePrimeList);
+	int sqrtNRB = (int)sqrt(nbr);
+	int *rand = (int *) malloc(sizePrimeList*sizeof(int));
+	int *dev_rand;
+	curandState_t *state = (curandState_t *)malloc(sizePrimeList*sizeof(curandState_t));
+	curandState_t *dev_state ;
+	int *dev_primeList;
+	CUDA_CHECK_RETURN(cudaMalloc((int **)&dev_primeList, sizePrimeList * sizeof(int)));
+	CUDA_CHECK_RETURN(cudaMemcpy(dev_primeList, primeList, sizePrimeList * sizeof(int), cudaMemcpyHostToDevice));
+	ensemble R, dev_R;
+	ensemble Div = (ensemble) malloc(sizeof(struct cell));
+	int *sizeDiv = (int*)malloc(sizeof(int));
+	*sizeDiv = 0;
+	ensemble dev_Div;
+	int *sizeR=(int*)malloc(sizeof(int));
+	int *dev_sizeR;
+	int *dev_sizeDiv;
+	printf("bonjour\n");
+	for(int j = 0; j < sizePrimeList; j++){
+		while(nbr % primeList[j] == 0){
+			nbr = (nbr / primeList[j]);
+			addVal(&Div, primeList[j], sizeDiv);
+			printf("ok  size div =%i nbr = %i\n",*sizeDiv,nbr);
+		}
+	}
+	if (nbr == 1){
+		*sizefinal = *sizeDiv;
+		return Div;
+	}
+	int *matrix;
+	int *dev_matrix;
+	int *kernel;
+	int u, v;
+	u = v = 1;
+	while(produit(Div,*sizeDiv) != n){
+		matrix = (int *) malloc(sizePrimeList * sizePrimeList * sizeof(int));
+		R = (ensemble) malloc(sizePrimeList * sizeof(struct cell));
+		*sizeR = 0;
+		CUDA_CHECK_RETURN(cudaMalloc(&dev_rand,sizePrimeList*sizeof(int)));
+		CUDA_CHECK_RETURN(cudaMemcpy(dev_rand, rand, sizePrimeList * sizeof(int), cudaMemcpyHostToDevice));
+		CUDA_CHECK_RETURN(cudaMalloc((int **)&dev_sizeR, sizePrimeList*sizeof(int)));
+		CUDA_CHECK_RETURN(cudaMalloc((int **)&dev_sizeDiv, sizeof(int)));
+		CUDA_CHECK_RETURN(cudaMalloc((curandState_t**)&dev_state, sizePrimeList*sizeof(curandState_t)));
+		CUDA_CHECK_RETURN(cudaMemset(dev_sizeR, 0, sizeof(int)));
+		CUDA_CHECK_RETURN(cudaMalloc((ensemble *)&dev_R, *sizeR * sizeof(struct cell)));
+		CUDA_CHECK_RETURN(cudaMalloc((ensemble *)&dev_Div, *sizeDiv * sizeof(struct cell)));
+		CUDA_CHECK_RETURN(cudaMemcpy(dev_R, R, *sizeR * sizeof(struct cell), cudaMemcpyHostToDevice));
+		CUDA_CHECK_RETURN(cudaMemcpy(dev_sizeR, sizeR,sizeof(int), cudaMemcpyHostToDevice));
+		CUDA_CHECK_RETURN(cudaMemcpy(dev_sizeDiv, sizeDiv,sizeof(int), cudaMemcpyHostToDevice));
+
+		printf("size Div %i\n",*sizeDiv);
+		printf(" Div %i\n",Div[*sizeDiv-1].ind.val);
+		CUDA_CHECK_RETURN(cudaMemcpy(dev_Div, Div, *sizeDiv * sizeof(struct cell), cudaMemcpyHostToDevice));
+		CUDA_CHECK_RETURN(cudaMalloc((int **)&dev_matrix, sizePrimeList * sizePrimeList * sizeof(int)));
+		CUDA_CHECK_RETURN(cudaMemset(dev_matrix, 0, sizePrimeList * sizePrimeList * sizeof(int)));
+
+		Generation<<<1,sizePrimeList>>>(dev_state,nbr, sqrtNRB,dev_rand);
+		printf("size Div = %i\n",*sizeDiv);
+		fillEnsR<<<1,sizePrimeList>>>(dev_state,dev_R,dev_sizeR,dev_Div,dev_sizeDiv,dev_primeList,sizePrimeList,dev_rand,nbr,dev_matrix);
+		cudaMemcpy(rand,dev_rand,sizePrimeList*sizeof(int),cudaMemcpyDeviceToHost);
+		for(int i = 0;i<sizePrimeList;i++){
+			printf("blahaza %i\n",rand[i]);
+		}
+		CUDA_CHECK_RETURN(cudaMemcpy(sizeR, dev_sizeR, sizeof(int), cudaMemcpyDeviceToHost));
+		CUDA_CHECK_RETURN(cudaMemcpy(sizeDiv, dev_sizeR, sizeof(int), cudaMemcpyDeviceToHost));
+		CUDA_CHECK_RETURN(cudaMemcpy(R, dev_R, *sizeR * sizeof(struct cell), cudaMemcpyDeviceToHost));
+
+		CUDA_CHECK_RETURN(cudaMemcpy(matrix, dev_matrix, sizePrimeList * sizePrimeList * sizeof(int), cudaMemcpyDeviceToHost));
+		kernel = gaussjordan_noyau(matrix, sizePrimeList);
+		int tmp = 1;
+		int *test = (int*)malloc(*sizeR*sizeof(int));
+		memset(test,0,*sizeR*sizeof(int));
+		for(int i = 0; i < *sizeR; i++){
+			if(kernel[i] != 0){
+				tmp = tmp * (R[i].ind.couple.y);
+				v = v * (R[i].ind.couple.x);
+			}
+		}
+		u = 1;
+		for(int i = 0; i < *sizeR; i++){
+			while(tmp % primeList[i]){
+				tmp = (tmp / primeList[i]);
+				test[i] += 1;
+			}
+			test[i] = floor(test[i] / 2);
+			u = u * (primeList[i] * test[i]);
+		}
+		if (pgcdUint(u+v,nbr) != 1){
+			addVal(&Div, (u+v), sizeDiv);
+		}
+		cudaFree(dev_sizeDiv);
+		cudaFree(dev_R);
+		cudaFree(dev_matrix);
+		cudaFree(dev_sizeR);
+	}
+	*sizefinal = *sizeDiv;
+	return Div;
+}
+
+ensemble Dixon(int n) {
+	int borne = ceil(exp(sqrt(2 * log(n) * log(log(n)))));
+	int sizePremList;
+	int *premList = generatePrimeList(borne, &sizePremList);
+	int *dev_premList;
+	CUDA_CHECK_RETURN(cudaMalloc((int **)&dev_premList, sizePremList * sizeof(int)));
+	CUDA_CHECK_RETURN(cudaMemcpy(dev_premList, premList, sizePremList * sizeof(int), cudaMemcpyHostToDevice));
+	ensemble R, dev_R;
+	ensemble Div = (ensemble) malloc(sizeof(struct cell));
+	int sizeDiv = 0;
+	ensemble dev_Div;
+	int sizeR;
+	int *dev_sizeR;
+	int *matrix;
+	int *dev_matrix;
+	int *kernel;
+	int u, v;
+	//test de primalite
+	while (produit(Div, sizeDiv) != n) {
+		matrix = (int *) malloc(sizePremList * sizePremList * sizeof(int));
+		R = (ensemble) malloc(sizePremList * sizeof(struct cell));
+		sizeR = 0;
+
+		CUDA_CHECK_RETURN(cudaMalloc((int **)&dev_sizeR, sizeof(int)));
+		CUDA_CHECK_RETURN(cudaMemset(dev_sizeR, 0, sizeof(int)));
+		CUDA_CHECK_RETURN(cudaMalloc((ensemble *)&dev_R, sizeR * sizeof(struct cell)));
+		CUDA_CHECK_RETURN(cudaMemcpy(dev_R, R, sizeR * sizeof(struct cell), cudaMemcpyHostToDevice));
+		CUDA_CHECK_RETURN(cudaMemcpy(dev_Div, Div, sizeDiv * sizeof(struct cell), cudaMemcpyHostToDevice));
+		CUDA_CHECK_RETURN(cudaMalloc((int **)&dev_matrix, sizePremList * sizePremList * sizeof(int)));
+		CUDA_CHECK_RETURN(cudaMemset(dev_matrix, 0, sizePremList * sizePremList * sizeof(int)));
+
+		//fillEnsembleG<<<1, sizePremList>>>(dev_R, dev_premList, sizePremList, n, borne, Div, sizeDiv, dev_sizeR, dev_matrix);
+
+		CUDA_CHECK_RETURN(cudaMemcpy(matrix, dev_matrix, sizePremList * sizePremList * sizeof(int), cudaMemcpyDeviceToHost));
+		CUDA_CHECK_RETURN(cudaMemcpy(&sizeR, dev_sizeR, sizeof(int), cudaMemcpyDeviceToHost));
+		CUDA_CHECK_RETURN(cudaMemcpy(R, dev_R, sizeR * sizeof(struct cell), cudaMemcpyDeviceToHost));
+		kernel = gaussjordan_noyau(matrix, sizePremList);
+		u = initU(R, sizeR, kernel, n);
+		v = calcul_v(premList, sizePremList, sizeR, matrix, sizePremList, kernel);
+		if (pgcdUint(u - v, n) != 1 && pgcdUint(u - v, n) != n) {
+			addVal(&Div, u - v, &sizeDiv);
+		} else if (pgcdUint(u + v, n) != 1 && pgcdUint(u + v, n) != n) {
+			addVal(&Div, u + v, &sizeDiv);
+		}
+		free(R);
+		CUDA_CHECK_RETURN(cudaFree(dev_R));
+		CUDA_CHECK_RETURN(cudaFree(dev_sizeR));
+		free(matrix);
+		CUDA_CHECK_RETURN(cudaFree(dev_matrix));
+		printf("Passage");
+	}
+	return Div;
 }
