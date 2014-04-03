@@ -1,8 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 #include "header/prime.h"
-
+/*
 // Cette fonctions elimine les multiples de chaques nombres
 // Ce qui a pour effet d'enlever les nombres non premiers
 // list contient tous les nombres de 2 a borne
@@ -110,4 +107,47 @@ int *generatePrimeList(int borne, int *tailleResult) {
 	cudaFree(dev_numbers);
 	free(numbers);
 	return result;
+}
+*/
+
+__global__ void fillList(int *list, int borne) {
+	int id = blockIdx.x;
+	if (id > 1 && id <= borne) {
+		list[id - 2] = id;
+	}
+}
+
+__global__ void eratosthene(int *list) {
+	int bid = blockIdx.x;
+	int tid = threadIdx.x;
+	if (tid > 1 && tid != list[bid]) {
+		if (list[bid] % tid == 0) {
+			list[bid] = 0;
+		}
+	}
+}
+
+int *generatePrimeList(int borne, int *size) {
+	int *list = (int *) malloc((borne - 1) * sizeof(int));
+	int *dev_list;
+	cudaMalloc((int **)&dev_list, (borne - 1) * sizeof(int));
+	fillList<<<borne + 1, 1>>>(dev_list, borne);
+	eratosthene<<<borne - 1, borne - 1>>>(dev_list);
+	cudaMemcpy(list, dev_list, (borne - 1) * sizeof(int), cudaMemcpyDeviceToHost);
+	*size = 0;
+	for (int i = 0; i < (borne - 1); i++) {
+		if (list[i] != 0) {
+			size++;
+		}
+	}
+	int *res = (int *) malloc(size * sizeof(int));
+	for (int i = 0, j = 0; i < (borne - 1); i++) {
+		if (list[i] != 0) {
+			res[j] = list[i];
+			j++;
+		}
+	}
+	cudaFree(dev_list);
+	free(list);
+	return res;
 }
