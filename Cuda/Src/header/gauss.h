@@ -9,7 +9,7 @@
 #define GAUSS_H_
 
 void print_matrix(int *matrix, int size);
-int *gaussjordan_noyau(int *matrix, int size);
-void test();
+void gaussjordan_noyau(int *matrix, int size,int *noyau);
+void testGauss();
 
 #endif /* GAUSS_H_ */

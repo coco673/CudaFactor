@@ -172,7 +172,7 @@ int *kernel(int **matrix, int size) {
 	return noyau;
 }*/
 
-int *gaussjordan_noyau(int *matrix, int size) {
+void gaussjordan_noyau(int *matrix, int size,int *noyau) {
 	int pivo,j,temp,a,k,l;
 	int nl = size;
 	int nc = size;
@@ -244,7 +244,6 @@ int *gaussjordan_noyau(int *matrix, int size) {
 			nl = nl + 1;
 		}
 	}
-	int *noyau = (int *) malloc(size * sizeof(int));
 	//on enleve les lignes en trop pour avoir
 	//une matrice carree de dim nc
 	//on retranche la matrice identite
@@ -260,7 +259,6 @@ int *gaussjordan_noyau(int *matrix, int size) {
 			}
 		}
 	}
-	return noyau;
 }
 
 
@@ -273,9 +271,9 @@ void test() {
 	matrix[1 * 4 + 2] = 0;
 	matrix[2 * 4 + 0] = 0;
 	matrix[2 * 4 + 2] = 0;
-	int *k = gaussjordan_noyau(matrix, 4);
+	//int *k = gaussjordan_noyau(matrix, 4);
 	for (int i = 0; i < 4; i++) {
-		printf("%d\n", k[i]);
+		//printf("%d\n", k[i]);
 	}
 }
 

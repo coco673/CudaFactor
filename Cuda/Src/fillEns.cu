@@ -129,6 +129,7 @@ __global__ void fillEnsR(curandState_t *state,ensemble R,int *size,ensemble Div,
 	int present= -1;
 	int x = -1;
 	int y =  -1;
+	int nbt = 0;
 	printf("tu print batard !!!!!!\n");
 	if(tid == 0){
 		sizeR = 0;
@@ -138,27 +139,31 @@ __global__ void fillEnsR(curandState_t *state,ensemble R,int *size,ensemble Div,
 	//memset(matrix,0,(k*k)*sizeof(int));
 	int sqrtNBR = (int) sqrtf(nbr);
 	do{
+
 		generate(state,rand,nbr,sqrtNBR);
 		printf("yahou %i::%i\n",rand[tid],tid);
 
 		x = rand[tid];
-		printf("je suis le gentil thread numéro : %i , j'ai pioché le random %i\n", tid, x);
 		y = (x*x) % nbr;
 
 		isBSmoothG(premList,k,y,&bsmooth);
 		isInEnsembleG(Div,y,*sizeDiv,&present);
-		printf("bsmooth %i pres = %i\n",bsmooth,present);
+		++nbt;
+		__syncthreads();
+		printf("je suis le thread %i et je suis au %i tours de boucle ::::: bsmooth %i pres = %i\n",tid,nbt,bsmooth,present);
 	}while(!bsmooth || present);
-	printf("ok\n");
+	__syncthreads();
+	printf("je suis le gentil  BON THREAD numéro : %i , j'ai fait  %i tours \n", tid, nbt);
+
+		printf("ok\n");
+	printf("la size de R est %i\n",sizeof(R));
 	R[tid].ind.couple.x = x;
 	printf("pourquoi ?? size = %i\n",sizeR);
-
 	R[tid].ind.couple.y = y;
 	atomicAdd(&sizeR,1);
 	printf("x = %i y = %i size = %i\n",R[tid].ind.couple.x,R[tid].ind.couple.y,sizeR);
 	int y1 = y;
 	for(int j = 0;j<k;j++){
-		printf("thread : %i ====> y = %i\n",tid, y);
 		while(y1%premList[j] == 0){
 			y1 = y1 / premList[j];
 			matrix[(k*tid)+j]=(matrix[(k*tid)+j]+1)%2;
@@ -166,6 +171,7 @@ __global__ void fillEnsR(curandState_t *state,ensemble R,int *size,ensemble Div,
 		}
 	}
 	__syncthreads();
-	*size = sizeR;
+	size[tid] = sizeR;
+
 
 }

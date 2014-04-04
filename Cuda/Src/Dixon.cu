@@ -1,5 +1,5 @@
 #include "header/Dixon.h"
-
+#include <unistd.h>
 #define CUDA_CHECK_RETURN(value) {											\
 		cudaError_t _m_cudaStat = value;										\
 		if (_m_cudaStat != cudaSuccess) {										\
@@ -206,8 +206,11 @@ ensemble Dixon2(int n,int *sizefinal){
 	int *kernel;
 	int u, v;
 	u = v = 1;
+	printf("la borne est %i\n",borne);
 	while(produit(Div,*sizeDiv) != n){
-		matrix = (int *) malloc(sizePrimeList * sizePrimeList * sizeof(int));
+		printf("malloc 1\n");
+		matrix= (int*)malloc(sizePrimeList * sizePrimeList * sizeof(int));
+		printf("malloc 2\n");
 		R = (ensemble) malloc(sizePrimeList * sizeof(struct cell));
 		*sizeR = 0;
 		CUDA_CHECK_RETURN(cudaMalloc(&dev_rand,sizePrimeList*sizeof(int)));
@@ -216,7 +219,7 @@ ensemble Dixon2(int n,int *sizefinal){
 		CUDA_CHECK_RETURN(cudaMalloc((int **)&dev_sizeDiv, sizeof(int)));
 		CUDA_CHECK_RETURN(cudaMalloc((curandState_t**)&dev_state, sizePrimeList*sizeof(curandState_t)));
 		CUDA_CHECK_RETURN(cudaMemset(dev_sizeR, 0, sizeof(int)));
-		CUDA_CHECK_RETURN(cudaMalloc((ensemble *)&dev_R, *sizeR * sizeof(struct cell)));
+		CUDA_CHECK_RETURN(cudaMalloc((ensemble *)&dev_R, sizePrimeList * sizeof(struct cell)));
 		CUDA_CHECK_RETURN(cudaMalloc((ensemble *)&dev_Div, *sizeDiv * sizeof(struct cell)));
 		CUDA_CHECK_RETURN(cudaMemcpy(dev_R, R, *sizeR * sizeof(struct cell), cudaMemcpyHostToDevice));
 		CUDA_CHECK_RETURN(cudaMemcpy(dev_sizeR, sizeR,sizeof(int), cudaMemcpyHostToDevice));
@@ -227,29 +230,38 @@ ensemble Dixon2(int n,int *sizefinal){
 		CUDA_CHECK_RETURN(cudaMemcpy(dev_Div, Div, *sizeDiv * sizeof(struct cell), cudaMemcpyHostToDevice));
 		CUDA_CHECK_RETURN(cudaMalloc((int **)&dev_matrix, sizePrimeList * sizePrimeList * sizeof(int)));
 		CUDA_CHECK_RETURN(cudaMemset(dev_matrix, 0, sizePrimeList * sizePrimeList * sizeof(int)));
-
+printf("on ouvre %i thread \n",sizePrimeList);
 		Generation<<<1,sizePrimeList>>>(dev_state,nbr, sqrtNRB,dev_rand);
 		printf("size Div = %i\n",*sizeDiv);
+		printf("on ouvre %i thread pour remplir \n",sizePrimeList);
 		fillEnsR<<<1,sizePrimeList>>>(dev_state,dev_R,dev_sizeR,dev_Div,dev_sizeDiv,dev_primeList,sizePrimeList,dev_rand,nbr,dev_matrix);
-		cudaMemcpy(rand,dev_rand,sizePrimeList*sizeof(int),cudaMemcpyDeviceToHost);
-		for(int i = 0;i<sizePrimeList;i++){
-			printf("blahaza %i\n",rand[i]);
-		}
+		printf("OK T ES LA \n");
+
 		CUDA_CHECK_RETURN(cudaMemcpy(sizeR, dev_sizeR, sizeof(int), cudaMemcpyDeviceToHost));
 		CUDA_CHECK_RETURN(cudaMemcpy(sizeDiv, dev_sizeR, sizeof(int), cudaMemcpyDeviceToHost));
 		CUDA_CHECK_RETURN(cudaMemcpy(R, dev_R, *sizeR * sizeof(struct cell), cudaMemcpyDeviceToHost));
-
+printf("ta frangine !! \n");
 		CUDA_CHECK_RETURN(cudaMemcpy(matrix, dev_matrix, sizePrimeList * sizePrimeList * sizeof(int), cudaMemcpyDeviceToHost));
-		kernel = gaussjordan_noyau(matrix, sizePrimeList);
+		int *kernel = (int *) malloc(sizePrimeList * sizeof(int));
+
+		gaussjordan_noyau(matrix, sizePrimeList,kernel);
 		int tmp = 1;
-		int *test = (int*)malloc(*sizeR*sizeof(int));
-		memset(test,0,*sizeR*sizeof(int));
+		printf("malloc 3 + size of R = %i\n",*sizeR);
+
+		//int *test = (int*) malloc((*sizeR)*sizeof(int));
+		int test[N];
+		printf("memset 1\n");
+
+		memset(test,0,(*sizeR)*sizeof(int));
+		printf("for 1\n");
+
 		for(int i = 0; i < *sizeR; i++){
 			if(kernel[i] != 0){
 				tmp = tmp * (R[i].ind.couple.y);
 				v = v * (R[i].ind.couple.x);
 			}
 		}
+		printf("FIN U\n");
 		u = 1;
 		for(int i = 0; i < *sizeR; i++){
 			while(tmp % primeList[i]){
@@ -259,13 +271,33 @@ ensemble Dixon2(int n,int *sizefinal){
 			test[i] = floor(test[i] / 2);
 			u = u * (primeList[i] * test[i]);
 		}
+		printf("FIN V\n");
 		if (pgcdUint(u+v,nbr) != 1){
 			addVal(&Div, (u+v), sizeDiv);
 		}
-		cudaFree(dev_sizeDiv);
-		cudaFree(dev_R);
-		cudaFree(dev_matrix);
-		cudaFree(dev_sizeR);
+		printf("FIN PGCD\n");
+		//CUDA_CHECK_RETURN(cudaFree(dev_Div));
+		printf("free -1\n");
+
+		//CUDA_CHECK_RETURN(cudaFree(dev_sizeDiv));
+		printf("free -21\n");
+
+		//CUDA_CHECK_RETURN(cudaFree(dev_R));
+		printf("free -31\n");
+
+		//CUDA_CHECK_RETURN(cudaFree(dev_matrix));
+		printf("free -41\n");
+
+		//CUDA_CHECK_RETURN(cudaFree(dev_sizeR));
+		printf("free 1\n");
+		free(R);
+		printf("free 2\n");
+		//free(test);
+		printf("free 3\n");
+		//free(matrix);
+		printf("free 4\n");
+		//free(kernel);
+		printf("free 5\n");
 	}
 	*sizefinal = *sizeDiv;
 	return Div;
@@ -307,7 +339,7 @@ ensemble Dixon(int n) {
 		CUDA_CHECK_RETURN(cudaMemcpy(matrix, dev_matrix, sizePremList * sizePremList * sizeof(int), cudaMemcpyDeviceToHost));
 		CUDA_CHECK_RETURN(cudaMemcpy(&sizeR, dev_sizeR, sizeof(int), cudaMemcpyDeviceToHost));
 		CUDA_CHECK_RETURN(cudaMemcpy(R, dev_R, sizeR * sizeof(struct cell), cudaMemcpyDeviceToHost));
-		kernel = gaussjordan_noyau(matrix, sizePremList);
+		//kernel = gaussjordan_noyau(matrix, sizePremList);
 		u = initU(R, sizeR, kernel, n);
 		v = calcul_v(premList, sizePremList, sizeR, matrix, sizePremList, kernel);
 		if (pgcdUint(u - v, n) != 1 && pgcdUint(u - v, n) != n) {
