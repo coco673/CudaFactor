@@ -12,6 +12,10 @@ TARGET = CUDAFactor
 TEMPLATE = app
 
 include(images/images.pri)
+
+INCLUDEPATH += . \
+    images
+
 SOURCES += main.cpp\
         mainwindow.cpp \
     fenetreprincipale.cpp \
