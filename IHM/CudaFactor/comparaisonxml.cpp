@@ -9,7 +9,7 @@ comparaisonXml::comparaisonXml(modelComparaison* m)
     label->move(250, 70);
     label->setStyleSheet("color: white; font-family:\"Arial\",Georgia,Serif; font-size: 50px;");
 
-    labelErreur = new QLabel("Impossible de comparer car les nombres \na factoriser ne sont pas les mêmes !", this);
+    labelErreur = new QLabel("Impossible de comparer car les nombres \na factoriser ne sont pas les memes !", this);
     labelErreur->move(38, 230);
     labelErreur->setStyleSheet("color: red; background-color: black; font-family:\"Arial\",Georgia,Serif; font-size: 40px;");
     labelErreur->hide();
@@ -126,7 +126,7 @@ void comparaisonXml::comparaison() {
         text1->insertPlainText("methode = "+methode1+"\n");
     }
     if (methode2 != "") {
-        text2->insertPlainText("methode = "+methode1+"\n");
+        text2->insertPlainText("methode = "+methode2+"\n");
     }
     if (temps1 != "" && temps2 != "") {
         text1->insertPlainText("temps = ");

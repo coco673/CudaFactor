@@ -4,6 +4,7 @@
 #include "model.h"
 #include "Frame.h"
 #include <QLabel>
+#include <QTextEdit>
 
 class Attente: public Frame
 {
@@ -17,7 +18,7 @@ public:
 private:
     Model * model;
     QLabel * label;
-
+    QTextEdit * text;
 
 };
 
