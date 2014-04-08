@@ -8,7 +8,7 @@ ChoixMethode::ChoixMethode(Model *m, ModelFenPrinc *mfp)
     setStyleSheet("background-color: rgb(1,74,111);");
 
     //Taille de la fenetre
-    setFixedSize(800, 600);
+    //setMinimumSize(800, 600);
 
     // Construction du Label
     label = new QLabel("Choix de la methode d'execution", this);

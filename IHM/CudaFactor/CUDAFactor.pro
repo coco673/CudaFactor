@@ -11,10 +11,17 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = CUDAFactor
 TEMPLATE = app
 
-include(images/images.pri)
+MOC_DIR = ./tmp/moc/
 
-INCLUDEPATH += . \
-    images
+OBJECTS_DIR = ./tmp/o/
+
+DEPENDPATH = ./images
+
+ICON = ./images
+
+INCLUDEPATH = ./images
+
+OTHER_FILES = ./images
 
 SOURCES += main.cpp\
         mainwindow.cpp \

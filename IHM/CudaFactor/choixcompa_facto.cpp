@@ -8,7 +8,7 @@ choixCompa_facto::choixCompa_facto(int* chx, ModelFenPrinc* m)
     setStyleSheet("background-color: rgb(1,74,111);");
 
     //Taille de la fenetre
-    setFixedSize(800, 600);
+    //setMinimumSize(800, 600);
 
     // Construction du Label
     label = new QLabel("CUDA Factor", this);
