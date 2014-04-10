@@ -23,14 +23,6 @@ int notIn(Int_List Div, int val) {
 	return 0;
 }
 
-/*int calcul_u(Couple_List R, int *noyau) {
-	int res = 1;
-	for (int i = 0; i < R.size; i++) {
-		res *= pow(getCouple(R, i).x, 2 * noyau[i]);
-	}
-	return res;
-}*/
-
 int calcul_u(Couple_List R, int *noyau, int n) {
 	int res = 1;
 	for (int i = 0; i < R.size; i++) {
@@ -76,15 +68,26 @@ Int_List *dixon(int n) {
 	VEC_ELEM *tmp;
 
 	//Allocations
-
 	matrixMod = (int **) malloc(sizePL * sizeof(int *));
+
 	for (int i  = 0; i < sizePL; i++) {
 		matrixMod[i] = (int *) malloc(sizePL * sizeof(int));
+	}
+
+	int index = 0;
+	while(index < sizePL) {
+		if (nbr % premList[index] == 0) {
+			addInt(Div, premList[index]);
+			nbr /= premList[index];
+		} else {
+			index++;
+		}
 	}
 	if (Miller(nbr, 10)) {
 		addInt(Div, nbr);
 		return Div;
 	}
+	printf("entree dans Dixon\n");
 	while (produitDiv(*Div) != nbr) {
 		while (R->size < sizePL) {
 			int x = alea(sqrt(nbr), nbr + 1);
