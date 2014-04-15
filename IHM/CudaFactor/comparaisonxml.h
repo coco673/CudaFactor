@@ -18,6 +18,7 @@ public:
     void actualiser();
     bool boutonSuivant();
     void check();
+    void actualiseAprèsAffichage();
 
 public slots:
     void ouvrirFichier1();

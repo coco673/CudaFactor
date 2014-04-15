@@ -10,6 +10,7 @@ public:
   virtual void actualiser() = 0;
   virtual void check() = 0;
   virtual bool boutonSuivant() = 0;
+  virtual void actualiseApresAffichage() = 0;
 
 };
 
