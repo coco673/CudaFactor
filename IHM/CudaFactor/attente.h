@@ -14,11 +14,13 @@ public:
     void actualiser();
     bool boutonSuivant();
     void check();
+    void actualiseAprèsAffichage();
 
 private:
     Model * model;
     QLabel * label;
     QTextEdit * text;
+    bool boolBoutonSuiv;
 
 };
 

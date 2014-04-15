@@ -20,6 +20,7 @@ public:
     void remplirText();
     void creerXml();
     void check();
+    void actualiseApresAffichage();
 
 public slots:
     void enregistrer();

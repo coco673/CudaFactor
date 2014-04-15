@@ -136,6 +136,7 @@ void ModelFenPrinc::next() {
                 suivant->hide();
             }
             listFramesAvant[page]->show();
+            listFramesAvant[page]->actualiseApresAffichage();
         } else {
             listFramesFact[page-listFramesAvant.size()]->actualiser();
             if (listFramesFact[page-listFramesAvant.size()]->boutonSuivant() == true) {
@@ -144,6 +145,7 @@ void ModelFenPrinc::next() {
                 suivant->hide();
             }
             listFramesFact[page-listFramesAvant.size()]->show();
+            listFramesFact[page]->actualiseApresAffichage();
         }
     } else {
         if (page < listFramesAvant.size()) {
@@ -165,6 +167,7 @@ void ModelFenPrinc::next() {
                 suivant->hide();
             }
             listFramesAvant[page]->show();
+            listFramesAvant[page]->actualiseApresAffichage();
         } else {
             listFramesComp[page-listFramesAvant.size()]->actualiser();
             if (listFramesFact[page-listFramesAvant.size()]->boutonSuivant() == true) {
@@ -173,6 +176,7 @@ void ModelFenPrinc::next() {
                 suivant->hide();
             }
             listFramesComp[page-listFramesAvant.size()]->show();
+            listFramesComp[page-listFramesAvant.size()]->actualiseApresAffichage();
         }
     }
     if (page == 0) {
