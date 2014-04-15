@@ -48,7 +48,7 @@ int calcul_v(int *premList, int sizePL, Couple_List R, int **matrix, int *noyau,
 		for (int j = 1; j < R.size; j++) {
 			if (noyau[j] == 1)
 				somme += matrix[j][i] * noyau[j];
-		} 
+		}
 		somme = floor(somme / 2);
 		res *= (int)(pow(premList[i], somme));
 		res %= n;
