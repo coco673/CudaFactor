@@ -49,6 +49,10 @@ void Resultat::check() {
 
 }
 
+void Resultat::actualiseApresAffichage() {
+
+}
+
 bool Resultat::boutonSuivant() {
     return true;
 }

@@ -44,6 +44,10 @@ void ChoixNombre::boutonClique() {
     check();
 }
 
+void ChoixNombre::actualiseApresAffichage() {
+
+}
+
 void ChoixNombre::check() {
     QStringList listString = nombre->toPlainText().split("\n");
 

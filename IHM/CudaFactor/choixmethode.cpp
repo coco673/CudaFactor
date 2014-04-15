@@ -50,6 +50,10 @@ void ChoixMethode::actualiser() {
 
 }
 
+void ChoixMethode::actualiseApresAffichage() {
+
+}
+
 void ChoixMethode::check() {
 
 }

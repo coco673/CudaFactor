@@ -48,6 +48,10 @@ void choixCompa_facto::actualiser() {
 
 }
 
+void choixCompa_facto::actualiseApresAffichage() {
+
+}
+
 void choixCompa_facto::check() {
 
 }

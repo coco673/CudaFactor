@@ -60,6 +60,10 @@ void comparaisonXml::check() {
 
 }
 
+void comparaisonXml::actualiseApresAffichage() {
+
+}
+
 void comparaisonXml::ouvrirFichier1() {
     QString s = QFileDialog::getOpenFileName(0, "Open File",
                                                    "untitled.xml",
