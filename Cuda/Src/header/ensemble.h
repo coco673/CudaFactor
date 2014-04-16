@@ -17,7 +17,7 @@ typedef struct {
 } Int_List_GPU;
 
 typedef struct {
-	int x;
+	int x; 
 	int y;
 } Couple;
 

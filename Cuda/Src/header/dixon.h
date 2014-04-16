@@ -20,7 +20,6 @@ int notIn(Int_List Div, int val);
 int calcul_u(Couple_List R, int *noyau);
 int calcul_v(int *premList, int sizePL, Couple_List R, int **matrix, int *noyau);
 Int_List_GPU *dixon(int n);
-Int_List_GPU *dixon3(int n);
-
+Int_List *dixon2(int n);
 
 #endif
