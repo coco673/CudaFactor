@@ -1,4 +1,4 @@
-#include "header/prime.h"
+#include "prime.h"
 /*
 // Cette fonctions elimine les multiples de chaques nombres
 // Ce qui a pour effet d'enlever les nombres non premiers
@@ -130,24 +130,36 @@ __global__ void eratosthene(int *list) {
 int *generatePrimeList(int borne, int *size) {
 	int *list = (int *) malloc((borne - 1) * sizeof(int));
 	int *dev_list;
-	cudaMalloc((int **)&dev_list, (borne - 1) * sizeof(int));
+	int cures = cudaMalloc((int **)&dev_list, (borne - 1) * sizeof(int));
+	if (cures != cudaSuccess) {
+		fprintf(stderr, "1 ; %s", cudaGetErrorString(cudaGetLastError()));
+		exit(1);
+	}
 	fillList<<<borne + 1, 1>>>(dev_list, borne);
 	eratosthene<<<borne - 1, borne - 1>>>(dev_list);
-	cudaMemcpy(list, dev_list, (borne - 1) * sizeof(int), cudaMemcpyDeviceToHost);
+	cures = cudaMemcpy(list, dev_list, (borne - 1) * sizeof(int), cudaMemcpyDeviceToHost);
+	if (cures != cudaSuccess) {
+		fprintf(stderr, "2 ; %s", cudaGetErrorString(cudaGetLastError()));
+		exit(1);
+	}
 	*size = 0;
 	for (int i = 0; i < (borne - 1); i++) {
 		if (list[i] != 0) {
-			size++;
+			(*size)++;
 		}
 	}
-	int *res = (int *) malloc(size * sizeof(int));
+	int *res = (int *) malloc((*size) * sizeof(int));
 	for (int i = 0, j = 0; i < (borne - 1); i++) {
 		if (list[i] != 0) {
 			res[j] = list[i];
 			j++;
 		}
 	}
-	cudaFree(dev_list);
+	cures = cudaFree(dev_list);
+	if (cures != cudaSuccess) {
+		fprintf(stderr, "3 ; %s", cudaGetErrorString(cudaGetLastError()));
+		exit(1);
+	}
 	free(list);
 	return res;
 }
