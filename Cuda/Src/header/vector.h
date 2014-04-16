@@ -21,7 +21,7 @@ typedef struct {
 	int vecNb;
 } Vector_List;
 
-Vector_List *createVectorList();
+__device__ __host__ Vector_List *createVectorList();
 __device__ __host__ void addVector(Vector_List *list, const int *vec, int size);
 __device__ __host__ int *getVector(const Vector_List list, int index);
 __device__ __host__ void removeLastVector(Vector_List *list);

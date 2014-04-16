@@ -18,7 +18,7 @@ __host__ Int_List_GPU *createIntList();
 __host__ void addInt(Int_List_GPU **list, int v);
 __device__ void addIntGPU(int **list, int size, int v);
 __host__ int getVal(Int_List_GPU l, int index);
-__device__ int getVal(int *l, int index);
+__device__ int getValGPU(int *l, int index);
 __host__ void removeLastInt(Int_List_GPU **list);
 __device__ void removeLastInt(int **list, int size);
 __host__ void resetIntList(Int_List_GPU **list);
