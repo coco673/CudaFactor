@@ -45,7 +45,6 @@ void ChoixNombre::boutonClique() {
 }
 
 void ChoixNombre::actualiseApresAffichage() {
-
 }
 
 void ChoixNombre::check() {

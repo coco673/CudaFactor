@@ -16,7 +16,7 @@ public:
     void actualiser();
     bool boutonSuivant();
     void check();
-    void actualiseAprèsAffichage();
+    void actualiseApresAffichage();
 
 private slots:
     void boutonClique();

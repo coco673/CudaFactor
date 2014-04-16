@@ -1,4 +1,5 @@
 #include "choixmethode.h"
+#include <QTextStream>
 
 ChoixMethode::ChoixMethode(Model *m, ModelFenPrinc *mfp)
 {
@@ -70,5 +71,6 @@ void ChoixMethode::pressCUDA() {
 
 void ChoixMethode::pressSAGE() {
     model->setMethode(SAGE);
+    printf("set methode : SAGE %d\n",SAGE);
     modelFen->next();
 }

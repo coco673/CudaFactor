@@ -1,5 +1,6 @@
 #include "model.h"
 
+
 Model::Model()
 {
     methode = CUDA;
@@ -61,7 +62,6 @@ QString Model::getTitre() {
 void Model::setTitre(QString titre) {
     this->titre = titre;
 }
-
 
 void Model::reinitialiser() {
     methode = CUDA;
