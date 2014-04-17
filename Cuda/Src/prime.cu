@@ -110,7 +110,7 @@ int *generatePrimeList(int borne, int *tailleResult) {
 }
 */
 
-__global__ void fillList(int *list, int borne) {
+__global__ void fillList(int *list, uint64_t borne) {
 	int id = blockIdx.x;
 	if (id > 1 && id <= borne) {
 		list[id - 2] = id;
@@ -127,7 +127,7 @@ __global__ void eratosthene(int *list) {
 	}
 }
 
-int *generatePrimeList(int borne, int *size) {
+uint64_t *generatePrimeList(uint64_t borne, int *size) {
 	int *list = (int *) malloc((borne - 1) * sizeof(int));
 	int *dev_list;
 	int cures = cudaMalloc((int **)&dev_list, (borne - 1) * sizeof(int));
@@ -143,12 +143,12 @@ int *generatePrimeList(int borne, int *size) {
 		exit(1);
 	}
 	*size = 0;
-	for (int i = 0; i < (borne - 1); i++) {
+	for (uint64_t i = 0; i < (borne - 1); i++) {
 		if (list[i] != 0) {
 			(*size)++;
 		}
 	}
-	int *res = (int *) malloc((*size) * sizeof(int));
+	uint64_t *res = (uint64_t *) malloc((*size) * sizeof(uint64_t));
 	for (int i = 0, j = 0; i < (borne - 1); i++) {
 		if (list[i] != 0) {
 			res[j] = list[i];

@@ -10,19 +10,19 @@
 					cudaGetErrorString(_m_cudaStat), __LINE__, __FILE__);		\
 					exit(1);															\
 		} }
-int alea(int a, int b) {
+uint64_t alea(uint64_t a, uint64_t b) {
 	return rand()%(b-a) +a;
 }
 
-int produitDiv(Int_List_GPU Div) {
-	int res = 1;
+uint64_t produitDiv(Int_List_GPU Div) {
+	uint64_t res = 1;
 	for (int i = 0; i < Div.Size; i++) {
 		res *= getVal(Div, i);
 	}
 	return res;
 }
 
-int notIn(Int_List_GPU Div, int val) {
+int notIn(Int_List_GPU Div, uint64_t val) {
 	for (int i = 0; i < Div.Size; i++) {
 		if (getVal(Div, i) == val) {
 			return 1;
@@ -41,7 +41,7 @@ int calcul_u(Couple_List R, int *noyau, int n) {
 	return res;
 }
 
-int calcul_v(int *premList, int sizePL, Couple_List R, int **matrix, int *noyau, int n) {
+int calcul_v(uint64_t *premList, int sizePL, Couple_List R, int **matrix, int *noyau, int n) {
 	int res = 1;
 	int somme;
 	for (int i = 0; i < sizePL; i++) {
@@ -61,9 +61,9 @@ Int_List_GPU *dixon(int n) {
 	//Declarations
 
 	//int borne = sqrt(exp(sqrt(log(n)*log(log(n)))));
-	int borne = ceil(sqrt(exp(sqrt(2 * log(n) * log(log(n))))));
+	uint64_t borne = ceil(sqrt(exp(sqrt(2 * log(n) * log(log(n))))));
 	int sizePL;
-	int *premList = generatePrimeList(borne, &sizePL);
+	uint64_t *premList = generatePrimeList(borne, &sizePL);
 	Couple_List *R = createCoupleList();
 
 	Int_List_GPU *Div = createIntList();
@@ -99,8 +99,8 @@ Int_List_GPU *dixon(int n) {
 	printf("entree dans Dixon\n");
 	while (produitDiv(*Div) != nbr) {
 		while (R->size < sizePL) {
-			int x = alea(sqrt(nbr), nbr + 1);
-			int y = ((int)pow(x, 2)) % nbr;
+			uint64_t x = alea(sqrt(nbr), nbr + 1);
+			uint64_t y = ((uint64_t)pow(x, 2)) % nbr;
 
 			if (isBSmoothG(premList, sizePL, y) && notIn(*Div, y) == 0) {
 				tmpC.x = x;
@@ -172,13 +172,13 @@ int **matrix1DTo2D(int *matrix, int size) {
 	return mat;
 }
 
-Int_List_GPU *dixonGPU(int n) {
+Int_List_GPU *dixonGPU(uint64_t n) {
 	//Declarations
 
 	//int borne = sqrt(exp(sqrt(log(n)*log(log(n)))));
-	int borne = ceil(sqrt(exp(sqrt(2 * log(n) * log(log(n))))));
+	uint64_t borne = ceil(sqrt(exp(sqrt(2 * log(n) * log(log(n))))));
 	int sizePL;
-	int *premList = generatePrimeList(borne, &sizePL);
+	uint64_t *premList = generatePrimeList(borne, &sizePL);
 	Couple_List *R = createCoupleList();
 	int * sizeR = (int *) malloc(sizeof(int));
 	Int_List_GPU *Div = createIntList();
@@ -187,17 +187,17 @@ Int_List_GPU *dixonGPU(int n) {
 	int **matrixMod;
 	int *noyau;
 	int u, v;
-	int nbr = n;
+	uint64_t nbr = n;
 	Vector_List *listNoyau;
 	VEC_ELEM *tmp;
 
 	curandState_t *dev_state;
 	Couple *dev_R;
 	int *dev_sizeR;
-	int *dev_Div;
+	uint64_t *dev_Div;
 	int *dev_sizeDiv;
-	int *dev_premList;
-	int *dev_rand;
+	uint64_t *dev_premList;
+	uint64_t *dev_rand;
 	int *dev_matrix;
 	int *dev_matrixMod;
 	int *tmpmatrix = (int*) malloc(sizePL*sizePL * sizeof(int));
@@ -249,7 +249,7 @@ Int_List_GPU *dixonGPU(int n) {
 
 		CUDA_CHECK_RETURN(cudaMemcpy(dev_Div,Div->List,Div->Size*sizeof(int),cudaMemcpyHostToDevice));
 
-		Generation<<<1,sizePL>>>(dev_state,nbr,(int)sqrtf(nbr),dev_rand);
+		Generation<<<1,sizePL>>>(dev_state,nbr,(uint64_t)sqrtf(nbr),dev_rand);
 
 		fillEnsR<<<1,sizePL>>>(dev_state,dev_R,dev_sizeR,dev_Div,Div->Size,dev_premList,sizePL,dev_rand,nbr,dev_matrix);
 

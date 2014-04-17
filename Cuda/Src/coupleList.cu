@@ -29,8 +29,8 @@ __device__ __host__ Couple getCouple(const Couple_List list, int index) {
 	Couple_List tmp = list;
 	if (index > list.size - 1 || index < 0) {
 		Couple error;
-		error.x = -1;
-		error.y = -1;
+		error.x = 0;
+		error.y = 0;
 		return error;
 	} else {
 		while (i != index) {
@@ -67,7 +67,7 @@ __device__ __host__ void resetCoupleList(Couple_List *list) {
 }
 
 void printCouple(Couple c) {
-	printf("x : %i ; y : %i\n", c.x, c.y);
+	printf("x : %ld ; y : %ld\n", c.x, c.y);
 }
 
 void printCoupleList(const Couple_List list) {

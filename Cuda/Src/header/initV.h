@@ -8,6 +8,9 @@
 #ifndef INITV_H_
 #define INITV_H_
 
-int calcul_v(int *premList, int sizePremList, int m, int *matrix, int sizeMatrix, int *noyau);
+#include <stdint.h>
+
+
+int calcul_v(uint64_t *premList, int sizePremList, int m, int *matrix, int sizeMatrix, int *noyau);
 
 #endif /* INITV_H_ */

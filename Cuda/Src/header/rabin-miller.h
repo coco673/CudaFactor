@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 int modulo(int a,int b,int c);
 long long mulmod(long long a,long long b,long long c);

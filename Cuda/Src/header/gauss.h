@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
+#include <stdint.h>
 #include "matrix.h"
 #include "vector.h"
 

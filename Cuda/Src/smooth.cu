@@ -1,6 +1,6 @@
 #include "smooth.h"
 
-int isBSmoothG(int *primeList, int size, int y){
+int isBSmoothG(uint64_t *primeList, int size, uint64_t y){
 	int i = 0;
 	if(i < size){
 		int y1 = y;
@@ -19,4 +19,5 @@ int isBSmoothG(int *primeList, int size, int y){
 			}
 		}
 	}
+	return -1;
 }

@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
+#include "initV.h"
 
-int calcul_v(int *premList, int sizePremList, int m, int *matrix, int sizeMatrix, int *noyau) {
+int calcul_v(uint64_t *premList, int sizePremList, int m, int *matrix, int sizeMatrix, int *noyau) {
 	int res_somme;
 	int res_produit = 1;
 	for (int i = 0; i < sizePremList; i++) {

@@ -38,7 +38,7 @@ __device__ int isInf(int *list, int size, int y){
  * list est la liste des premiers de la borne
  * result le resultat retourné
  */
-__device__ void isBSmoothG(int *list,int size, int y,int *result){
+__device__ void isBSmoothG(uint64_t *list,int size, uint64_t y,int *result){
 	int i =threadIdx.x+blockIdx.x;
 	if(i < size){
 		int y1 = y;
@@ -59,7 +59,6 @@ __device__ void isBSmoothG(int *list,int size, int y,int *result){
 			}
 		}
 	}
-
 }
 /**
  * Mode GPU
@@ -68,7 +67,7 @@ __device__ void isBSmoothG(int *list,int size, int y,int *result){
  * size est la taille de l'ensemble.
  */
 
-__device__ void isInEnsembleG(int *ens, int y,int size, int *res){
+__device__ void isInEnsembleG(uint64_t *ens, uint64_t y,int size, int *res){
 	int i = threadIdx.x+blockIdx.x;
 	int found = 0;
 
@@ -92,7 +91,7 @@ __device__ void setup_kernel ( curandState_t *state )
 	curand_init ( clock()+id, id, 0, &state[id] );
 }
 
-__device__ void generate( curandState_t *globalState, int *rand, int nbr, int racN)
+__device__ void generate( curandState_t *globalState, uint64_t *rand, uint64_t nbr, uint64_t racN)
 {
 
 	int id = threadIdx.x + blockIdx.x ;
@@ -107,26 +106,26 @@ __device__ void generate( curandState_t *globalState, int *rand, int nbr, int ra
 	rand[id] = (int) x;
 }
 
-__global__ void Generation(curandState_t *state,int nbr, int sqrtNBR,int *rand){
+__global__ void Generation(curandState_t *state,uint64_t nbr, uint64_t sqrtNBR,uint64_t *rand){
 	setup_kernel(state);
 }
 
 
-__global__ void fillEnsR(curandState_t *state,Couple *R,int *size,int *Div,int sizeDiv,int *premList,int k,int *rand,int nbr,int *matrix){
+__global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,int sizeDiv,uint64_t *premList,int k,uint64_t *rand,uint64_t nbr,int *matrix){
 	//int tid = threadIdx.x + blockIdx.x * blockDim.x;
 	int tid=threadIdx.x+blockIdx.x;
 
 	__shared__ int sizeR;
 	int bsmooth= -1;
 	int present= -1;
-	int x = -1;
-	int y =  -1;
+	uint64_t x = 0;
+	uint64_t y =  0;
 	int nbt = 0;
 	if(tid == 0){
 		sizeR = 0;
 	}
 	__syncthreads();
-	int sqrtNBR = (int) sqrtf(nbr);
+	uint64_t sqrtNBR = (uint64_t) sqrtf(nbr);
 	do{
 		generate(state,rand,nbr,sqrtNBR);
 

@@ -14,12 +14,12 @@
 #include "fillMatrix.h"
 #include "rabin-miller.h"
 
-int alea(int a, int b);
-int produitDiv(Int_List Div);
-int notIn(Int_List Div, int val);
+uint64_t alea(uint64_t a, uint64_t b);
+uint64_t produitDiv(Int_List Div);
+int notIn(Int_List Div, uint64_t val);
 int calcul_u(Couple_List R, int *noyau);
-int calcul_v(int *premList, int sizePL, Couple_List R, int **matrix, int *noyau);
-Int_List_GPU *dixon(int n);
-Int_List_GPU *dixonGPU(int n);
+int calcul_v(uint64_t *premList, int sizePL, Couple_List R, int **matrix, int *noyau);
+Int_List_GPU *dixon(uint64_t n);
+Int_List_GPU *dixonGPU(uint64_t n);
 
 #endif

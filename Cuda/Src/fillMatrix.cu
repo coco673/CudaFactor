@@ -1,8 +1,8 @@
 #include "fillMatrix.h"
 
-int **fillMatrix(int *premList, int sizePL, const Couple_List *R) {
+int **fillMatrix(uint64_t *premList, int sizePL, const Couple_List *R) {
 	int **matrix = (int **) malloc(R->size * sizeof(int *));
-	for (int i  = 0; i < R->size; i++) {
+	for (uint64_t i  = 0; i < R->size; i++) {
 		matrix[i] = (int *) malloc(sizePL * sizeof(int));
 
 		for (int j = 0; j < sizePL; j++) {
@@ -11,7 +11,7 @@ int **fillMatrix(int *premList, int sizePL, const Couple_List *R) {
 	}
 
 	int tmp, index;
-	for (int i = 0; i < R->size; i++) {
+	for (uint64_t i = 0; i < R->size; i++) {
 		tmp = getCouple(*R, i).y;
 		index = 0;
 		while (tmp != 1) {

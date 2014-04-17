@@ -1,8 +1,10 @@
 #ifndef _ENSEMBLE_H
 #define _ENSEMBLE_H
 
+#include <stdint.h>
+
 struct IL {
-	int val;
+	uint64_t val;
 	struct IL *suiv;
 };
 
@@ -12,13 +14,13 @@ typedef struct Int_L {
 } Int_List;
 
 typedef struct {
-	int *List;
+	uint64_t *List;
 	int Size;
 } Int_List_GPU;
 
 typedef struct {
-	int x; 
-	int y;
+	uint64_t x;
+	uint64_t y;
 } Couple;
 
 struct CL {

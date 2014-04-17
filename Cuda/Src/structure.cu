@@ -27,7 +27,7 @@ __host__ __device__ ensemble initEns(int *size){
  * l'ensemble si tout c'est bien passé sinon retourne NULL. !!ATTENTION POSSIBLE
  * FUITE MEMOIRE!!
  */
-__host__ __device__ int addCouple(ensemble *ens, int x, int y,int *size){
+__host__ __device__ int addCouple(ensemble *ens, uint64_t x, uint64_t y,int *size){
 	*size = *size+1;
 
 	ensemble tp = (ensemble) malloc((*size)*sizeof(struct cell));
@@ -57,7 +57,7 @@ __host__ __device__ int addCouple(ensemble *ens, int x, int y,int *size){
  * Ajoute (en tete) une valeur dans l'ensemble ens et retourne la taille de
  * l'ensemble si tout c'est bien passé sinon retourne NULL
  */
-__host__ __device__ int addVal(ensemble *ens, int x,int *size){
+__host__ __device__ int addVal(ensemble *ens, uint64_t x,int *size){
 	/*	*size = (*size)+1;
 
 	ensemble tp = (ensemble) malloc((*size)*sizeof(struct cell));
