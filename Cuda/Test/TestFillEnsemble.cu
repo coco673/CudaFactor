@@ -6,7 +6,7 @@
  *  Copyright 2014 __MyCompanyName__. All rights reserved.
  *
  */
-
+/*
 #include "TestFillEnsemble.h"
 #include "../Src/header/prime.h"
 #include "../Src/header/fillEnsemble.h"
@@ -287,3 +287,4 @@ int TestGenerateOnce(){
 	free(rand);
 	cudaFree(dev_rand);
 }
+*/

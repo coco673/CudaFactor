@@ -1,4 +1,4 @@
-#include <stdio.h>
+/*#include <stdio.h>
 #include <stdlib.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
 	for (int i = 2 * sizeVect + 2; i < 3 * sizeVect; i++) {
 		assert(res[i] == 0);
 	}*/
-    int **result = fillMatrixNaif(yList, sizeYList, primeList, sizePrimeList);
+/*    int **result = fillMatrixNaif(yList, sizeYList, primeList, sizePrimeList);
     for (int i = 0; i < sizeYList; i++) {
         printf("yList[%d] : [", i);
         for (int j = 0; j < sizePrimeList; j++) {
@@ -59,3 +59,4 @@ int main(int argc, char **argv) {
     }
     return EXIT_SUCCESS;
 }
+*/

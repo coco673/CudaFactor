@@ -47,7 +47,7 @@ int testAddVal(int val){
 	return 0;
 }
 
-int testAddCouple(int valx,int valy){
+int testAddCouple(uint64_t valx,uint64_t valy){
 	int size;
 	ensemble e = (ensemble) initEns(&size);
 	int res =	addCouple(&e,valx,valy,&size);
