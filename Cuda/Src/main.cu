@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
 	if (argc > 1)
 		n = atoll(argv[1]);
 	else
-		n = 107*113;
+		n = 101*101;
 	printf("Le nombre entrée est %ld\n",n);
 	if (n < 0) {
 		fprintf(stderr, "Le nombre entre est négatif, entrez un nombre >= 2!\n");

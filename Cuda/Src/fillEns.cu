@@ -14,7 +14,7 @@
  * Verifie si chaque valeur contenue dans la liste des premiers (de taille size)
  * est inférieur a la valeur y.
  */
-__device__ int isInf(int *list, int size, int y){
+__device__ int isInf(uint64_t *list, int size, uint64_t y){
 	int i = threadIdx.x;
 	int res= 0;
 	/*if(i == 0){
