@@ -27,7 +27,10 @@ Attente::Attente(Model *m)
 void Attente::actualiser() {
     text->clear();
     boolBoutonSuiv = false;
+}
 
+void Attente::actualiseApresAffichage() {
+    /*
     FILE * sage_output;
     std::ostringstream strs;
     int precision = 2000;
@@ -55,10 +58,7 @@ void Attente::actualiser() {
 
     }
     pclose(sage_output);
-}
-
-void Attente::actualiseApresAffichage() {
-
+    */
 }
 
 void Attente::check() {
