@@ -10,6 +10,8 @@
 					cudaGetErrorString(_m_cudaStat), __LINE__, __FILE__);		\
 					exit(1);															\
 		} }
+
+
 uint64_t alea(uint64_t a, uint64_t b) {
 	return rand()%(b-a) +a;
 }
