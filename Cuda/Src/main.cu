@@ -8,13 +8,13 @@ int main(int argc, char **argv) {
 	if (argc > 1)
 		n = atoll(argv[1]);
 	else
-		n = 101*101;
-	printf("Le nombre entrée est %ld\n",n);
+		n = 169;
+	printf("Le nombre entrée est %llu\n",n);
 	if (n < 0) {
 		fprintf(stderr, "Le nombre entre est négatif, entrez un nombre >= 2!\n");
 		return EXIT_FAILURE;
 	} else if (n <= 1) {
-		printf("%ld n'est pas factorisable!\n", n);
+		printf("%llu n'est pas factorisable!\n", n);
 		return EXIT_SUCCESS;
 	} else if (n == 2) {
 		Div = createIntList();

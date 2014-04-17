@@ -67,7 +67,7 @@ __device__ __host__ void resetCoupleList(Couple_List *list) {
 }
 
 void printCouple(Couple c) {
-	printf("x : %ld ; y : %ld\n", c.x, c.y);
+	printf("x : %llud ; y : %llud\n", c.x, c.y);
 }
 
 void printCoupleList(const Couple_List list) {

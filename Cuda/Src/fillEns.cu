@@ -7,7 +7,10 @@
 #include <stdio.h>
 #include "fillEns.h"
 #include "prime.h"
+#include <assert.h>
 #define N 1000
+
+//extern __constant__ int *devPremList;
 
 /**
  * Mode GPU.
@@ -38,7 +41,7 @@ __device__ int isInf(uint64_t *list, int size, uint64_t y){
  * list est la liste des premiers de la borne
  * result le resultat retourné
  */
-__device__ void isBSmoothG(uint64_t *list,int size, uint64_t y,int *result){
+__device__ void isBSmoothG(int *devPremList, int size, uint64_t y,int *result){
 	int i =threadIdx.x+blockIdx.x;
 	if(i < size){
 		int y1 = y;
@@ -47,8 +50,8 @@ __device__ void isBSmoothG(uint64_t *list,int size, uint64_t y,int *result){
 		}else{
 
 			for(int j = 0; j< size;j++){
-				while(y1 % list[j] == 0){
-					y1=y1/list[j];
+				while(y1 % devPremList[j] == 0){
+					y1=y1/devPremList[j];
 				}
 			}
 			__syncthreads();
@@ -111,7 +114,7 @@ __global__ void Generation(curandState_t *state,uint64_t nbr, uint64_t sqrtNBR,u
 }
 
 
-__global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,int sizeDiv,uint64_t *premList,int k,uint64_t *rand,uint64_t nbr,int *matrix){
+__global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,int sizeDiv,int * devPremList,int k,uint64_t *rand,uint64_t nbr,int *matrix){
 	//int tid = threadIdx.x + blockIdx.x * blockDim.x;
 	int tid=threadIdx.x+blockIdx.x;
 
@@ -131,14 +134,14 @@ __global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,
 
 		x = rand[tid];
 		y = (x*x) % nbr;
-		if(premList == NULL ){
+		if(devPremList == NULL ){
 			printf("PrimeList est NULL\n");
 		}
 		if(k <= 0 ){
 			printf("valeur de K <= 0 \n");
 		}
 
-		isBSmoothG(premList,k,y,&bsmooth);
+		isBSmoothG(devPremList, k,y,&bsmooth);
 
 		isInEnsembleG(Div,y,sizeDiv,&present);
 		++nbt;
@@ -155,8 +158,8 @@ __global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,
 
 	int y1 = y;
 	for(int j = 0;j<k;j++){
-		while(y1%premList[j] == 0){
-			y1 = y1 / premList[j];
+		while(y1%devPremList[j] == 0){
+			y1 = y1 / devPremList[j];
 			matrix[tid*k+j]=(matrix[tid*k+j]+1);
 		}
 	}
