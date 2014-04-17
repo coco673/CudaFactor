@@ -108,7 +108,6 @@ __device__ void generate( curandState_t *globalState, int *rand, int nbr, int ra
 }
 
 __global__ void Generation(curandState_t *state,int nbr, int sqrtNBR,int *rand){
-	int i = threadIdx.x + blockIdx.x;
 	setup_kernel(state);
 }
 
@@ -116,7 +115,6 @@ __global__ void Generation(curandState_t *state,int nbr, int sqrtNBR,int *rand){
 __global__ void fillEnsR(curandState_t *state,Couple *R,int *size,int *Div,int sizeDiv,int *premList,int k,int *rand,int nbr,int *matrix){
 	//int tid = threadIdx.x + blockIdx.x * blockDim.x;
 	int tid=threadIdx.x+blockIdx.x;
-	printf("kikoo\n");
 
 	__shared__ int sizeR;
 	int bsmooth= -1;
@@ -130,17 +128,16 @@ __global__ void fillEnsR(curandState_t *state,Couple *R,int *size,int *Div,int s
 	__syncthreads();
 	int sqrtNBR = (int) sqrtf(nbr);
 	do{
-		printf("On entre dans FIllEns\n");
 		generate(state,rand,nbr,sqrtNBR);
 
 		x = rand[tid];
 		y = (x*x) % nbr;
-if(premList == NULL ){
-	printf("err1\n");
-}
-if(k <= 0 ){
-	printf("err2\n");
-}
+		if(premList == NULL ){
+			printf("PrimeList est NULL\n");
+		}
+		if(k <= 0 ){
+			printf("valeur de K <= 0 \n");
+		}
 
 		isBSmoothG(premList,k,y,&bsmooth);
 
@@ -152,28 +149,19 @@ if(k <= 0 ){
 	}while(!bsmooth || present);
 
 	__syncthreads();
-
 	R[tid].x = x;
 	R[tid].y = y;
 
 	atomicAdd(&sizeR,1);
-	printf("1 la taille %i\n",sizeR);
 
 	int y1 = y;
-	printf("on passe Y\n");
 	for(int j = 0;j<k;j++){
-		printf("%i tours de la 1ere boucle\n",j);
 		while(y1%premList[j] == 0){
-printf("la val du mod entre %i et %i est de %i\n",y1,premList[j],y1%premList[j]);
 			y1 = y1 / premList[j];
-			printf("y1 vaut maintenant %i\n",y1);
-			//matrix[tid][j]=(matrix[tid][j]+1);
 			matrix[tid*k+j]=(matrix[tid*k+j]+1);
-			printf("ok on a bien ajouté ! \n");
 		}
 	}
-	printf("on passe les boucles\n");
+
 	__syncthreads();
 	size[0] = sizeR;
-	printf("2 la taille %i\n",size[0]);
 }

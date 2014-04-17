@@ -54,7 +54,6 @@ int calcul_v(int *premList, int sizePL, Couple_List R, int **matrix, int *noyau,
 		res *= (int)(pow(premList[i], somme));
 		res %= n;
 	}
-	printf("on va sortir la \n");
 	return res;
 }
 
@@ -173,7 +172,7 @@ int **matrix1DTo2D(int *matrix, int size) {
 	return mat;
 }
 
-Int_List_GPU *dixon3(int n) {
+Int_List_GPU *dixonGPU(int n) {
 	//Declarations
 
 	//int borne = sqrt(exp(sqrt(log(n)*log(log(n)))));
@@ -255,8 +254,6 @@ Int_List_GPU *dixon3(int n) {
 		fillEnsR<<<1,sizePL>>>(dev_state,dev_R,dev_sizeR,dev_Div,Div->Size,dev_premList,sizePL,dev_rand,nbr,dev_matrix);
 
 		CUDA_CHECK_RETURN(cudaMemcpy(sizeR,dev_sizeR,sizeof(int),cudaMemcpyDeviceToHost));
-		printf("la taille de R %i\n",*sizeR);
-		*sizeR=*sizeR-1;
 		CUDA_CHECK_RETURN(cudaMemcpy(tmpC,dev_R, *sizeR * sizeof(Couple),cudaMemcpyDeviceToHost));
 		CUDA_CHECK_RETURN(cudaMemcpy(tmpmatrix,dev_matrix, sizePL*sizePL*sizeof(int),cudaMemcpyDeviceToHost));
 
@@ -265,29 +262,19 @@ Int_List_GPU *dixon3(int n) {
 
 		for (int i = 0; i < *sizeR; i++) {
 			for (int j = 0; j < sizePL; j++) {
-				addCouple(R,tmpC[j]);
 				matrixMod[i][j] = matrix[i][j] % 2;
 			}
+			addCouple(R,tmpC[i]);
 		}
-		printf("on arrive à gauss\n");
 		listNoyau = gaussjordan_noyau(matrixMod, sizePL);
-		printf("ok gauss\n");
-		int nbX= 0;
-		while (listNoyau->list != NULL) {
-			printf("valeur nbX %i\n",nbX);
-			noyau = listNoyau->list->vec;
-			printf("calcul de u\n");
 
-			printf("*-------------------------------------------*\n");
+		while (listNoyau->list != NULL) {
+			noyau = listNoyau->list->vec;
+
 			u = (calcul_u(*R, noyau, n));
-			printf("good U\n");
-			printf("size PL %i\n",sizePL);
-			for(int i = 0; i< sizePL ; i++){
-				printf("%i:: %i \n",noyau[i],i);
-			}
+
 			v = (calcul_v(premList, sizePL, *R, matrix, noyau,n));
 
-			printf("good V\n");
 			if ((pgcdUint(u - v, nbr) != 1) && (pgcdUint(u - v, nbr) != nbr)) {
 				addInt(&Div, pgcdUint(u - v, nbr));
 				nbr /= pgcdUint(u - v, nbr);
@@ -304,27 +291,28 @@ Int_List_GPU *dixon3(int n) {
 			listNoyau->list = listNoyau->list->suiv;
 			free(tmp);
 			free(noyau);
-			nbX++;
 		}
+
 		for (int i = 0; i < sizePL; i++) {
 			free(matrix[i]);
 		}
+
 		free(matrix);
 		free(listNoyau);
-		cudaFree(dev_Div);
+		CUDA_CHECK_RETURN(cudaFree(dev_Div));
 		resetCoupleList(R);
 	}
 	for (int i = 0; i < sizePL; i++) {
 		free(matrixMod[i]);
 	}
-	cudaFree(dev_state);
-	cudaFree(dev_R);
-	cudaFree(dev_sizeR);
-	//cudaFree(dev_Div);
-	cudaFree(dev_rand);
 
-	cudaFree(dev_matrix);
-	cudaFree(dev_matrixMod);
+	CUDA_CHECK_RETURN(cudaFree(dev_state));
+	CUDA_CHECK_RETURN(cudaFree(dev_R));
+	CUDA_CHECK_RETURN(cudaFree(dev_sizeR));
+	CUDA_CHECK_RETURN(cudaFree(dev_rand));
+
+	CUDA_CHECK_RETURN(cudaFree(dev_matrix));
+	CUDA_CHECK_RETURN(cudaFree(dev_matrixMod));
 	free(matrixMod);
 	free(R);
 	free(premList);
