@@ -16,7 +16,7 @@ public:
     void actualiser();
     bool boutonSuivant();
     void check();
-    void actualiseAprèsAffichage();
+    void actualiseApresAffichage();
 
 public slots:
     void pressCUDA();

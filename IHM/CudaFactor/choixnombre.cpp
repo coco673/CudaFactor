@@ -45,7 +45,6 @@ void ChoixNombre::boutonClique() {
 }
 
 void ChoixNombre::actualiseApresAffichage() {
-
 }
 
 void ChoixNombre::check() {
@@ -64,13 +63,13 @@ void ChoixNombre::check() {
     long double chiffre = 0;
     if (decimal->isChecked()) {
         bool ok;
-        chiffre = nombre->toPlainText().toUInt(&ok,10);
+        chiffre = nombre->toPlainText().toLongLong(&ok,10);
     } else if (hexa->isChecked()) {
         bool ok;
-        chiffre = nombre->toPlainText().toUInt(&ok,16);
+        chiffre = nombre->toPlainText().toLongLong(&ok,16);
     } else {
         bool ok;
-        chiffre = nombre->toPlainText().toUInt(&ok,2);
+        chiffre = nombre->toPlainText().toLongLong(&ok,2);
     }
     model->setNombre(chiffre);
 }

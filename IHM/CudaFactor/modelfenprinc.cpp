@@ -113,9 +113,9 @@ void ModelFenPrinc::next() {
         if (page < listFramesAvant.size()) {
             listFramesAvant[page]->hide();
         } else {
-            listFramesFact[page-listFramesAvant.size()]->hide();
+            listFramesFact[page - listFramesAvant.size()]->hide();
         }
-        if (page >= listFramesFact.size()+listFramesAvant.size()-1) {
+        if (page >= listFramesFact.size() + listFramesAvant.size()-1) {
             page = 0;
             model->reinitialiser();
         } else {
@@ -138,14 +138,14 @@ void ModelFenPrinc::next() {
             listFramesAvant[page]->show();
             listFramesAvant[page]->actualiseApresAffichage();
         } else {
-            listFramesFact[page-listFramesAvant.size()]->actualiser();
-            if (listFramesFact[page-listFramesAvant.size()]->boutonSuivant() == true) {
+            listFramesFact[page - listFramesAvant.size()]->actualiser();
+            if (listFramesFact[page - listFramesAvant.size()]->boutonSuivant() == true) {
                 suivant->show();
             } else {
                 suivant->hide();
             }
-            listFramesFact[page-listFramesAvant.size()]->show();
-            listFramesFact[page]->actualiseApresAffichage();
+            listFramesFact[page - listFramesAvant.size()]->show();
+            listFramesFact[page - listFramesAvant.size()]->actualiseApresAffichage();
         }
     } else {
         if (page < listFramesAvant.size()) {

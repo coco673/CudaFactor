@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+import sys
 #créer la liste des premiers inférieurs à la borne
 def premiers(borne) :
     prems = []
@@ -34,10 +36,10 @@ def est_friable(borne,nb) :
 def calcule_borne(n) :
     return Integer(round(sqrt(exp(sqrt(log(n)*log(log(n))))).n()))
 
-# boucle de remplissage de l'ensemble r  
-# paramètres : k = taille de l'ensemble des nombres premiers, borne = borne de l'algorithme, n = nombre à factoriser, div = l'ensemble des produits de n déjà trouvés   
+# boucle de remplissage de l'ensemble r
+# paramètres : k = taille de l'ensemble des nombres premiers, borne = borne de l'algorithme, n = nombre à factoriser, div = l'ensemble des produits de n déjà trouvés
 def remplir_ens_r(k, borne, n, div) :
-    m = 0  
+    m = 0
     r = []
     while m < k+1 :
         x = randint(floor(sqrt(n)),n)
@@ -53,25 +55,25 @@ def remplir_matrice(r, prems):
     m = len(r)
     liste_v = []
     for i in range(0,m) :
-        yy = r[i][0]  
+        yy = r[i][0]
         liste_vv = [] # un vecteur Vi,p
         liste_div_y = list(factor(yy))
-        for j in range(0,len(prems)-1) :    
+        for j in range(0,len(prems)-1) :
             tmp = getElem(liste_div_y, prems[j])
             liste_vv.append(tmp%2)
         vecteur = vector(ZZ,liste_vv)
         liste_v.append(vecteur)
     # construction de la matrice
-    matrice = matrix(liste_v) 
+    matrice = matrix(liste_v)
     return matrice
     
-# calcule des u, v 
+# calcule des u, v
 # paramètres : n = nombre à factoriser, matrice
 def calcule_div_nb(nb,k,matrice, div, r, prems) :
-    e = matrice.right_kernel() # vecteur non nul noyau de m         
+    e = matrice.right_kernel() # vecteur non nul noyau de m
     # 3ème boucle : trouver les u et v tels que u-v est premier et divise n
     for z in e.basis() :
-        relation_subset = []        
+        relation_subset = []
         for i in range(0,len(z)-1) :
             if z[i] == 1 : relation_subset.append((i,r[i]))
         u = 1
@@ -83,11 +85,11 @@ def calcule_div_nb(nb,k,matrice, div, r, prems) :
                 sumvals[i] += vect
         #v = prod(p**(vv) for p,vv in zip(prems, sumvals))
         v = 1
-        for i in range(0, len(prems)-1) : 
+        for i in range(0, len(prems)-1) :
             v *= prems[i]^^(sumvals[i]//2)
         #print "u,v : ", u, v
         if nb.gcd(u-v) > 1 and nb.gcd(u-v) < nb and (u-v).is_prime() :
-            div.append(u-v)                
+            div.append(u-v)
             nb = nb/(u-v)
             print u-v
             break
@@ -96,7 +98,7 @@ def calcule_div_nb(nb,k,matrice, div, r, prems) :
             nb = nb/(u+v)
             print u+v
             break
-        #else : print "erreur"  
+        #else : print "erreur"
         if (ceil(nb) == nb) :
             if is_prime(ceil(nb)) :
                 div.append(nb)
@@ -113,23 +115,28 @@ def dixon (n) :
     nb = n
     div = []
     prod_div = 1
-    while prod_div != n :        
-        r = remplir_ens_r(k,borne,n,div)   # liste des couples (x,y)
-        m = len(r)                         # cardinal de r
-        liste_v = [] 
+    while prod_div != n :
+        r = remplir_ens_r(k,borne,n,div) # liste des couples (x,y)
+        m = len(r) # cardinal de r
+        liste_v = []
         # construction de la matrice
         matrice = remplir_matrice(r,prems)
-        matrix        
+        matrix
         div = calcule_div_nb(nb,k,matrice, div, r, prems)
         if len(div) > 0 : nb = nb / div[len(div)-1]
-        prod_div = prod(div) 
-        #print prod_div, div, nb   
+        prod_div = prod(div)
+        #print prod_div, div, nb
     return div
     
-def test(nb) :
+    
+def test() :
+    nb = Integer(sys.argv[1])
     t = cputime(subprocesses=True)
     div = dixon(nb)
     print "les facteurs : ", div
     print "temps d'exécution (en secondes) : ", cputime(t)
-    if prod(div) == nb : return 1
+    if prod(div) == nb : 
+      return 1
     else : return 0
+
+test()

@@ -5,6 +5,7 @@
 #include "Frame.h"
 #include <QLabel>
 #include <QTextEdit>
+#include <QPushButton>
 
 class Attente: public Frame
 {
@@ -14,13 +15,18 @@ public:
     void actualiser();
     bool boutonSuivant();
     void check();
-    void actualiseAprèsAffichage();
+    void actualiseApresAffichage();
+    void execSAGE();
+
+public slots :
+    void lancerExec();
 
 private:
     Model * model;
     QLabel * label;
     QTextEdit * text;
     bool boolBoutonSuiv;
+    QPushButton * execButton;
 
 };
 

@@ -61,7 +61,6 @@ void comparaisonXml::check() {
 }
 
 void comparaisonXml::actualiseApresAffichage() {
-
 }
 
 void comparaisonXml::ouvrirFichier1() {
@@ -117,8 +116,8 @@ bool comparaisonXml::isComparable() {
 void comparaisonXml::comparaison() {
     text1->clear();
     text2->clear();
-    QString backgroundGreen = "background:green";
-    QString backgroundRed = "background:red";
+    QString backgroundGreen = "color:green";
+    QString backgroundRed = "color:red";
 
     if (nombre1 != "") {
         text1->insertPlainText("nombre = "+nombre1+"\n");
@@ -273,42 +272,46 @@ while (!reader.atEnd())
             break;
 
         case QXmlStreamReader::Characters :
-            QString t = "";
-            t+= reader.text();
-            t.remove(QChar(' '), Qt::CaseInsensitive);
-            t.remove(QChar('\n'), Qt::CaseInsensitive);
-            if (derniereBaliseOuverte == "nombre") {
-                if (t != "") {
-                    nombre1 = t;
+            {
+                QString t = "";
+                t+= reader.text();
+                t.remove(QChar(' '), Qt::CaseInsensitive);
+                t.remove(QChar('\n'), Qt::CaseInsensitive);
+                if (derniereBaliseOuverte == "nombre") {
+                    if (t != "") {
+                        nombre1 = t;
+                    }
                 }
-            }
-            else if (derniereBaliseOuverte == "methode") {
-                if (t != "") {
-                    methode1 = t;
+                else if (derniereBaliseOuverte == "methode") {
+                    if (t != "") {
+                        methode1 = t;
+                    }
                 }
-            }
-            else if (derniereBaliseOuverte == "temps") {
-                if (t != "") {
-                    temps1 = t;
+                else if (derniereBaliseOuverte == "temps") {
+                    if (t != "") {
+                        temps1 = t;
+                    }
                 }
-            }
-            else if (derniereBaliseOuverte == "nb_instr") {
-                if (t != "") {
-                    nbInstr1 = t;
+                else if (derniereBaliseOuverte == "nb_instr") {
+                    if (t != "") {
+                        nbInstr1 = t;
+                    }
                 }
-            }
-            else if (derniereBaliseOuverte == "nb_instr_sec") {
-                if (t != "") {
-                    nbInstrSec1 = t;
+                else if (derniereBaliseOuverte == "nb_instr_sec") {
+                    if (t != "") {
+                        nbInstrSec1 = t;
+                    }
                 }
-            }
-            else if (derniereBaliseOuverte == "listfacteurs" ) {
-            }
-            else if (derniereBaliseOuverte == "facteur" ) {
-                if (t != "") {
-                    listFacteursPremiers1.append(t);
+                else if (derniereBaliseOuverte == "listfacteurs" ) {
                 }
+                else if (derniereBaliseOuverte == "facteur" ) {
+                    if (t != "") {
+                        listFacteursPremiers1.append(t);
+                    }
+                }
+                break;
             }
+        default :
             break;
         }
     }
@@ -338,42 +341,46 @@ while (!reader.atEnd())
             break;
 
         case QXmlStreamReader::Characters :
-            QString t = "";
-            t+= reader.text();
-            t.remove(QChar(' '), Qt::CaseInsensitive);
-            t.remove(QChar('\n'), Qt::CaseInsensitive);
-            if (derniereBaliseOuverte == "nombre") {
-                if (t != "") {
-                    nombre2 = t;
+            {
+                QString t = "";
+                t+= reader.text();
+                t.remove(QChar(' '), Qt::CaseInsensitive);
+                t.remove(QChar('\n'), Qt::CaseInsensitive);
+                if (derniereBaliseOuverte == "nombre") {
+                    if (t != "") {
+                        nombre2 = t;
+                    }
                 }
-            }
-            else if (derniereBaliseOuverte == "methode") {
-                if (t != "") {
-                    methode2 = t;
+                else if (derniereBaliseOuverte == "methode") {
+                    if (t != "") {
+                        methode2 = t;
+                    }
                 }
-            }
-            else if (derniereBaliseOuverte == "temps") {
-                if (t != "") {
-                    temps2 = t;
+                else if (derniereBaliseOuverte == "temps") {
+                    if (t != "") {
+                        temps2 = t;
+                    }
                 }
-            }
-            else if (derniereBaliseOuverte == "nb_instr") {
-                if (t != "") {
-                    nbInstr2 = t;
+                else if (derniereBaliseOuverte == "nb_instr") {
+                    if (t != "") {
+                        nbInstr2 = t;
+                    }
                 }
-            }
-            else if (derniereBaliseOuverte == "nb_instr_sec") {
-                if (t != "") {
-                    nbInstrSec2 = t;
+                else if (derniereBaliseOuverte == "nb_instr_sec") {
+                    if (t != "") {
+                        nbInstrSec2 = t;
+                    }
                 }
-            }
-            else if (derniereBaliseOuverte == "listfacteurs" ) {
-            }
-            else if (derniereBaliseOuverte == "facteur" ) {
-                if (t != "") {
-                    listFacteursPremiers2.append(t);
+                else if (derniereBaliseOuverte == "listfacteurs" ) {
                 }
+                else if (derniereBaliseOuverte == "facteur" ) {
+                    if (t != "") {
+                        listFacteursPremiers2.append(t);
+                    }
+                }
+                break;
             }
+        default :
             break;
         }
     }
