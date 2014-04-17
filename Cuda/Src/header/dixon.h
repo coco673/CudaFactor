@@ -22,5 +22,4 @@ int calcul_v(int *premList, int sizePL, Couple_List R, int **matrix, int *noyau)
 Int_List_GPU *dixon(int n);
 Int_List_GPU *dixon3(int n);
 
-
 #endif

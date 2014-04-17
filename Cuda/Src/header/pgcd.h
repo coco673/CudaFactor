@@ -18,9 +18,9 @@
 #define N 2000
 
 
-int pgcd(int a, int b);
+/*int pgcd(int a, int b);
 char *convert(int a);
-char *equalNBit(char *res,int size);
+char *equalNBit(char *res,int size);*/
 uint64_t pgcdUint(uint64_t u, uint64_t v);
 
 

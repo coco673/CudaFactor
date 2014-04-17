@@ -2,13 +2,14 @@
 #include <unistd.h>
 #include "fillEns.h"
 #include <assert.h>
+
 #define CUDA_CHECK_RETURN(value) {											\
-	cudaError_t _m_cudaStat = value;										\
-	if (_m_cudaStat != cudaSuccess) {										\
-		fprintf(stderr, "Error %s at line %d in file %s\n",					\
-				cudaGetErrorString(_m_cudaStat), __LINE__, __FILE__);		\
-		exit(1);															\
-	} }
+		cudaError_t _m_cudaStat = value;										\
+		if (_m_cudaStat != cudaSuccess) {										\
+			fprintf(stderr, "Error %s at line %d in file %s\n",					\
+					cudaGetErrorString(_m_cudaStat), __LINE__, __FILE__);		\
+					exit(1);															\
+		} }
 int alea(int a, int b) {
 	return rand()%(b-a) +a;
 }
@@ -157,19 +158,19 @@ Int_List_GPU *dixon(int n) {
 	return Div;
 }
 int **matrix1DTo2D(int *matrix, int size) {
-        int **mat = new int*[size];
-        for(int i = 0;i< size ; i++){
-        	mat[i] = new int[size];
-        }
-        int row = 0, col = 0;
-        for (int i = 0; i < size * size; i++) {
-                mat[row][col] = matrix[i];
-                col = (col + 1) % size;
-                if (col == 0) {
-                        row++;
-                }
-        }
-        return mat;
+	int **mat = new int*[size];
+	for(int i = 0;i< size ; i++){
+		mat[i] = new int[size];
+	}
+	int row = 0, col = 0;
+	for (int i = 0; i < size * size; i++) {
+		mat[row][col] = matrix[i];
+		col = (col + 1) % size;
+		if (col == 0) {
+			row++;
+		}
+	}
+	return mat;
 }
 
 Int_List_GPU *dixon3(int n) {
@@ -200,8 +201,8 @@ Int_List_GPU *dixon3(int n) {
 	int *dev_rand;
 	int *dev_matrix;
 	int *dev_matrixMod;
-int *tmpmatrix = (int*) malloc(sizePL*sizePL * sizeof(int));
-int *tmpmatrixMod= (int*) malloc(sizePL*sizePL * sizeof(int));
+	int *tmpmatrix = (int*) malloc(sizePL*sizePL * sizeof(int));
+	int *tmpmatrixMod= (int*) malloc(sizePL*sizePL * sizeof(int));
 
 
 	//Allocations
@@ -233,7 +234,7 @@ int *tmpmatrixMod= (int*) malloc(sizePL*sizePL * sizeof(int));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_matrix,sizePL*sizePL*sizeof(int*)));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_matrixMod,sizePL*sizePL*sizeof(int)));
 
-		CUDA_CHECK_RETURN(cudaMemcpy(dev_premList,premList,sizePL*sizeof(int),cudaMemcpyHostToDevice));
+	CUDA_CHECK_RETURN(cudaMemcpy(dev_premList,premList,sizePL*sizeof(int),cudaMemcpyHostToDevice));
 
 	printf("entree dans Dixon\n");
 	while (produitDiv(*Div) != nbr) {
@@ -255,7 +256,7 @@ int *tmpmatrixMod= (int*) malloc(sizePL*sizePL * sizeof(int));
 
 		CUDA_CHECK_RETURN(cudaMemcpy(sizeR,dev_sizeR,sizeof(int),cudaMemcpyDeviceToHost));
 		printf("la taille de R %i\n",*sizeR);
-*sizeR=*sizeR-1;
+		*sizeR=*sizeR-1;
 		CUDA_CHECK_RETURN(cudaMemcpy(tmpC,dev_R, *sizeR * sizeof(Couple),cudaMemcpyDeviceToHost));
 		CUDA_CHECK_RETURN(cudaMemcpy(tmpmatrix,dev_matrix, sizePL*sizePL*sizeof(int),cudaMemcpyDeviceToHost));
 
@@ -270,8 +271,8 @@ int *tmpmatrixMod= (int*) malloc(sizePL*sizePL * sizeof(int));
 		}
 		printf("on arrive à gauss\n");
 		listNoyau = gaussjordan_noyau(matrixMod, sizePL);
-printf("ok gauss\n");
-int nbX= 0;
+		printf("ok gauss\n");
+		int nbX= 0;
 		while (listNoyau->list != NULL) {
 			printf("valeur nbX %i\n",nbX);
 			noyau = listNoyau->list->vec;
@@ -280,7 +281,7 @@ int nbX= 0;
 			printf("*-------------------------------------------*\n");
 			u = (calcul_u(*R, noyau, n));
 			printf("good U\n");
-printf("size PL %i\n",sizePL);
+			printf("size PL %i\n",sizePL);
 			for(int i = 0; i< sizePL ; i++){
 				printf("%i:: %i \n",noyau[i],i);
 			}
@@ -303,7 +304,7 @@ printf("size PL %i\n",sizePL);
 			listNoyau->list = listNoyau->list->suiv;
 			free(tmp);
 			free(noyau);
-nbX++;
+			nbX++;
 		}
 		for (int i = 0; i < sizePL; i++) {
 			free(matrix[i]);

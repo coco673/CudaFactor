@@ -45,6 +45,7 @@ void Attente::lancerExec() {
     printf("execution\n");
     text->clear();
     boolBoutonSuiv = false;
+<<<<<<< HEAD
     printf("methode : %d\n", model->getMethode());
     if (model->getMethode() == SAGE) {
         printf("methode == SAGE\n");
@@ -60,6 +61,12 @@ void Attente::lancerExec() {
 void Attente::execSAGE() {
     printf("ici\n");
    // std::stringstream strs;
+=======
+}
+
+void Attente::actualiseApresAffichage() {
+    /*
+>>>>>>> cb5f788e0814dea32fad2ff1cf264b7b48c0d6f7
     FILE * sage_output;
     std::ostringstream strs;
     int pres = 2000;
@@ -143,8 +150,12 @@ void Attente::execSAGE() {
         printf("linecount %i\n", line_count);
     }
     pclose(sage_output);
+<<<<<<< HEAD
     free(ret_str);
     free(tmp);
+=======
+    */
+>>>>>>> cb5f788e0814dea32fad2ff1cf264b7b48c0d6f7
 }
 
 void Attente::check() {
