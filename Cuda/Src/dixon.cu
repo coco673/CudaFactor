@@ -234,6 +234,9 @@ Int_List_GPU *dixonGPU(uint64_t n) {
 			index++;
 		}
 	}
+	if (nbr == 1) {
+		return Div;
+	}
 	if (Miller(nbr, 10)) {
 		addInt(&Div, nbr);
 		return Div;
