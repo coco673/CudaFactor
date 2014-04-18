@@ -20,6 +20,8 @@ int notIn(Int_List Div, uint64_t val);
 int calcul_u(Couple_List R, int *noyau);
 int calcul_v(uint64_t *premList, int sizePL, Couple_List R, int **matrix, int *noyau);
 Int_List_GPU *dixon(uint64_t n);
-Int_List_GPU *dixonGPU(uint64_t n);
+//Int_List_GPU *dixonGPU(uint64_t n);
+Int_List_GPU *factor(uint64_t n);
+Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int *ptr);
 
 #endif

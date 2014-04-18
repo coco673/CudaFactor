@@ -182,18 +182,58 @@ int **matrix1DTo2D(int *matrix, int size) {
 	return mat;
 }
 
-Int_List_GPU *dixonGPU(uint64_t n) {
-	//Declarations
+Int_List_GPU *mergeDiv(Int_List_GPU *src1, Int_List_GPU *src2) {
+	Int_List_GPU *result = createIntList();
+	for (int i = 0; i < src1->Size; i++) {
+		addInt(&result, src1->List[i]);
+	}
+	for (int i = 0; i < src2->Size; i++) {
+		addInt(&result, src2->List[i]);
+	}
+	return result;
+}
 
-	//int borne = sqrt(exp(sqrt(log(n)*log(log(n)))));
+Int_List_GPU *factor(uint64_t n) {
 	int borne = ceil(sqrt(exp(sqrt(2 * log(n) * log(log(n))))));
 	int sizePL;
 	int *premList = generatePrimeList(borne, &sizePL);
-	printf("taille liste : %i\n", sizePL);
-
 	CUDA_CHECK_RETURN(cudaMemcpyToSymbol(devPremList, premList, sizePL * sizeof(int), 0, cudaMemcpyHostToDevice));
 	int *ptr;
 	cudaGetSymbolAddress((void **)&ptr, devPremList);
+	Int_List_GPU *Div = createIntList();
+	uint64_t nbr = n;
+	int index = 0;
+	while(index < sizePL) {
+		if (nbr % premList[index] == 0) {
+			addInt(&Div, premList[index]);
+			nbr /= premList[index];
+		} else {
+			index++;
+		}
+	}
+	if (nbr == 1) {
+		return Div;
+	}
+	Int_List_GPU *tmpDiv;
+	float racine = sqrt(nbr);
+	if (ceil(racine) == racine) {
+		if (Miller((int) racine, 10)) {
+			addInt(&Div, (int) racine);
+			addInt(&Div, (int) racine);
+			return Div;
+		}
+		tmpDiv = dixonGPU(nbr, n, premList, sizePL, ptr);
+		return mergeDiv(tmpDiv, mergeDiv(Div, tmpDiv));
+	}
+	if (Miller(nbr, 10)) {
+		addInt(&Div, nbr);
+		return Div;
+	}
+	tmpDiv = dixonGPU(nbr, n, premList, sizePL, ptr);
+	return mergeDiv(Div, tmpDiv);
+}
+
+Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int *ptr) {
 	Couple_List *R = createCoupleList();
 	int * sizeR = (int *) malloc(sizeof(int));
 	Int_List_GPU *Div = createIntList();
@@ -202,7 +242,6 @@ Int_List_GPU *dixonGPU(uint64_t n) {
 	int **matrixMod;
 	int *noyau;
 	int u, v;
-	uint64_t nbr = n;
 	Vector_List *listNoyau;
 	VEC_ELEM *tmp;
 
@@ -223,30 +262,6 @@ Int_List_GPU *dixonGPU(uint64_t n) {
 
 	for (int i  = 0; i < sizePL; i++) {
 		matrixMod[i] = (int *) malloc(sizePL * sizeof(int));
-	}
-
-	int index = 0;
-	while(index < sizePL) {
-		if (nbr % premList[index] == 0) {
-			addInt(&Div, premList[index]);
-			nbr /= premList[index];
-		} else {
-			index++;
-		}
-	}
-	if (nbr == 1) {
-		return Div;
-	}
-	float racine = sqrt(nbr);
-	if (ceil(racine) == racine) {
-		if (Miller((int) racine, 10)) {
-			addInt(&Div, (int) racine);
-			addInt(&Div, (int) racine);
-		}
-	}
-	if (Miller(nbr, 10)) {
-		addInt(&Div, nbr);
-		return Div;
 	}
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_state,sizePL*sizeof(curandState_t)));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_R,sizePL*sizeof(Couple)));

@@ -115,6 +115,60 @@ __global__ void Generation(curandState_t *state,uint64_t nbr, uint64_t sqrtNBR,u
 }
 
 
+/*__global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,int sizeDiv,int * devPremList,int k,uint64_t *rand,uint64_t nbr,int *matrix){
+	//int tid = threadIdx.x + blockIdx.x * blockDim.x;
+	int tid=threadIdx.x+blockIdx.x;
+
+	__shared__ int sizeR;
+	int bsmooth= -1;
+	int present= -1;
+	uint64_t x = 0;
+	uint64_t y =  0;
+	int nbt = 0;
+	if(tid == 0){
+		sizeR = 0;
+	}
+	__syncthreads();
+	uint64_t sqrtNBR = (uint64_t) sqrtf(nbr);
+	do{
+		generate(state,rand,nbr,sqrtNBR);
+
+		x = rand[tid];
+		y = (x*x) % nbr;
+		if(devPremList == NULL ){
+			printf("PrimeList est NULL\n");
+		}
+		if(k <= 0 ){
+			printf("valeur de K <= 0 \n");
+		}
+
+		isBSmoothG(devPremList, k,y,&bsmooth);
+
+		isInEnsembleG(Div,y,sizeDiv,&present);
+		++nbt;
+
+		__syncthreads();
+
+	}while(!bsmooth || present);
+
+	__syncthreads();
+	R[tid].x = x;
+	R[tid].y = y;
+
+	atomicAdd(&sizeR,1);
+
+	int y1 = y;
+	for(int j = 0;j<k;j++){
+		while(y1%devPremList[j] == 0){
+			y1 = y1 / devPremList[j];
+			matrix[tid*k+j]=(matrix[tid*k+j]+1);
+		}
+	}
+
+	__syncthreads();
+	size[0] = sizeR;
+}*/
+
 __global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,int sizeDiv,int * devPremList,int k,uint64_t *rand,uint64_t nbr,int *matrix){
 	//int tid = threadIdx.x + blockIdx.x * blockDim.x;
 	int tid=threadIdx.x+blockIdx.x;
@@ -168,3 +222,4 @@ __global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,
 	__syncthreads();
 	size[0] = sizeR;
 }
+
