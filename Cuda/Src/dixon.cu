@@ -11,7 +11,7 @@
 					exit(1);															\
 		} }
 
-__constant__ int *devPremList;
+__device__ __constant__ int devPremList[1000];
 
 uint64_t alea(uint64_t a, uint64_t b) {
 	return rand()%(b-a) +a;
@@ -61,6 +61,9 @@ int calcul_v(int *premList, int sizePL, Couple_List R, int **matrix, int *noyau,
 }
 
 Int_List_GPU *dixon(int n) {
+	//timer
+
+
 	//Declarations
 
 	//int borne = sqrt(exp(sqrt(log(n)*log(log(n)))));
@@ -157,6 +160,9 @@ Int_List_GPU *dixon(int n) {
 	free(R);
 	free(premList);
 
+	//timer
+
+
 	return Div;
 }
 int **matrix1DTo2D(int *matrix, int size) {
@@ -183,7 +189,7 @@ Int_List_GPU *dixonGPU(uint64_t n) {
 	int sizePL;
 	int *premList = generatePrimeList(borne, &sizePL);
 	//int devPremList[sizePL];
-	CUDA_CHECK_RETURN(cudaMemcpyToSymbol(devPremList, premList, sizePL * sizeof(int)));
+	CUDA_CHECK_RETURN(cudaMemcpyToSymbol(devPremList, premList, sizePL * sizeof(int), 0, cudaMemcpyHostToDevice));
 	int *ptr;
 	cudaGetSymbolAddress((void **)&ptr, devPremList);
 	Couple_List *R = createCoupleList();

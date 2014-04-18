@@ -5,11 +5,15 @@
 int main(int argc, char **argv) {
 	Int_List_GPU *Div;
 	uint64_t n;
+	cudaEvent_t start, stop;
+	cudaEventCreate(&start);
+	cudaEventCreate(stop);
+	cudaEventRecord(start, 0);
 	if (argc > 1)
 		n = atoll(argv[1]);
 	else
-		n = 197 * 373;
-	//printf("Le nombre entré est %llu\n",n);
+		n = 1088934001;
+	printf("Le nombre entré est %llu\n",n);
 	if (n < 0) {
 		fprintf(stderr, "Le nombre entre est négatif, entrez un nombre >= 2!\n");
 		return EXIT_FAILURE;
@@ -23,6 +27,12 @@ int main(int argc, char **argv) {
 		Div = dixonGPU(n);
 	}
 	printIntList(*Div);
-	//printf("temps %f\n",tps);
+	cudaEventRecord(stop, 0);
+	cudaEventSynchronize(stop);
+	float elapsedTime;
+	cudaEventElapsedTime(&elapsedTime, start, stop);
+	printf("temps %f\n",elapsedTime);
+	cudaEventDestroy(start);
+	cudaEventDestroy(stop);
 	free(Div);
 }
