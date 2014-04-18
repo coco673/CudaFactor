@@ -8,8 +8,8 @@ int main(int argc, char **argv) {
 	if (argc > 1)
 		n = atoll(argv[1]);
 	else
-		n = 47 * 79;
-	printf("Le nombre entrée est %llu\n",n);
+		n = 197 * 373;
+	//printf("Le nombre entré est %llu\n",n);
 	if (n < 0) {
 		fprintf(stderr, "Le nombre entre est négatif, entrez un nombre >= 2!\n");
 		return EXIT_FAILURE;
@@ -23,5 +23,6 @@ int main(int argc, char **argv) {
 		Div = dixonGPU(n);
 	}
 	printIntList(*Div);
+	//printf("temps %f\n",tps);
 	free(Div);
 }

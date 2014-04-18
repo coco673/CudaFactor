@@ -170,15 +170,25 @@ __host__ void resetIntList(Int_List_GPU **list) {
 
 __device__ void resetIntListGPU(uint64_t **list, uint64_t size) {
 	if (blockIdx.x == 0) {
-		for (uint64_t i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++) {
 			removeLastInt(list, size);
 		}
 	}
 }
 
 __host__ void printIntList(Int_List_GPU l) {
-	printf("Taille de la liste : %i\n", l.Size);
-	for (uint64_t i = 0; i < l.Size; i++) {
-		printf("valeur : %ld\n", getVal(l, i));
+	printf("%i\n", l.Size);
+	char* tmp = (char *) malloc (1000*sizeof(char));
+	char *tmptmp = (char *) malloc (1000*sizeof(char));
+	sprintf(tmp,"%s ","facteurs");
+	for (int i = 0; i < l.Size; i++) {
+		//printf("valeur : %ld\n", getVal(l, i));
+		tmptmp;
+		sprintf(tmptmp," %i", getVal(l, i));
+		strcat(tmp, tmptmp);
+		sprintf(tmptmp,"%s", "");
 	}
+	printf("%s\n",tmp);
+	free(tmptmp);
+	free(tmp);
 }

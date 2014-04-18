@@ -36,16 +36,16 @@ C_DEPS += \
 Test/%.o: ../Test/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: NVCC Compiler'
-	/usr/local/cuda-5.5/bin/nvcc -I"/home/etendard/CudaFactor/Cuda/Src/header" -I"/home/etendard/CudaFactor/Cuda/Test" -G -g -O0 -gencode arch=compute_20,code=sm_20 -odir "Test" -M -o "$(@:%.o=%.d)" "$<"
-	/usr/local/cuda-5.5/bin/nvcc -I"/home/etendard/CudaFactor/Cuda/Src/header" -I"/home/etendard/CudaFactor/Cuda/Test" -G -g -O0 --compile  -x c -o  "$@" "$<"
+	/opt/cuda/bin/nvcc -G -g -O0 -v -gencode arch=compute_20,code=sm_20  -odir "Test" -M -o "$(@:%.o=%.d)" "$<"
+	/opt/cuda/bin/nvcc -G -g -O0 -v --compile  -x c -o  "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
 Test/%.o: ../Test/%.cu
 	@echo 'Building file: $<'
 	@echo 'Invoking: NVCC Compiler'
-	/usr/local/cuda-5.5/bin/nvcc -I"/home/etendard/CudaFactor/Cuda/Src/header" -I"/home/etendard/CudaFactor/Cuda/Test" -G -g -O0 -gencode arch=compute_20,code=sm_20 -odir "Test" -M -o "$(@:%.o=%.d)" "$<"
-	/usr/local/cuda-5.5/bin/nvcc --device-c -G -I"/home/etendard/CudaFactor/Cuda/Src/header" -I"/home/etendard/CudaFactor/Cuda/Test" -O0 -g -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_20  -x cu -o  "$@" "$<"
+	/opt/cuda/bin/nvcc -G -g -O0 -v -gencode arch=compute_20,code=sm_20  -odir "Test" -M -o "$(@:%.o=%.d)" "$<"
+	/opt/cuda/bin/nvcc --device-c -G -O0 -g -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_20 -v  -x cu -o  "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

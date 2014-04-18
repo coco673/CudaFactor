@@ -42,13 +42,13 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: CudaFactor secondary-outputs
+all: CudaFactor
 
 # Tool invocations
 CudaFactor: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: NVCC Linker'
-	/usr/local/cuda-5.5/bin/nvcc --cudart static --relocatable-device-code=true -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_20 -link -o  "CudaFactor" $(OBJS) $(USER_OBJS) $(LIBS)
+	/opt/cuda/bin/nvcc --cudart static --relocatable-device-code=true -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_20 -link -o  "CudaFactor" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -56,8 +56,6 @@ CudaFactor: $(OBJS) $(USER_OBJS)
 clean:
 	-$(RM) $(CU_DEPS)$(OBJS)$(C++_DEPS)$(C_DEPS)$(CC_DEPS)$(CPP_DEPS)$(EXECUTABLES)$(CXX_DEPS)$(C_UPPER_DEPS) CudaFactor
 	-@echo ' '
-
-secondary-outputs: $(CUBINS)
 
 .PHONY: all clean dependents
 .SECONDARY:

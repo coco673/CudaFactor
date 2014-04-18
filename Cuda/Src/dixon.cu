@@ -242,7 +242,7 @@ Int_List_GPU *dixonGPU(uint64_t n) {
 
 	//CUDA_CHECK_RETURN(cudaMemcpy(dev_premList,premList,sizePL*sizeof(int),cudaMemcpyHostToDevice));
 
-	printf("entree dans Dixon\n");
+	//printf("entree dans Dixon\n");
 	while (produitDiv(*Div) != nbr) {
 		CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_Div,Div->Size*sizeof(int)));
 		CUDA_CHECK_RETURN(cudaMemset(dev_state,0,sizePL*sizeof(curandState_t)));
