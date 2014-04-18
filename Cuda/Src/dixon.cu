@@ -1,6 +1,6 @@
-#include "dixon.h"
+#include "header/dixon.h"
 #include <unistd.h>
-#include "fillEns.h"
+#include "header/fillEns.h"
 #include <assert.h>
 
 #define CUDA_CHECK_RETURN(value) {											\
@@ -44,7 +44,7 @@ int calcul_u(Couple_List R, int *noyau, int n) {
 	return res;
 }
 
-int calcul_v(uint64_t *premList, int sizePL, Couple_List R, int **matrix, int *noyau, int n) {
+int calcul_v(int *premList, int sizePL, Couple_List R, int **matrix, int *noyau, int n) {
 	int res = 1;
 	int somme;
 	for (int i = 0; i < sizePL; i++) {
@@ -64,9 +64,9 @@ Int_List_GPU *dixon(int n) {
 	//Declarations
 
 	//int borne = sqrt(exp(sqrt(log(n)*log(log(n)))));
-	uint64_t borne = ceil(sqrt(exp(sqrt(2 * log(n) * log(log(n))))));
+	int borne = ceil(sqrt(exp(sqrt(2 * log(n) * log(log(n))))));
 	int sizePL;
-	uint64_t *premList = generatePrimeList(borne, &sizePL);
+	int *premList = generatePrimeList(borne, &sizePL);
 	Couple_List *R = createCoupleList();
 
 	Int_List_GPU *Div = createIntList();
@@ -179,11 +179,11 @@ Int_List_GPU *dixonGPU(uint64_t n) {
 	//Declarations
 
 	//int borne = sqrt(exp(sqrt(log(n)*log(log(n)))));
-	uint64_t borne = ceil(sqrt(exp(sqrt(2 * log(n) * log(log(n))))));
+	int borne = ceil(sqrt(exp(sqrt(2 * log(n) * log(log(n))))));
 	int sizePL;
-	uint64_t *premList = generatePrimeList(borne, &sizePL);
+	int *premList = generatePrimeList(borne, &sizePL);
 	//int devPremList[sizePL];
-	CUDA_CHECK_RETURN(cudaMemcpyToSymbol(devPremList, premList, sizePL * sizeof(uint64_t)));
+	CUDA_CHECK_RETURN(cudaMemcpyToSymbol(devPremList, premList, sizePL * sizeof(int)));
 	int *ptr;
 	cudaGetSymbolAddress((void **)&ptr, devPremList);
 	Couple_List *R = createCoupleList();

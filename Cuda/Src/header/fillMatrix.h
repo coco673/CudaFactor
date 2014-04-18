@@ -6,6 +6,6 @@
 #include <stdint.h>
 #include "coupleList.h"
 
-int **fillMatrix(uint64_t *premList, int sizePL, const Couple_List *R);
+int **fillMatrix(int *premList, int sizePL, const Couple_List *R);
 
 #endif

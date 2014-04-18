@@ -1,4 +1,4 @@
-#include "prime.h"
+#include "header/prime.h"
 /*
 // Cette fonctions elimine les multiples de chaques nombres
 // Ce qui a pour effet d'enlever les nombres non premiers
@@ -127,7 +127,7 @@ __global__ void eratosthene(int *list) {
 	}
 }
 
-uint64_t *generatePrimeList(uint64_t borne, int *size) {
+int *generatePrimeList(int borne, int *size) {
 	int *list = (int *) malloc((borne - 1) * sizeof(int));
 	int *dev_list;
 	int cures = cudaMalloc((int **)&dev_list, (borne - 1) * sizeof(int));
@@ -148,7 +148,7 @@ uint64_t *generatePrimeList(uint64_t borne, int *size) {
 			(*size)++;
 		}
 	}
-	uint64_t *res = (uint64_t *) malloc((*size) * sizeof(uint64_t));
+	int *res = (int *) malloc((*size) * sizeof(int));
 	for (int i = 0, j = 0; i < (borne - 1); i++) {
 		if (list[i] != 0) {
 			res[j] = list[i];

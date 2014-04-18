@@ -1,4 +1,4 @@
-#include "rabin-miller.h"
+#include "header/rabin-miller.h"
 
 int modulo(int a,int b,int c){
     long long x=1,y=a; // long long is taken to avoid overflow of intermediate results

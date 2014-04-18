@@ -1,4 +1,4 @@
-#include "coupleList.h"
+#include "header/coupleList.h"
 
 __device__ __host__ Couple_List *createCoupleList() {
 	Couple_List *list = (Couple_List *) malloc(sizeof(Couple_List));

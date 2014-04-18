@@ -1,4 +1,4 @@
-#include "vector.h"
+#include "header/vector.h"
 
 __device__ __host__ Vector_List *createVectorList() {
 	Vector_List *list = (Vector_List *) malloc(sizeof(Vector_List));

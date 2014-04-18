@@ -1,4 +1,4 @@
-#include "gauss.h"
+#include "header/gauss.h"
 
 
 void print_matrix(int **matrix, int size) {

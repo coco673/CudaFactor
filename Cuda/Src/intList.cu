@@ -1,4 +1,4 @@
-#include "intList.h"
+#include "header/intList.h"
 
 /*
 __device__ __host__ Int_List *createIntList() {

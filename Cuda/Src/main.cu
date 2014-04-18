@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "dixon.h"
+#include "header/dixon.h"
 
 int main(int argc, char **argv) {
 	Int_List_GPU *Div;
@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
 	if (argc > 1)
 		n = atoll(argv[1]);
 	else
-		n = 169;
+		n = 47 * 79;
 	printf("Le nombre entrée est %llu\n",n);
 	if (n < 0) {
 		fprintf(stderr, "Le nombre entre est négatif, entrez un nombre >= 2!\n");

@@ -5,8 +5,9 @@
  *      Author: groupeDev
  */
 #include <stdio.h>
-#include "fillEns.h"
-#include "prime.h"
+#include "header/fillEns.h"
+#include "header/intList.h"
+#include "header/prime.h"
 #include <assert.h>
 #define N 1000
 

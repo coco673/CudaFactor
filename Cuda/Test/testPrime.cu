@@ -5,8 +5,8 @@
 
 int TestPrime() {
 	int k;
-	uint64_t borne = 100;
-	uint64_t *res = generatePrimeList(borne,&k);
+	int borne = 100;
+	int *res = generatePrimeList(borne,&k);
 
 
 

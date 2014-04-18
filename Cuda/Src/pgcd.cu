@@ -5,9 +5,7 @@
  *      Author: tony
  */
 
-
-
-#include "pgcd.h"
+#include "header/pgcd.h"
 #include <string.h>
 
 #include <time.h>

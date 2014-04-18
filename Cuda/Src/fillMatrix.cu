@@ -1,6 +1,6 @@
-#include "fillMatrix.h"
+#include "header/fillMatrix.h"
 
-int **fillMatrix(uint64_t *premList, int sizePL, const Couple_List *R) {
+int **fillMatrix(int *premList, int sizePL, const Couple_List *R) {
 	int **matrix = (int **) malloc(R->size * sizeof(int *));
 	for (uint64_t i  = 0; i < R->size; i++) {
 		matrix[i] = (int *) malloc(sizePL * sizeof(int));
