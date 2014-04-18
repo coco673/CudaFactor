@@ -43,14 +43,10 @@ private:
     QString nombre1;
     QList<QString> listFacteursPremiers1;
     QString temps1;
-    QString nbInstr1;
-    QString nbInstrSec1;
     QString methode2;
     QString nombre2;
     QList<QString> listFacteursPremiers2;
     QString temps2;
-    QString nbInstr2;
-    QString nbInstrSec2;
 
 };
 

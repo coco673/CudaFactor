@@ -116,61 +116,34 @@ bool comparaisonXml::isComparable() {
 void comparaisonXml::comparaison() {
     text1->clear();
     text2->clear();
-    QString backgroundGreen = "color:green";
-    QString backgroundRed = "color:red";
+    QString colorGreen = "color:green; font-size: 20px;";
+    QString colorRed = "color:red; font-size: 20px;";
+    QString taille = "font-size: 20px;";
 
     if (nombre1 != "") {
-        text1->insertPlainText("nombre = "+nombre1+"\n");
+        text1->insertHtml(QString("<span style=\"%1\">nombre = %2</span><br />").arg(taille, nombre1));
     }
     if (nombre2 != "") {
-        text2->insertPlainText("nombre = "+nombre1+"\n");
+        text2->insertHtml(QString("<span style=\"%1\">nombre = %2</span><br />").arg(taille, nombre2));
     }
     if (methode1 != "") {
-        text1->insertPlainText("methode = "+methode1+"\n");
+        text1->insertHtml(QString("<span style=\"%1\">methode = %2</span><br />").arg(taille, methode1));
     }
     if (methode2 != "") {
-        text2->insertPlainText("methode = "+methode2+"\n");
+        text2->insertHtml(QString("<span style=\"%1\">methode = %2</span><br />").arg(taille, methode2));
     }
     if (temps1 != "" && temps2 != "") {
-        text1->insertPlainText("temps = ");
-        text2->insertPlainText("temps = ");
+        text1->insertHtml(QString("<span style=\"%1\">temps = </span>").arg(taille));
+        text2->insertHtml(QString("<span style=\"%1\">nombre = </span>").arg(taille));
         if (temps1.toDouble() < temps2.toDouble()) {
-            text1->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(backgroundGreen, temps1));
-            text2->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(backgroundRed, temps2));
+            text1->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(colorGreen, temps1));
+            text2->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(colorRed, temps2));
         } else if (temps1.toDouble() > temps2.toDouble()) {
-            text1->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(backgroundRed, temps1));
-            text2->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(backgroundGreen, temps2));
+            text1->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(colorRed, temps1));
+            text2->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(colorGreen, temps2));
         } else {
-            text1->insertPlainText(temps1+"\n");
-            text2->insertPlainText(temps2+"\n");
-        }
-    }
-    if (nbInstr1 != "" && nbInstr2 != "") {
-        text1->insertPlainText("nombre d'intructions = ");
-        text2->insertPlainText("nombre d'intructions = ");
-        if (nbInstr1.toDouble() < nbInstr2.toDouble()) {
-            text1->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(backgroundGreen, nbInstr1));
-            text2->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(backgroundRed, nbInstr2));
-        } else if (nbInstr1.toDouble() > nbInstr2.toDouble()) {
-            text1->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(backgroundRed, nbInstr1));
-            text2->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(backgroundGreen, nbInstr2));
-        } else {
-            text1->insertPlainText(nbInstr1+"\n");
-            text2->insertPlainText(nbInstr2+"\n");
-        }
-    }
-    if (nbInstrSec1 != "" && nbInstrSec2 != "") {
-        text1->insertPlainText("nombre d'intructions par seconde = ");
-        text2->insertPlainText("nombre d'intructions par seconde = ");
-        if (nbInstrSec1.toDouble() > nbInstrSec2.toDouble()) {
-            text1->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(backgroundGreen, nbInstrSec1));
-            text2->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(backgroundRed, nbInstrSec2));
-        } else if (nbInstrSec1.toDouble() < nbInstrSec2.toDouble()) {
-            text1->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(backgroundRed, nbInstrSec1));
-            text2->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(backgroundGreen, nbInstrSec2));
-        } else {
-            text1->insertPlainText(nbInstrSec1+"\n");
-            text2->insertPlainText(nbInstrSec2+"\n");
+            text1->insertHtml(temps1+"\n");
+            text2->insertHtml(temps2+"\n");
         }
     }
     if (listFacteursPremiers1.length() != 0) {
@@ -179,7 +152,7 @@ void comparaisonXml::comparaison() {
             s += listFacteursPremiers1[i]+", ";
         }
         s += listFacteursPremiers1[listFacteursPremiers1.length()-1];
-        text1->insertPlainText(s);
+        text1->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(taille, s));
     }
     if (listFacteursPremiers2.length() != 0) {
         QString s = "liste des facteurs : ";
@@ -187,28 +160,23 @@ void comparaisonXml::comparaison() {
             s += listFacteursPremiers2[i]+", ";
         }
         s += listFacteursPremiers1[listFacteursPremiers2.length()-1];
-        text2->insertPlainText(s);
+        text2->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(taille, s));
     }
 }
 
 void comparaisonXml::remplirText1() {
     text1->clear();
+    QString taille = "font-size: 20px;";
 
     QString s = "";
     if (nombre1 != "") {
-        s += "nombre = "+nombre1+"\n";
+        s += "nombre = "+nombre1+"<br />";
     }
     if (methode1 != "") {
-        s += "methode = "+methode1+"\n";
+        s += "methode = "+methode1+"<br />";
     }
     if (temps1 != "") {
-        s += "temps = "+temps1+"\n";
-    }
-    if (nbInstr1 != "") {
-        s += "nombre d'intructions = "+nbInstr1+"\n";
-    }
-    if (nbInstrSec1 != "") {
-        s += "nombre d'intructions par seconde = "+nbInstrSec1+"\n";
+        s += "temps = "+temps1+"<br />";
     }
     if (listFacteursPremiers1.length() != 0) {
         s += "liste des facteurs : ";
@@ -217,26 +185,21 @@ void comparaisonXml::remplirText1() {
         }
         s += listFacteursPremiers1[listFacteursPremiers1.length()-1];
     }
-    text1->setPlainText(s);
+    text1->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(taille, s));
 }
 
 void comparaisonXml::remplirText2() {
-
+    text2->clear();
+    QString taille = "font-size: 20px;";
     QString s = "";
     if (nombre2 != "") {
-        s += "nombre = "+nombre2+"\n";
+        s += "nombre = "+nombre2+"<br />";
     }
     if (methode2 != "") {
-        s += "methode = "+methode2+"\n";
+        s += "methode = "+methode2+"<br />";
     }
     if (temps2 != "") {
-        s += "temps = "+temps2+"\n";
-    }
-    if (nbInstr2 != "") {
-        s += "nombre d'intructions = "+nbInstr2+"\n";
-    }
-    if (nbInstrSec2 != "") {
-        s += "nombre d'intructions par seconde = "+nbInstrSec2+"\n";
+        s += "temps = "+temps2+"<br />";
     }
     if (listFacteursPremiers2.length() != 0) {
         s += "liste des facteurs : ";
@@ -245,7 +208,7 @@ void comparaisonXml::remplirText2() {
         }
         s += listFacteursPremiers2[listFacteursPremiers2.length()-1];
     }
-    text2->setPlainText(s);
+    text2->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(taille, s));
 }
 
 void comparaisonXml::lecturefichierXML1() {
@@ -290,16 +253,6 @@ while (!reader.atEnd())
                 else if (derniereBaliseOuverte == "temps") {
                     if (t != "") {
                         temps1 = t;
-                    }
-                }
-                else if (derniereBaliseOuverte == "nb_instr") {
-                    if (t != "") {
-                        nbInstr1 = t;
-                    }
-                }
-                else if (derniereBaliseOuverte == "nb_instr_sec") {
-                    if (t != "") {
-                        nbInstrSec1 = t;
                     }
                 }
                 else if (derniereBaliseOuverte == "listfacteurs" ) {
@@ -361,16 +314,6 @@ while (!reader.atEnd())
                         temps2 = t;
                     }
                 }
-                else if (derniereBaliseOuverte == "nb_instr") {
-                    if (t != "") {
-                        nbInstr2 = t;
-                    }
-                }
-                else if (derniereBaliseOuverte == "nb_instr_sec") {
-                    if (t != "") {
-                        nbInstrSec2 = t;
-                    }
-                }
                 else if (derniereBaliseOuverte == "listfacteurs" ) {
                 }
                 else if (derniereBaliseOuverte == "facteur" ) {
@@ -393,14 +336,10 @@ void comparaisonXml::actualiser() {
     nombre1 = "";
     listFacteursPremiers1.clear();
     temps1 = "";
-    nbInstr1 = "";
-    nbInstrSec1 = "";
     methode2 = "";
     nombre2 = "";
     listFacteursPremiers2.clear();
     temps2 = "";
-    nbInstr2 = "";
-    nbInstrSec2 = "";
     labelErreur->hide();
 }
 

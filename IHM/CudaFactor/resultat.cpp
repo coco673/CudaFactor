@@ -74,14 +74,6 @@ void Resultat::remplirText() {
     stream << model->getTempsExecution();
     QString tps = QString::fromStdString(stream.str());
 
-    stream.str("");
-    stream << model->getNbreInstruction();
-    QString nbinst = QString::fromStdString(stream.str());
-
-    stream.str("");
-    stream << model->getNbreInstrParSec();
-    QString nbinstsec = QString::fromStdString(stream.str());
-
     QString listfact = "aucun";
     if (model->getListFacteursPremiers().length() > 0) {
         listfact = "";
@@ -99,9 +91,7 @@ void Resultat::remplirText() {
     }
     QString s = "nombre = "+nbr+"\n"
             +"methode = "+meth+"\n"
-            +"temps = "+tps+"\n"
-            +"nombre d'instructions = "+nbinst+"\n"
-            +"nombre d'instructions par seconde = "+nbinstsec+"\n"
+            +"temps (en sec)= "+tps+"\n"
             +"liste des facteurs : "+listfact;
 
     text->setPlainText(s);
@@ -140,13 +130,6 @@ void Resultat::creerXml() {
         QString tps = QString::fromStdString(stream.str());
         bool ok;
         printf("getTpsExec() %f\n",tps.toDouble(&ok));
-        stream.str("");
-        stream << model->getNbreInstruction();
-        QString nbinst = QString::fromStdString(stream.str());
-
-        stream.str("");
-        stream << model->getNbreInstrParSec();
-        QString nbinstsec = QString::fromStdString(stream.str());
 
         QXmlStreamWriter out(&file);
         out.setAutoFormatting(true);
@@ -161,12 +144,6 @@ void Resultat::creerXml() {
         out.writeStartElement("temps");
         out.writeCharacters(tps);
         out.writeEndElement(); //</temps>
-        out.writeStartElement("nb_instr");
-        out.writeCharacters(nbinst);
-        out.writeEndElement(); //</nb_instr>
-        out.writeStartElement("nb_instr_sec");
-        out.writeCharacters(nbinstsec);
-        out.writeEndElement(); //</nb_instr_sec>
         if (model->getListFacteursPremiers().length() > 0) {
             out.writeStartElement("listfacteurs");
             for (int i=0; i < model->getListFacteursPremiers().length(); i++) {

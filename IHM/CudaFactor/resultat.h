@@ -32,8 +32,6 @@ private:
     QString nombre;
     QList<QString> listFacteursPremiers;
     QString temps;
-    QString nbInstr;
-    QString nbInstrSec;
     QLabel * label;
     QString fileName;
     QPushButton * sauvegarder;
