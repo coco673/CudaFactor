@@ -73,14 +73,14 @@ def factorDixon(n,h) :
 	while i < h :
 		if gcd(a,n) == a : 
 				#print 'TROUVEa'
-				print "facteurs a : ", a
+				#print "facteurs a : ", a
 				div.append(a)
 				return a
 	if n.jacobi(a) == 1:
 		li.append(a)
 		i = i+1
 		a = next_prime(a)
-	print "li : ", li
+	#print "li : ", li
 	N = Integers(n)
 	j = 0
 	liB = []
@@ -96,13 +96,13 @@ def factorDixon(n,h) :
 	s = 1
 	boo = 1
 	lim = n // 10
-	print "lim : ",lim
+	#print "lim : ",lim
 	lam = lim
 	while j < h+1+off and s < n-1 :
 		if r == lam :
 			s = s + 1
 			rd = ceil(sqrt(s*n,prec=4*nn))
-			print "s : ", s
+			#print "s : ", s
 			r = 0
 			lam = lim // s^2
 		if boo == 0 :
@@ -112,13 +112,13 @@ def factorDixon(n,h) :
 		gc = gcd(Integer(b),n)
 		if gc != 1:
 			#print 'TROUVEb'
-			print "facteur b : gcd", gc
-			div.append(gc)
+			#print "facteur b : gcd", gc
+			#div.append(gc)
 			return gc
 		b2 = b * b
 		ret = tstcd(b2,li,j)
 		if ret == 0 :
-			print 'AAAAA',r
+			#print 'AAAAA',r
 			if boo == 0 :
 				liB.append(rd+r)
 			else:
@@ -132,13 +132,13 @@ def factorDixon(n,h) :
 	return liB
 
 def tstcd2(bl,h) :
-		global tb, div
-		for i in range(h) :
-				ret = sum(tb[i,j] for j in bl) % 2
-				if ret != 0:
-						#div.append(ret)
-						return ret
-		return 0
+	global tb, div
+	for i in range(h) :
+		ret = sum(tb[i,j] for j in bl) % 2
+		if ret != 0:
+			#div.append(ret)
+			return ret
+	return 0
 
 def searchRoot(n,liB,h):
 	global tb,off, div
@@ -147,18 +147,18 @@ def searchRoot(n,liB,h):
 	mbl = (ma.right_kernel()).basis()
 	for i in range(len(mbl)) :
 		bl = []
-		print "mbl[",i,"] : ",mbl[i]
+		#print "mbl[",i,"] : ",mbl[i]
 		for j in range(len(mbl[i])):
 			if (mbl[i])[j] == 1:
 				bl.append(j)
 				ret1 = cgr(n,liB,bl)
 				if ret1!=-1:
-					print "bl : (searchroot) : ",bl
+					#print "bl : (searchroot) : ",bl
 					div.append(ret1) 
 					return ret1
-				else:
-					print "bl : (searchroot) : ",bl
-					print'CONTINUE'
+				#else:
+					#print "bl : (searchroot) : ",bl
+					#print'CONTINUE'
 	return -1
 
 li = []
@@ -181,12 +181,12 @@ def cgr(n,liB,res1):
 		for j in res1:
 			ad+=tb[k,j]
 		cg2 *= i ^ (ad / 2)
-	cg2 = cg2 % n
-	k = k + 1
+		cg2 = cg2 % n
+		k = k + 1
 	ret = gcd(n,cg2 + cg1)
 	if ret != n and ret != 1 :
 		#print 'TROUVE'
-		div.append(ret)
+		#div.append(ret)
 		return ret
 	else:
 		return -1

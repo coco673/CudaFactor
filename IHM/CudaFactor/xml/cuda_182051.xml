@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rapport>
+    <nombre>182051</nombre>
+    <methode>CUDA</methode>
+    <temps>24.5877</temps>
+    <nb_instr>0</nb_instr>
+    <nb_instr_sec>0</nb_instr_sec>
+    <listfacteurs>
+        <facteur>593</facteur>
+        <facteur>307</facteur>
+    </listfacteurs>
+</rapport>
