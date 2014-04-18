@@ -143,7 +143,7 @@ int *generatePrimeList(int borne, int *size) {
 		exit(1);
 	}
 	*size = 0;
-	for (uint64_t i = 0; i < (borne - 1); i++) {
+	for (int i = 0; i < (borne - 1); i++) {
 		if (list[i] != 0) {
 			(*size)++;
 		}
