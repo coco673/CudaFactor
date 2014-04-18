@@ -19,7 +19,6 @@ q = Integer(next_prime(randint(2,lm)))
 
 t = cputime(subprocesses=True)
 n = Integer(sys.argv[1])
-div = []
 h = Integer(round(sqrt(exp(sqrt(log(n)*log(log(n))))).n())) # borne optimale
 off = 0
 off = off / 2
@@ -31,7 +30,7 @@ tb = matrix(h,h+1+off)
 
 
 def tstcd(b2,li,j):
-	global tb,n,div
+	global tb,n
 	r = Integer(b2)
 	i = 0
 	l = []
@@ -43,18 +42,18 @@ def tstcd(b2,li,j):
 		else :
 			bl = 0
 			np = (0,0)
-		while (r >= el) :
-			av = r
-		np = r.quo_rem(el)
-		if np[1] != 0 :
-			r = av
-			break
-		else:
-			r = np[0]
-			tb[i,j]=tb[i,j]+1
-			if bl == 0 :
-				l.append(i)
-				bl = 1
+			while (r >= el) :
+				av = r
+				np = r.quo_rem(el)
+				if np[1] != 0 :
+					r = av
+					break
+				else:
+					r = np[0]
+					tb[i,j]=tb[i,j]+1
+					if bl == 0 :
+						l.append(i)
+						bl = 1
 		i = i + 1
 	if r != 1 :
 		for i in l :
@@ -64,7 +63,7 @@ def tstcd(b2,li,j):
 		return 0
 
 def factorDixon(n,h) :
-	global tb,li,off,div
+	global tb,li,off
 	if gcd(2,n) != 1 :
 		return 2
 	li = [-1,2]
@@ -72,13 +71,12 @@ def factorDixon(n,h) :
 	i=2
 	while i < h :
 		if gcd(a,n) == a : 
-				#print 'TROUVEa'
-				#print "facteurs a : ", a
-				div.append(a)
-				return a
-	if n.jacobi(a) == 1:
-		li.append(a)
-		i = i+1
+			#print 'TROUVEa'
+			#print "facteurs a : ", a
+			return a
+		if n.jacobi(a) == 1:
+			li.append(a)
+			i = i+1
 		a = next_prime(a)
 	#print "li : ", li
 	N = Integers(n)
@@ -113,7 +111,6 @@ def factorDixon(n,h) :
 		if gc != 1:
 			#print 'TROUVEb'
 			#print "facteur b : gcd", gc
-			#div.append(gc)
 			return gc
 		b2 = b * b
 		ret = tstcd(b2,li,j)
@@ -132,16 +129,15 @@ def factorDixon(n,h) :
 	return liB
 
 def tstcd2(bl,h) :
-	global tb, div
+	global tb
 	for i in range(h) :
 		ret = sum(tb[i,j] for j in bl) % 2
 		if ret != 0:
-			#div.append(ret)
 			return ret
 	return 0
 
 def searchRoot(n,liB,h):
-	global tb,off, div
+	global tb,off
 
 	ma = matrix(GF(2),map(lambda t:t%2,tb))
 	mbl = (ma.right_kernel()).basis()
@@ -151,21 +147,20 @@ def searchRoot(n,liB,h):
 		for j in range(len(mbl[i])):
 			if (mbl[i])[j] == 1:
 				bl.append(j)
-				ret1 = cgr(n,liB,bl)
-				if ret1!=-1:
-					#print "bl : (searchroot) : ",bl
-					div.append(ret1) 
-					return ret1
-				#else:
-					#print "bl : (searchroot) : ",bl
-					#print'CONTINUE'
+		ret1 = cgr(n,liB,bl)
+		if ret1!=-1:
+			#print "bl : (searchroot) : ",bl
+			return ret1
+		#else:
+			#print "bl : (searchroot) : ",bl
+			#print'CONTINUE'
 	return -1
 
 li = []
 liB = factorDixon(n,h)
 #print 'liB : ', liB
 def cgr(n,liB,res1):
-	global li,tb, div
+	global li,tb
 
 	if res1 == -1:
 		return -1
@@ -186,7 +181,6 @@ def cgr(n,liB,res1):
 	ret = gcd(n,cg2 + cg1)
 	if ret != n and ret != 1 :
 		#print 'TROUVE'
-		#div.append(ret)
 		return ret
 	else:
 		return -1
@@ -196,13 +190,11 @@ def cgr(n,liB,res1):
 
 div = [] 
 
-if type(liB) == list :
-		
+if type(liB) == list :		
 	#print 1
 	#print "tb : ",tb
 	ret=searchRoot(n,liB,h)
 	#print "liB : ",liB
-	div.append(ret)
 	#print "ret final : ", ret
 	div.append(ret)
 	div.append(n/ret)
