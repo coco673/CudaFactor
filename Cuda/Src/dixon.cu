@@ -237,6 +237,13 @@ Int_List_GPU *dixonGPU(uint64_t n) {
 	if (nbr == 1) {
 		return Div;
 	}
+	float racine = sqrt(nbr);
+	if (ceil(racine) == racine) {
+		if (Miller((int) racine, 10)) {
+			addInt(&Div, (int) racine);
+			addInt(&Div, (int) racine);
+		}
+	}
 	if (Miller(nbr, 10)) {
 		addInt(&Div, nbr);
 		return Div;
