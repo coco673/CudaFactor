@@ -17,6 +17,7 @@ public:
     void check();
     void actualiseApresAffichage();
     void execSAGE();
+    void execCUDA();
 
 public slots :
     void lancerExec();

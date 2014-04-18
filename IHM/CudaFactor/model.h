@@ -18,8 +18,8 @@ public:
     void setNombre(long double);
     QList<long double> getListFacteursPremiers();
     void setListFacteursPremiers(QList<long double> l);
-    int getTempsExecution();
-    void setTempsExecution(int t);
+    double getTempsExecution();
+    void setTempsExecution(double t);
     int getNbreInstruction();
     double getNbreInstrParSec();
     void setNbreInstruction(int nbrInstruction);
@@ -30,7 +30,7 @@ private:
     int methode;
     long double nombre;
     QList<long double> listFacteursPremiers;
-    int temps;
+    double temps;
     QString titre;
     int nbre_instructions;
 

@@ -115,7 +115,7 @@ Frame * FenetrePrincipale::getFrameCourante() {
     } else if (modelFen->getChxCompFact() == Comparaison){
         return listFramesComp[modelFen->getPage()-listFramesAvant.size()];
     } else {
-        NULL;
+        return NULL;
     }
 }
 

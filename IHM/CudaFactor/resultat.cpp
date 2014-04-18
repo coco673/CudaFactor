@@ -138,7 +138,8 @@ void Resultat::creerXml() {
         stream.str("");
         stream << model->getTempsExecution();
         QString tps = QString::fromStdString(stream.str());
-
+        bool ok;
+        printf("getTpsExec() %f\n",tps.toDouble(&ok));
         stream.str("");
         stream << model->getNbreInstruction();
         QString nbinst = QString::fromStdString(stream.str());
