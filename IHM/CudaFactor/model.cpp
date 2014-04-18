@@ -20,7 +20,7 @@ QList<long double> Model::getListFacteursPremiers() {
     return listFacteursPremiers;
 }
 
-int Model::getTempsExecution() {
+double Model::getTempsExecution() {
     return temps;
 }
 
@@ -36,7 +36,7 @@ void Model::setListFacteursPremiers(QList<long double> l) {
     listFacteursPremiers = l;
 }
 
-void Model::setTempsExecution(int t) {
+void Model::setTempsExecution(double t) {
     temps = t;
 }
 
