@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include "header/fillEns.h"
 #include <assert.h>
+#define NB_TH_PER_BLOCK 32
 
 #define CUDA_CHECK_RETURN(value) {											\
 		cudaError_t _m_cudaStat = value;										\
@@ -13,6 +14,20 @@
 
 __device__ __constant__ int devPremList[10000];
 
+
+int adjust_bl(int value){
+	if(value < 32){
+		return 1;
+	}
+	return(ceil(value/NB_TH_PER_BLOCK)+1);
+}
+
+int adjust_th( int value){
+	if(value < NB_TH_PER_BLOCK){
+		return value;
+	}
+	return NB_TH_PER_BLOCK;
+}
 uint64_t alea(uint64_t a, uint64_t b) {
 	return rand()%(b-a) +a;
 }
@@ -267,7 +282,7 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_R,sizePL*sizeof(Couple)));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_sizeR,sizeof(int)));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_sizeDiv,sizeof(int)));
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_rand,sizePL*sizeof(int)));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_rand,sizePL*sizeof(uint64_t)));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_matrix,sizePL*sizePL*sizeof(int*)));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_matrixMod,sizePL*sizePL*sizeof(int)));
 
@@ -277,29 +292,31 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 		CUDA_CHECK_RETURN(cudaMemset(dev_R,0,sizePL*sizeof(Couple)));
 		CUDA_CHECK_RETURN(cudaMemset(dev_sizeR,0,sizeof(int)));
 		CUDA_CHECK_RETURN(cudaMemset(dev_sizeDiv,0,sizeof(int)));
-		CUDA_CHECK_RETURN(cudaMemset(dev_rand,0,sizePL*sizeof(int)));
+		CUDA_CHECK_RETURN(cudaMemset(dev_rand,0,sizePL*sizeof(uint64_t)));
 		CUDA_CHECK_RETURN(cudaMemset(dev_matrix,0,sizePL*sizePL*sizeof(int)));
 		CUDA_CHECK_RETURN(cudaMemset(dev_matrixMod,0,sizePL*sizePL*sizeof(int)));
 
 		CUDA_CHECK_RETURN(cudaMemcpy(dev_Div,Div->List,Div->Size*sizeof(int),cudaMemcpyHostToDevice));
+		Generation<<<adjust_bl(sizePL),adjust_th(sizePL)>>>(dev_state,nbr,(uint64_t)sqrtf(nbr),dev_rand);
+		fillEnsR<<<adjust_bl(sizePL),adjust_th(sizePL)>>>(dev_state,dev_R,dev_sizeR,dev_Div,Div->Size,ptr, sizePL,dev_rand,nbr,dev_matrix);
 
-		Generation<<<1,sizePL>>>(dev_state,nbr,(uint64_t)sqrtf(nbr),dev_rand);
-		fillEnsR<<<1,sizePL>>>(dev_state,dev_R,dev_sizeR,dev_Div,Div->Size,ptr, sizePL,dev_rand,nbr,dev_matrix);
 		CUDA_CHECK_RETURN(cudaMemcpy(sizeR,dev_sizeR,sizeof(int),cudaMemcpyDeviceToHost));
+		int tp = *sizeR - sizePL;
+		*sizeR -= tp;
 
 		CUDA_CHECK_RETURN(cudaMemcpy(tmpC,dev_R, *sizeR * sizeof(Couple),cudaMemcpyDeviceToHost));
 
 		CUDA_CHECK_RETURN(cudaMemcpy(tmpmatrix,dev_matrix, sizePL*sizePL*sizeof(int),cudaMemcpyDeviceToHost));
-
-		matrix = matrix1DTo2D(tmpmatrix,sizePL);
 		cudaDeviceSynchronize();
 
+		matrix = matrix1DTo2D(tmpmatrix,sizePL);
 		for (int i = 0; i < *sizeR; i++) {
 			for (int j = 0; j < sizePL; j++) {
 				matrixMod[i][j] = matrix[i][j] % 2;
 			}
 			addCouple(R,tmpC[i]);
 		}
+
 		listNoyau = gaussjordan_noyau(matrixMod, sizePL);
 
 		while (listNoyau->list != NULL) {
