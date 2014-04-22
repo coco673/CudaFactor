@@ -56,16 +56,8 @@ OBJS += \
 Src/%.o: ../Src/%.cu
 	@echo 'Building file: $<'
 	@echo 'Invoking: NVCC Compiler'
-	/opt/cuda/bin/nvcc -G -g -O0 -v -gencode arch=compute_20,code=sm_20  -odir "Src" -M -o "$(@:%.o=%.d)" "$<"
-	/opt/cuda/bin/nvcc --device-c -G -O0 -g -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_20 -v  -x cu -o  "$@" "$<"
-	@echo 'Finished building: $<'
-	@echo ' '
-
-Src/fillEns.o: ../Src/fillEns.cu
-	@echo 'Building file: $<'
-	@echo 'Invoking: NVCC Compiler'
-	nvcc -I"/home/didelify/cudafactor-ws/CudaFactor/Src/header" -G -g -O0 -v -gencode arch=compute_20,code=sm_20  -odir "Src" -M -o "$(@:%.o=%.d)" "$<"
-	nvcc --device-c -G -I"/home/didelify/cudafactor-ws/CudaFactor/Src/header" -O0 -g -gencode arch=compute_20,code=sm_20 -v  -x cu -o  "$@" "$<"
+	/usr/local/cuda-5.5/bin/nvcc -I"/home/tony/CudaFactor/Cuda/Src/mpz" -G -g -lineinfo -O0 -gencode arch=compute_20,code=sm_20 -odir "Src" -M -o "$(@:%.o=%.d)" "$<"
+	/usr/local/cuda-5.5/bin/nvcc --device-c -G -I"/home/tony/CudaFactor/Cuda/Src/mpz" -O0 -g -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_20 -lineinfo  -x cu -o  "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

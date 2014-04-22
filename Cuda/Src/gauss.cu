@@ -293,6 +293,7 @@ Vector_List *gaussjordan_noyau(int **matrix, int size) {
 	jl = 0;
 	// on traite toutes les colonnes
 	while (jc < nc and jl < nl) {
+
 		//choix du pivot que l'on veut mettre en M[jl,jc]
 		k = jl;
 		while (tmpMat->mat[k][jc] == 0 and k < nl-1) {
@@ -310,6 +311,7 @@ Vector_List *gaussjordan_noyau(int **matrix, int size) {
 			for (l = 0; l < nc; l++) {
 				tmpMat->mat[jl][l] = tmpMat->mat[jl][l] / pivo;
 			}
+
 			//on met des 0 au dessus de la diagonale
 			// de la colonne jc
 			for (k = 0; k < jl; k++) {
@@ -339,10 +341,12 @@ Vector_List *gaussjordan_noyau(int **matrix, int size) {
 		jl = jl + 1;
 		//il faut faire toutes les colonnes
 		if (jl == nl and jl < nc) {
+
 			tmpMat = addLineToMatrix2D(tmpMat, 0, nl);
 			nl++;
 		}
 	}
+
 	int *noyau;
 	Vector_List *listNoyau = createVectorList();
 	//on enleve les lignes en trop pour avoir

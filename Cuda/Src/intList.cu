@@ -107,9 +107,9 @@ __host__ void addInt(Int_List_GPU **list, int v) {
 	cudaFree(dev_list_dest);
 	l->List[(*list)->Size] = v;
 
-	delete((*list)->List);
-	delete(*list);
-	*list = l;
+	delete[]((list[0])->List);
+	delete[](list[0]);
+	list[0] = l;
 }
 
 __device__ void addIntGPU(uint64_t **list, int size, int v) {

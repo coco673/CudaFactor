@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include "header/fillEns.h"
 #include <assert.h>
-#define NB_TH_PER_BLOCK 32
 
 #define CUDA_CHECK_RETURN(value) {											\
 		cudaError_t _m_cudaStat = value;										\
@@ -205,6 +204,8 @@ Int_List_GPU *mergeDiv(Int_List_GPU *src1, Int_List_GPU *src2) {
 	for (int i = 0; i < src2->Size; i++) {
 		addInt(&result, src2->List[i]);
 	}
+	delete[](src1);
+	delete[](src2);
 	return result;
 }
 
@@ -245,6 +246,7 @@ Int_List_GPU *factor(uint64_t n) {
 		return Div;
 	}
 	tmpDiv = dixonGPU(nbr, n, premList, sizePL, ptr);
+	free(premList);
 	return mergeDiv(Div, tmpDiv);
 }
 
@@ -252,7 +254,7 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 	Couple_List *R = createCoupleList();
 	int * sizeR = (int *) malloc(sizeof(int));
 	Int_List_GPU *Div = createIntList();
-	Couple *tmpC = (Couple *) malloc(sizePL * sizeof(Couple));
+	Couple *tmpC;
 	int **matrix;
 	int **matrixMod;
 	int *noyau;
@@ -268,47 +270,49 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 	uint64_t *dev_rand;
 	int *dev_matrix;
 	int *dev_matrixMod;
-	int *tmpmatrix = (int*) malloc(sizePL*sizePL * sizeof(int));
-	int *tmpmatrixMod= (int*) malloc(sizePL*sizePL * sizeof(int));
+	int *tmpmatrix;
 
 
 	//Allocations
-	matrixMod = (int **) malloc(sizePL * sizeof(int *));
 
-	for (int i  = 0; i < sizePL; i++) {
-		matrixMod[i] = (int *) malloc(sizePL * sizeof(int));
-	}
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_state,sizePL*sizeof(curandState_t)));
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_R,sizePL*sizeof(Couple)));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_state,(sizePL+32)*sizeof(curandState_t)));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_R,(sizePL+32)*sizeof(Couple)));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_sizeR,sizeof(int)));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_sizeDiv,sizeof(int)));
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_rand,sizePL*sizeof(uint64_t)));
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_matrix,sizePL*sizePL*sizeof(int*)));
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_matrixMod,sizePL*sizePL*sizeof(int)));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_rand,(sizePL+32)*sizeof(uint64_t)));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_matrix,(sizePL+32)*(sizePL+32)*sizeof(int)));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_matrixMod,(sizePL+32)*(sizePL+32)*sizeof(int)));
 
+	printf("entree dans Dixon\n");
 	while (produitDiv(*Div) != nbr) {
+		matrixMod = (int **) malloc(sizePL * sizeof(int *));
+
+		for (int i  = 0; i < sizePL; i++) {
+			matrixMod[i] = (int *) malloc(sizePL * sizeof(int));
+		}
+		tmpC = (Couple *) malloc(sizePL * sizeof(Couple));
+		tmpmatrix = (int*) malloc((sizePL+32)*(sizePL+32) * sizeof(int));
 		CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_Div,Div->Size*sizeof(int)));
-		CUDA_CHECK_RETURN(cudaMemset(dev_state,0,sizePL*sizeof(curandState_t)));
-		CUDA_CHECK_RETURN(cudaMemset(dev_R,0,sizePL*sizeof(Couple)));
+		CUDA_CHECK_RETURN(cudaMemset(dev_state,0,(sizePL+32)*sizeof(curandState_t)));
+		CUDA_CHECK_RETURN(cudaMemset(dev_R,0,(sizePL+32)*sizeof(Couple)));
 		CUDA_CHECK_RETURN(cudaMemset(dev_sizeR,0,sizeof(int)));
 		CUDA_CHECK_RETURN(cudaMemset(dev_sizeDiv,0,sizeof(int)));
-		CUDA_CHECK_RETURN(cudaMemset(dev_rand,0,sizePL*sizeof(uint64_t)));
-		CUDA_CHECK_RETURN(cudaMemset(dev_matrix,0,sizePL*sizePL*sizeof(int)));
-		CUDA_CHECK_RETURN(cudaMemset(dev_matrixMod,0,sizePL*sizePL*sizeof(int)));
+		CUDA_CHECK_RETURN(cudaMemset(dev_rand,0,(sizePL+32)*sizeof(uint64_t)));
+		CUDA_CHECK_RETURN(cudaMemset(dev_matrix,0,(sizePL+32)*(sizePL+32)*sizeof(int)));
+		CUDA_CHECK_RETURN(cudaMemset(dev_matrixMod,0,(sizePL+32)*(sizePL+32)*sizeof(int)));
 
 		CUDA_CHECK_RETURN(cudaMemcpy(dev_Div,Div->List,Div->Size*sizeof(int),cudaMemcpyHostToDevice));
 		Generation<<<adjust_bl(sizePL),adjust_th(sizePL)>>>(dev_state,nbr,(uint64_t)sqrtf(nbr),dev_rand);
 		fillEnsR<<<adjust_bl(sizePL),adjust_th(sizePL)>>>(dev_state,dev_R,dev_sizeR,dev_Div,Div->Size,ptr, sizePL,dev_rand,nbr,dev_matrix);
 
+		CUDA_CHECK_RETURN(cudaDeviceSynchronize());
+
 		CUDA_CHECK_RETURN(cudaMemcpy(sizeR,dev_sizeR,sizeof(int),cudaMemcpyDeviceToHost));
 		int tp = *sizeR - sizePL;
 		*sizeR -= tp;
-
 		CUDA_CHECK_RETURN(cudaMemcpy(tmpC,dev_R, *sizeR * sizeof(Couple),cudaMemcpyDeviceToHost));
 
 		CUDA_CHECK_RETURN(cudaMemcpy(tmpmatrix,dev_matrix, sizePL*sizePL*sizeof(int),cudaMemcpyDeviceToHost));
-		cudaDeviceSynchronize();
-
 		matrix = matrix1DTo2D(tmpmatrix,sizePL);
 		for (int i = 0; i < *sizeR; i++) {
 			for (int j = 0; j < sizePL; j++) {
@@ -316,7 +320,8 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 			}
 			addCouple(R,tmpC[i]);
 		}
-
+		free(tmpmatrix);
+		free(tmpC);
 		listNoyau = gaussjordan_noyau(matrixMod, sizePL);
 
 		while (listNoyau->list != NULL) {
@@ -355,18 +360,19 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 			free(noyau);
 		}
 
+		//for (int i = 0; i < sizePL; i++) {
+			//delete(matrix[i]);
+		//}
 		for (int i = 0; i < sizePL; i++) {
-			free(matrix[i]);
+			free(matrixMod[i]);
 		}
-
-		free(matrix);
+		free(matrixMod);
+		delete[](matrix);
 		free(listNoyau);
 		CUDA_CHECK_RETURN(cudaFree(dev_Div));
 		resetCoupleList(R);
 	}
-	for (int i = 0; i < sizePL; i++) {
-		free(matrixMod[i]);
-	}
+
 
 	CUDA_CHECK_RETURN(cudaFree(dev_state));
 	CUDA_CHECK_RETURN(cudaFree(dev_R));
@@ -375,8 +381,8 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 
 	CUDA_CHECK_RETURN(cudaFree(dev_matrix));
 	CUDA_CHECK_RETURN(cudaFree(dev_matrixMod));
-	free(matrixMod);
 	free(R);
+	free(sizeR);
 	free(premList);
 
 	return Div;

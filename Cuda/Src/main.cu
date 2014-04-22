@@ -35,6 +35,6 @@ int main(int argc, char **argv) {
 	printf("temps %f\n", elapsedTime / 1000);
 	cudaEventDestroy(start);
 	cudaEventDestroy(stop);
-	free(Div);
+	delete[](Div);
 	cudaDeviceReset();
 }

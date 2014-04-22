@@ -11,6 +11,7 @@
 #include <assert.h>
 #define N 1000
 
+__device__ curandState_t localState;
 //extern __constant__ int *devPremList;
 
 /**
@@ -102,7 +103,7 @@ __device__ void generate( curandState_t *globalState, uint64_t *rand, uint64_t n
 	//int id = threadIdx.x;
 	uint64_t x;
 
-	curandState_t localState = globalState[id];
+	localState = globalState[id];
 	//for(int n = 0; n < N; n++) {
 	x = (uint64_t)fmodf(curand(&localState),(nbr-racN)) + racN;
 	//}
@@ -173,21 +174,26 @@ __global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,
 	int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
 	__shared__ int sizeR;
+	Couple tmp;
+	__shared__ int *matTmp;
 	int bsmooth= -1;
 	int present= -1;
 	uint64_t x = 0;
 	uint64_t y =  0;
 	if(tid % blockDim.x == 0){
 		sizeR = 0;
+		matTmp = (int *)malloc((k*k)*sizeof(int));
+		memset(matTmp,0,(k*k)*sizeof(int));
 	}
 	__syncthreads();
 	uint64_t sqrtNBR = (uint64_t) sqrtf(nbr);
-	if(tid < k){
+
 		do{
 			generate(state,rand,nbr,sqrtNBR);
 
 			x = rand[tid];
 			y = (x*x) % nbr;
+
 			if(devPremList == NULL ){
 				printf("PrimeList est NULL\n");
 			}
@@ -199,26 +205,31 @@ __global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,
 
 			isInEnsembleG(Div,y,sizeDiv,&present);
 
-			__syncthreads();
 
 		}while(!bsmooth || present);
-		//printf("on arrive apres la boucle\n");
-		__syncthreads();
-		R[tid].x = x;
-		R[tid].y = y;
+
+		tmp.x = x;
+		tmp.y = y;
 
 		atomicAdd(&sizeR,1);
 		uint64_t y1 = y;
 		for(int j = 0;j<k;j++){
 			while(y1%devPremList[j] == 0){
 				y1 = y1 / devPremList[j];
-				matrix[tid*k+j]=(matrix[tid*k+j]+1);
+				matTmp[threadIdx.x*k+j]=(matTmp[threadIdx.x*k+j]+1);
 			}
 		}
 
-		__syncthreads();
-		size[0] += sizeR;
+		R[tid] = tmp;
 
-	}
+		for(int j = 0; j< k;j++){
+			matrix[tid*k+j]=matTmp[threadIdx.x*k+j];
+
+		}
+
+		size[0] += sizeR;
+		if(tid % blockDim.x == 0){
+		free(matTmp);
+		}
 }
 

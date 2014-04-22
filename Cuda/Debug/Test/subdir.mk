@@ -8,14 +8,12 @@ C_SRCS += \
 
 CU_SRCS += \
 ../Test/TestFillEnsemble.cu \
-../Test/TestFillMatrix.cu \
 ../Test/TestPgcd.cu \
 ../Test/TestStructure.cu \
 ../Test/testPrime.cu 
 
 CU_DEPS += \
 ./Test/TestFillEnsemble.d \
-./Test/TestFillMatrix.d \
 ./Test/TestPgcd.d \
 ./Test/TestStructure.d \
 ./Test/testPrime.d 
@@ -23,7 +21,6 @@ CU_DEPS += \
 OBJS += \
 ./Test/CuTest.o \
 ./Test/TestFillEnsemble.o \
-./Test/TestFillMatrix.o \
 ./Test/TestPgcd.o \
 ./Test/TestStructure.o \
 ./Test/testPrime.o 
@@ -36,16 +33,16 @@ C_DEPS += \
 Test/%.o: ../Test/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: NVCC Compiler'
-	/opt/cuda/bin/nvcc -G -g -O0 -v -gencode arch=compute_20,code=sm_20  -odir "Test" -M -o "$(@:%.o=%.d)" "$<"
-	/opt/cuda/bin/nvcc -G -g -O0 -v --compile  -x c -o  "$@" "$<"
+	/usr/local/cuda-5.5/bin/nvcc -I"/home/tony/CudaFactor/Cuda/Src/mpz" -G -g -lineinfo -O0 -gencode arch=compute_20,code=sm_20 -odir "Test" -M -o "$(@:%.o=%.d)" "$<"
+	/usr/local/cuda-5.5/bin/nvcc -I"/home/tony/CudaFactor/Cuda/Src/mpz" -G -g -lineinfo -O0 --compile  -x c -o  "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
 Test/%.o: ../Test/%.cu
 	@echo 'Building file: $<'
 	@echo 'Invoking: NVCC Compiler'
-	/opt/cuda/bin/nvcc -G -g -O0 -v -gencode arch=compute_20,code=sm_20  -odir "Test" -M -o "$(@:%.o=%.d)" "$<"
-	/opt/cuda/bin/nvcc --device-c -G -O0 -g -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_20 -v  -x cu -o  "$@" "$<"
+	/usr/local/cuda-5.5/bin/nvcc -I"/home/tony/CudaFactor/Cuda/Src/mpz" -G -g -lineinfo -O0 -gencode arch=compute_20,code=sm_20 -odir "Test" -M -o "$(@:%.o=%.d)" "$<"
+	/usr/local/cuda-5.5/bin/nvcc --device-c -G -I"/home/tony/CudaFactor/Cuda/Src/mpz" -O0 -g -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_20 -lineinfo  -x cu -o  "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
