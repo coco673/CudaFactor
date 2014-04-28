@@ -116,7 +116,8 @@ __global__ void fillList(int *list, uint64_t borne) {
 		list[id - 2] = id;
 	}
 }
-
+//TODO modifier le parametrage de la fonction pour supporter le cas
+// d'une borne > 1024 th
 __global__ void eratosthene(int *list) {
 	int bid = blockIdx.x;
 	int tid = threadIdx.x;

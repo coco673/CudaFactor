@@ -1,13 +1,13 @@
 #include "header/vector.h"
 
-__device__ __host__ Vector_List *createVectorList() {
+ __host__ Vector_List *createVectorList() {
 	Vector_List *list = (Vector_List *) malloc(sizeof(Vector_List));
 	list->list = NULL;
 	list->vecNb = 0;
 	return list;
 }
 
-__device__ __host__ void addVector(Vector_List *list, const int *vec, int size) {
+ __host__ void addVector(Vector_List *list, const int *vec, int size) {
 	int *tmp = (int *) malloc(size * sizeof(int));
 	for (int i = 0; i < size; i++) {
 		tmp[i] = vec[i];
@@ -25,7 +25,7 @@ __device__ __host__ void addVector(Vector_List *list, const int *vec, int size) 
 	list->vecNb++;
 }
 
-__device__ __host__ int *getVector(const Vector_List list, int index) {
+ __host__ int *getVector(const Vector_List list, int index) {
 	int i = 0;
 	Vector_List tmp = list;
 	if (index > list.vecNb - 1 || index < 0) {
@@ -39,7 +39,7 @@ __device__ __host__ int *getVector(const Vector_List list, int index) {
 	}
 }
 
-__device__ __host__ void removeLastVector(Vector_List *list) {
+ __host__ void removeLastVector(Vector_List *list) {
 	if (list->vecNb != 0) {
 		struct VEC_ELEM *ptr;
 		ptr = list->list;
@@ -58,13 +58,13 @@ __device__ __host__ void removeLastVector(Vector_List *list) {
 	}
 }
 
-__device__ __host__ void resetVectorList(Vector_List *list) {
+ __host__ void resetVectorList(Vector_List *list) {
 	while (list->vecNb != 0) {
 		removeLastVector(list);
 	}
 }
 
-__device__ __host__ int isNullVector(int *vec, int size) {
+ __host__ int isNullVector(int *vec, int size) {
 	for (int i = 0; i < size; i++) {
 		if (vec[i] != 0) {
 			return 1;

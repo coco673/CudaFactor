@@ -18,7 +18,7 @@ uint64_t alea(uint64_t a, uint64_t b);
 uint64_t produitDiv(Int_List Div);
 int notIn(Int_List Div, uint64_t val);
 int calcul_u(Couple_List R, int *noyau);
-int calcul_v(uint64_t *premList, int sizePL, Couple_List R, int **matrix, int *noyau);
+int calcul_v(int *premList, int sizePL, Couple_List R, char **matrix, int *noyau, int n);
 Int_List_GPU *dixon(uint64_t n);
 //Int_List_GPU *dixonGPU(uint64_t n);
 Int_List_GPU *factor(uint64_t n);

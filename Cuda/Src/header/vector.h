@@ -22,11 +22,11 @@ typedef struct {
 	int vecNb;
 } Vector_List;
 
-__device__ __host__ Vector_List *createVectorList();
-__device__ __host__ void addVector(Vector_List *list, const int *vec, int size);
-__device__ __host__ int *getVector(const Vector_List list, int index);
-__device__ __host__ void removeLastVector(Vector_List *list);
-__device__ __host__ void resetVectorList(Vector_List *list);
-__device__ __host__ int isNullVector(int *vec, int size);
+ __host__ Vector_List *createVectorList();
+ __host__ void addVector(Vector_List *list, const int *vec, int size);
+ __host__ int *getVector(const Vector_List list, int index);
+ __host__ void removeLastVector(Vector_List *list);
+ __host__ void resetVectorList(Vector_List *list);
+ __host__ int isNullVector(int *vec, int size);
 
 #endif /* VECTOR_H_ */

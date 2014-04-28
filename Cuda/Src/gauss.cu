@@ -1,6 +1,6 @@
 #include "header/gauss.h"
 
-
+#include <unistd.h>
 void print_matrix(int **matrix, int size) {
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
@@ -279,8 +279,9 @@ void test() {
 
 
 //Avec des matrix2D
-Vector_List *gaussjordan_noyau(int **matrix, int size) {
+Vector_List *gaussjordan_noyau(char **matrix, int size) {
 	int pivo,jc,jl,k,j,nl,nc,l,a;
+	int nbt = 0;
 	matrix2D Mat;
 	Mat.mat = matrix;
 	Mat.colsNb = size;
@@ -341,10 +342,11 @@ Vector_List *gaussjordan_noyau(int **matrix, int size) {
 		jl = jl + 1;
 		//il faut faire toutes les colonnes
 		if (jl == nl and jl < nc) {
-
 			tmpMat = addLineToMatrix2D(tmpMat, 0, nl);
 			nl++;
 		}
+		nbt ++;	printf("nbt = %i\n",nbt);
+
 	}
 
 	int *noyau;
@@ -366,6 +368,8 @@ Vector_List *gaussjordan_noyau(int **matrix, int size) {
 		}
 		free(noyau);
 	}
+
+	free(tmpMat->mat);
 	free(tmpMat);
 	return listNoyau;
 }

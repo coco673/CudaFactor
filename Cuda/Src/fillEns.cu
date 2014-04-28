@@ -170,20 +170,20 @@ __global__ void Generation(curandState_t *state,uint64_t nbr, uint64_t sqrtNBR,u
 	size[0] = sizeR;
 }*/
 
-__global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,int sizeDiv,int * devPremList,int k,uint64_t *rand,uint64_t nbr,int *matrix){
+__global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,int sizeDiv,int * devPremList,int k,uint64_t *rand,uint64_t nbr,char *matrix){
 	int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
 	__shared__ int sizeR;
 	Couple tmp;
-	__shared__ int *matTmp;
+	//__shared__ int *matTmp;
 	int bsmooth= -1;
 	int present= -1;
 	uint64_t x = 0;
 	uint64_t y =  0;
 	if(tid % blockDim.x == 0){
 		sizeR = 0;
-		matTmp = (int *)malloc((k*k)*sizeof(int));
-		memset(matTmp,0,(k*k)*sizeof(int));
+	/*	matTmp = (int *)malloc((k*k)*sizeof(int));
+		memset(matTmp,0,(k*k)*sizeof(int));*/
 	}
 	__syncthreads();
 	uint64_t sqrtNBR = (uint64_t) sqrtf(nbr);
@@ -216,20 +216,21 @@ __global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,
 		for(int j = 0;j<k;j++){
 			while(y1%devPremList[j] == 0){
 				y1 = y1 / devPremList[j];
-				matTmp[threadIdx.x*k+j]=(matTmp[threadIdx.x*k+j]+1);
+				//matTmp[threadIdx.x*k+j]=(matTmp[threadIdx.x*k+j]+1);
+				matrix[threadIdx.x*k+j]=(matrix[threadIdx.x*k+j]+1);
 			}
 		}
 
 		R[tid] = tmp;
 
-		for(int j = 0; j< k;j++){
+		/*for(int j = 0; j< k;j++){
 			matrix[tid*k+j]=matTmp[threadIdx.x*k+j];
 
-		}
+		}*/
 
 		size[0] += sizeR;
 		if(tid % blockDim.x == 0){
-		free(matTmp);
+		//free(matTmp);
 		}
 }
 

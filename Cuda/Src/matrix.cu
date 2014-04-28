@@ -7,7 +7,7 @@
  * 																			   *
  ******************************************************************************/
 
-__device__ __host__ matrix2D *createEmptyMatrix2D() {
+ __host__ matrix2D *createEmptyMatrix2D() {
 	matrix2D *matrix = (matrix2D *) malloc(sizeof(matrix2D));
 	matrix->mat = NULL;
 	matrix->colsNb = 0;
@@ -15,12 +15,12 @@ __device__ __host__ matrix2D *createEmptyMatrix2D() {
 	return matrix;
 }
 
-__device__ __host__ matrix2D *createMatrix2D(int rows, int cols) {
+ __host__ matrix2D *createMatrix2D(int rows, int cols) {
 	matrix2D *matrix = (matrix2D *) malloc(sizeof(matrix2D));
-	matrix->mat = (int **) malloc(rows * sizeof(int*));
+	matrix->mat = (char **) malloc(rows * sizeof(char*));
 
 	for (int i = 0; i < rows; i++) {
-		matrix->mat[i] = (int *) malloc(cols * sizeof(int));
+		matrix->mat[i] = (char *) malloc(cols * sizeof(char));
 		/*for (int j = 0; j < cols; j++) {
 			matrix->mat[i][j] = 0;
 		}*/
@@ -29,7 +29,7 @@ __device__ __host__ matrix2D *createMatrix2D(int rows, int cols) {
 			sprintf(s," create matrix %i",i);
 			perror(s);
 		}else{
-			if(memset(matrix->mat[i],0,cols*sizeof(int)) == NULL){
+			if(memset(matrix->mat[i],0,cols*sizeof(char)) == NULL){
 				perror("createMatrix2D \n");
 			}
 		}
@@ -40,17 +40,17 @@ __device__ __host__ matrix2D *createMatrix2D(int rows, int cols) {
 	return matrix;
 }
 
-__device__ __host__ matrix2D *copyMatrix2D(matrix2D src) {
+ __host__ matrix2D *copyMatrix2D(matrix2D src) {
 	matrix2D *matrix = (matrix2D *) malloc(sizeof(matrix2D));
 	if(matrix == NULL){
 			perror("copy mat");
 		}
-	matrix->mat = (int **) malloc(src.rowsNb * sizeof(int*));
+	matrix->mat = (char **) malloc(src.rowsNb * sizeof(char*));
 	if(matrix->mat == NULL){
 			perror("matrix mat");
 		}
 	for (int i = 0; i < src.rowsNb; i++) {
-		matrix->mat[i] = (int *) malloc(src.colsNb * sizeof(int));
+		matrix->mat[i] = (char *) malloc(src.colsNb * sizeof(char));
 		if(matrix->mat[i] == NULL){
 				perror("mattrix mat[i]");
 			}
@@ -63,8 +63,8 @@ __device__ __host__ matrix2D *copyMatrix2D(matrix2D src) {
 	return matrix;
 }
 
-__device__ __host__ matrix2D *addLineToMatrix2D(matrix2D *src, int val, int index) {
-	int *vector = (int *) malloc(src->colsNb * sizeof(int));
+ __host__ matrix2D *addLineToMatrix2D(matrix2D *src, int val, int index) {
+	 char *vector = (char *) malloc(src->colsNb * sizeof(char));
 	if(vector == NULL){
 			perror("add line vector");
 		}
@@ -82,12 +82,13 @@ __device__ __host__ matrix2D *addLineToMatrix2D(matrix2D *src, int val, int inde
 	for (int i = index + 1; i < matrix->rowsNb; i++) {
 		matrix->mat[i] = src->mat[i - 1];
 	}
+delete[](src->mat);
 	free(src);
 	return matrix;
 }
 
-__device__ __host__ void swapLineMatrix2D(matrix2D *src, int line1, int line2) {
-	int *tmpLine = (int *) malloc(src->colsNb * sizeof(int));
+ __host__ void swapLineMatrix2D(matrix2D *src, int line1, int line2) {
+	char *tmpLine = (char *) malloc(src->colsNb * sizeof(char));
 	if(tmpLine == NULL){
 		perror("swapLine");
 	}
@@ -107,7 +108,7 @@ __device__ __host__ void swapLineMatrix2D(matrix2D *src, int line1, int line2) {
  * 																			   *
  ******************************************************************************/
 
-__device__ __host__ matrix1D *createEmptyMatrix1D() {
+ __host__ matrix1D *createEmptyMatrix1D() {
 	matrix1D *matrix = (matrix1D *) malloc(sizeof(matrix1D));
 	matrix->mat = NULL;
 	matrix->colsNb = 0;
@@ -115,9 +116,9 @@ __device__ __host__ matrix1D *createEmptyMatrix1D() {
 	return matrix;
 }
 
-__device__ __host__ matrix1D *createMatrix1D(int rows, int cols) {
+ __host__ matrix1D *createMatrix1D(int rows, int cols) {
 	matrix1D *matrix = (matrix1D *) malloc(sizeof(matrix1D));
-	matrix->mat = (int *) malloc(rows * cols * sizeof(int));
+	matrix->mat = (char *) malloc(rows * cols * sizeof(char));
 	for (int j = 0; j < cols; j++) {
 		matrix->mat[j] = 0;
 	}
@@ -126,9 +127,9 @@ __device__ __host__ matrix1D *createMatrix1D(int rows, int cols) {
 	return matrix;
 }
 
-__device__ __host__ matrix1D *copyMatrix1D(matrix1D src) {
+ __host__ matrix1D *copyMatrix1D(matrix1D src) {
 	matrix1D *matrix = (matrix1D *) malloc(sizeof(matrix1D));
-	matrix->mat = (int *) malloc(src.rowsNb * src.colsNb * sizeof(int));
+	matrix->mat = (char *) malloc(src.rowsNb * src.colsNb * sizeof(char));
 	for (int j = 0; j < src.colsNb * src.rowsNb; j++) {
 		matrix->mat[j] = src.mat[j];
 	}
@@ -137,7 +138,7 @@ __device__ __host__ matrix1D *copyMatrix1D(matrix1D src) {
 	return matrix;
 }
 
-__device__ __host__ matrix1D *addLineToMatrix1D(matrix1D *src, int val, int index) {
+ __host__ matrix1D *addLineToMatrix1D(matrix1D *src, int val, int index) {
 	matrix1D *matrix = createMatrix1D(src->rowsNb + 1, src->colsNb);
 	for (int i = 0; i < index * src->colsNb; i++) {
 		matrix->mat[i] = src->mat[i];
@@ -151,8 +152,8 @@ __device__ __host__ matrix1D *addLineToMatrix1D(matrix1D *src, int val, int inde
 	return matrix;
 }
 
-__device__ __host__ void swapLineMatrix1D(matrix1D *src, int line1, int line2) {
-	int *tmpLine = (int*) malloc(src->rowsNb * sizeof(int));
+ __host__ void swapLineMatrix1D(matrix1D *src, int line1, int line2) {
+	char *tmpLine = (char*) malloc(src->rowsNb * sizeof(char));
 	for (int i = 0; i < src->rowsNb; i++) {
 		tmpLine[i] = src->mat[line1 * src->colsNb + i];
 		src->mat[line2 * src->colsNb + i] = src->mat[line1 * src->colsNb + i];

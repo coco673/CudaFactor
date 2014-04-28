@@ -16,8 +16,8 @@
 #include "matrix.h"
 #include "vector.h"
 
-void print_matrix(int **matrix, int size);
-Vector_List *gaussjordan_noyau(int **matrix, int size);
+void print_matrix(char **matrix, int size);
+Vector_List *gaussjordan_noyau(char **matrix, int size);
 void test();
 
 #endif /* GAUSS_H_ */

@@ -26,7 +26,7 @@ struct cell {
 };
 typedef struct cell* ensemble;
 
-__host__ __device__ ensemble initEns(int *size);
-__host__ __device__ int addCouple(ensemble *ens, uint64_t x, uint64_t y,int *size);
-__host__ __device__ int addVal(ensemble *ens, uint64_t x,int *size);
+__host__  ensemble initEns(int *size);
+__host__  int addCouple(ensemble *ens, uint64_t x, uint64_t y,int *size);
+__host__  int addVal(ensemble *ens, uint64_t x,int *size);
 #endif /* STRUCTURE_H_ */
