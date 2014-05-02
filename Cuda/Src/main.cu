@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "header/dixon.h"
+#include <stdint.h>
 
 int main(int argc, char **argv) {
 	Int_List_GPU *Div;
@@ -13,12 +14,12 @@ int main(int argc, char **argv) {
 		n = atoll(argv[1]);
 	else
 		n = 3061 * 3259;
-	printf("Le nombre entré est %llu\n",n);
+	printf("Le nombre entré est %lud\n",n);
 	if (n < 0) {
 		fprintf(stderr, "Le nombre entre est négatif, entrez un nombre >= 2!\n");
 		return EXIT_FAILURE;
 	} else if (n <= 1) {
-		printf("%llu n'est pas factorisable!\n", n);
+		printf("%lud n'est pas factorisable!\n", n);
 		return EXIT_SUCCESS;
 	} else if (n == 2) {
 		Div = createIntList();

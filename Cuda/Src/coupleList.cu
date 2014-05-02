@@ -67,7 +67,7 @@
 }
 
 void printCouple(Couple c) {
-	printf("x : %llud ; y : %llud\n", c.x, c.y);
+	printf("x : %lud ; y : %lud\n", c.x, c.y);
 }
 
 void printCoupleList(const Couple_List list) {

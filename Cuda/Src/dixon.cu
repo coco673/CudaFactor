@@ -363,6 +363,7 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 			listNoyau->list = listNoyau->list->suiv;
 			free(tmp);
 			free(noyau);
+
 		}
 
 
@@ -370,6 +371,7 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 		free(listNoyau);
 		CUDA_CHECK_RETURN(cudaFree(dev_Div));
 		resetCoupleList(R);
+		printf("c est pas fini\n");
 	}
 
 
