@@ -21,7 +21,7 @@
 /*int pgcd(int a, int b);
 char *convert(int a);
 char *equalNBit(char *res,int size);*/
-uint64_t pgcdUint(uint64_t u, uint64_t v);
+__host__ __device__ uint64_t pgcdUint(uint64_t u, uint64_t v);
 
 
 #endif /* PGCD_H_ */

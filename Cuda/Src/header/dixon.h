@@ -23,5 +23,7 @@ Int_List_GPU *dixon(uint64_t n);
 //Int_List_GPU *dixonGPU(uint64_t n);
 Int_List_GPU *factor(uint64_t n);
 Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int *ptr);
+Int_List_GPU *dixonDevice(uint64_t nbr, uint64_t n, int *premList, int sizePL, int *ptr);
+
 
 #endif

@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-uint64_t pgcdUint(uint64_t u, uint64_t v) {
+__host__ __device__ uint64_t pgcdUint(uint64_t u, uint64_t v) {
 	int shift;
 	if (u == 0) {
 		return v;

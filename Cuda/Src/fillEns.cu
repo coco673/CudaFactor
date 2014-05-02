@@ -110,7 +110,7 @@ __device__ void generate( curandState_t *globalState, uint64_t *rand, uint64_t n
 	rand[id] = (int) x;
 }
 
-__global__ void Generation(curandState_t *state,uint64_t nbr, uint64_t sqrtNBR,uint64_t *rand){
+__device__ void Generation(curandState_t *state,uint64_t nbr, uint64_t sqrtNBR,uint64_t *rand){
 	setup_kernel(state);
 }
 
@@ -169,7 +169,7 @@ __global__ void Generation(curandState_t *state,uint64_t nbr, uint64_t sqrtNBR,u
 	size[0] = sizeR;
 }*/
 
-__global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,int sizeDiv,int * devPremList,int k,uint64_t *rand,uint64_t nbr,int *matrix){
+__device__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,int sizeDiv,int * devPremList,int k,uint64_t *rand,uint64_t nbr,int *matrix){
 	//int tid = threadIdx.x + blockIdx.x * blockDim.x;
 	int tid=threadIdx.x+blockIdx.x;
 
