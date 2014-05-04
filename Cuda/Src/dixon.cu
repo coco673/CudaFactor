@@ -12,7 +12,7 @@
 		} }
 
 #define MAX_FACTORS_PER_BLOCK 20
-#define NB_BLOCKS 65535
+#define NB_BLOCKS 20000
 #define MAX_TEMPORARILY_FACTORS NB_BLOCKS * MAX_FACTORS_PER_BLOCK
 
 __device__ __constant__ int devPremList[10000];
@@ -638,25 +638,47 @@ Int_List_GPU *dixonDevice(uint64_t nbr, uint64_t n, int *premList, int sizePL, i
 	threads.x = sizePL;
 	threads.y = sizePL;
 
+
 	//Copies GPU
 	uint64_t *dev_currentDiv;
 	uint64_t *dev_nextDiv;
 	int *sizeNextDiv;
-	cudaMalloc((int **) &dev_currentDiv, Div->Size * sizeof(int));
-	cudaMalloc((int **) &dev_nextDiv, NB_BLOCKS * MAX_FACTORS_PER_BLOCK * sizeof(int));
+	//cudaMalloc((int **) &dev_currentDiv, Div->Size * sizeof(int));
+	cudaMalloc((uint64_t **) &dev_nextDiv, NB_BLOCKS * MAX_FACTORS_PER_BLOCK * sizeof(uint64_t));
 	cudaMalloc((int **) &sizeNextDiv, NB_BLOCKS * sizeof(int));
 
 	while (produitDiv(*Div) != nbr) {
+		cudaMalloc((int **) &dev_currentDiv, Div->Size * sizeof(int));
+		cudaMemcpy(dev_currentDiv, Div->List, Div->Size, cudaMemcpyHostToDevice);
+		cudaMemset(dev_nextDiv, 0, NB_BLOCKS * MAX_FACTORS_PER_BLOCK * sizeof(uint64_t));
+		cudaMemset(sizeNextDiv, 0, NB_BLOCKS * sizeof(int));
+		memset(tmpDiv, 0, NB_BLOCKS * MAX_FACTORS_PER_BLOCK * sizeof(uint64_t));
+		memset(sizeTmpDiv, 0, NB_BLOCKS * sizeof(int));
 		dixonParrallele<<<NB_BLOCKS, threads>>>(dev_currentDiv, Div->Size, dev_nextDiv, sizeNextDiv, ptr, sizePL, nbr);
+		cudaMemcpy(tmpDiv, dev_nextDiv, NB_BLOCKS * MAX_FACTORS_PER_BLOCK * sizeof(uint64_t), cudaMemcpyDeviceToHost);
+		cudaMemcpy(sizeTmpDiv, sizeNextDiv, NB_BLOCKS * sizeof(int), cudaMemcpyDeviceToHost);
 		for (int i = 0; i < NB_BLOCKS; i++) {
 			for (int j = 0; j < sizeTmpDiv[i]; j++) {
 				if (!isIn(tmp->List, tmpDiv[i * MAX_FACTORS_PER_BLOCK + j], tmp->Size)) {
 					addInt(&tmp, tmpDiv[i * MAX_FACTORS_PER_BLOCK + j]);
+					nbr /= tmpDiv[i * MAX_FACTORS_PER_BLOCK + j];
 				}
 			}
 		}
 		Div = mergeDiv(Div, tmp);
+		resetIntList(&tmp);
+		cudaFree(dev_currentDiv);
+		if (Miller(nbr, 10)) {
+			addInt(&Div, nbr);
+			cudaFree(dev_nextDiv);
+			cudaFree(sizeNextDiv);
+			return Div;
+		}
 	}
-
+	free(tmpDiv);
+	free(sizeTmpDiv);
+	free(tmp);
+	cudaFree(dev_nextDiv);
+	cudaFree(sizeNextDiv);
 	return Div;
 }
