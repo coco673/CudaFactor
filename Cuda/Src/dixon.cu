@@ -522,13 +522,12 @@ __device__ void calculateUV(Couple *R, int *premList, int sizePL, int **matrix, 
 	__syncthreads();
 }
 
-__global__ void dixonParrallele(uint64_t *Div, int sizeDiv, uint64_t *newDiv, int *sizeNewDiv, int *ptr, int sizePL, uint64_t nbr) {
+__global__ void dixonParrallele(uint64_t *Div, int sizeDiv, uint64_t *newDiv, char *sizeNewDiv, int *ptr, int sizePL, uint64_t nbr) {
 	__shared__ curandState_t *dev_state;
 	__shared__ uint64_t *dev_rand;
 	__shared__ Couple *dev_R;
 	__shared__ int *dev_sizeR;
 	__shared__ int *dev_matrix;
-	__shared__ int indexCurrentBlock;
 	__shared__ int u;
 	__shared__ int v;
 	__shared__ Vector_List *listNoyau;
@@ -540,9 +539,9 @@ __global__ void dixonParrallele(uint64_t *Div, int sizeDiv, uint64_t *newDiv, in
 		dev_R = (Couple *) malloc(sizePL*sizeof(Couple));
 		dev_sizeR = (int *) malloc(sizeof(int));
 		dev_matrix = (int *) malloc(sizePL * sizePL * sizeof(int));
-		indexCurrentBlock = 0;
 		sizeNewDiv[blockIdx.x] = 0;
 	}
+
 	__syncthreads();
 	if (threadIdx.x < sizePL && threadIdx.y == 0) {
 		Generation(dev_state,nbr,(uint64_t)sqrtf(nbr),dev_rand);
@@ -564,6 +563,7 @@ __global__ void dixonParrallele(uint64_t *Div, int sizeDiv, uint64_t *newDiv, in
 		while (listNoyau != NULL) {
 			noyau = listNoyau->list->vec;
 			calculateUV(dev_R, ptr, sizePL, mat, noyau, nbr, &u, &v);
+
 			__syncthreads();
 			if (threadIdx.x == 0) {
 
@@ -572,43 +572,13 @@ __global__ void dixonParrallele(uint64_t *Div, int sizeDiv, uint64_t *newDiv, in
 
 				if ((pgcd1 != 1) && (pgcd1 != nbr)) {
 					//addInt(&Div[blockIdx.x], pgcd1);
-					if (indexCurrentBlock < MAX_FACTORS_PER_BLOCK) {
-						newDiv[indexCurrentBlock * blockIdx.x] = pgcd1;
-						indexCurrentBlock++;
-						atomicAdd(&sizeNewDiv[blockIdx.x], 1);
-						nbr /= pgcd1;
-						while (nbr % pgcd1 == 0) {
-							//addInt(&Div[blockIdx.x], pgcd1);
-							if (indexCurrentBlock < MAX_FACTORS_PER_BLOCK) {
-								newDiv[indexCurrentBlock * blockIdx.x] = pgcd1;
-								indexCurrentBlock++;
-								atomicAdd(&sizeNewDiv[blockIdx.x], 1);
-								nbr /= pgcd1;
-							}
-						}
-					}
+					newDiv[blockIdx.x] = pgcd1;
+					sizeNewDiv[blockIdx.x] += 1;
 				} else if ((pgcd2 != 1) && (pgcd2 != nbr)) {
 					//addInt(&Div[blockIdx.x], pgcd2);
-					if (indexCurrentBlock < MAX_FACTORS_PER_BLOCK) {
-						newDiv[indexCurrentBlock * blockIdx.x] = pgcd2;
-						indexCurrentBlock++;
-						atomicAdd(&sizeNewDiv[blockIdx.x], 1);
-						nbr /= pgcd2;
-						while (nbr % pgcd2 == 0) {
-							//addInt(&Div[blockIdx.x], pgcd2);
-							if (indexCurrentBlock < MAX_FACTORS_PER_BLOCK) {
-								newDiv[indexCurrentBlock * blockIdx.x] = pgcd2;
-								indexCurrentBlock++;
-								atomicAdd(&sizeNewDiv[blockIdx.x], 1);
-								nbr /= pgcd2;
-							}
-						}
-					}
+					newDiv[blockIdx.x] = pgcd2;
+					sizeNewDiv[blockIdx.x] += 1;
 				}
-				/*if (Miller(nbr, 10)) {
-					addInt(&Div[blockIdx.x], nbr);
-					//return Div;
-				}*/
 				tmp = listNoyau->list;
 
 				listNoyau->list = listNoyau->list->suiv;
@@ -618,6 +588,7 @@ __global__ void dixonParrallele(uint64_t *Div, int sizeDiv, uint64_t *newDiv, in
 		}
 	}
 	__syncthreads();
+	//newDiv[0]=12;
 }
 
 bool isIn(uint64_t *list, uint64_t elem, int size) {
@@ -630,55 +601,64 @@ bool isIn(uint64_t *list, uint64_t elem, int size) {
 }
 
 Int_List_GPU *dixonDevice(uint64_t nbr, uint64_t n, int *premList, int sizePL, int *ptr) {
-	//Declarations
-	Int_List_GPU *Div = createIntList(), *tmp = createIntList();
-	uint64_t *tmpDiv = (uint64_t *) malloc(NB_BLOCKS * MAX_FACTORS_PER_BLOCK * sizeof(uint64_t));
-	int *sizeTmpDiv = (int *) malloc(NB_BLOCKS * sizeof(int));
+	Int_List_GPU *Div = createIntList();
+	uint64_t *factorList = new uint64_t[NB_BLOCKS];
+	uint64_t *tmpFactor = new uint64_t[NB_BLOCKS];
+	int sizeTmpFactor;
+	char *sizeFactorList = new char[NB_BLOCKS];
 	dim3 threads;
 	threads.x = sizePL;
 	threads.y = sizePL;
+	threads.z = 0;
 
+	uint64_t *dev_div;
+	uint64_t *dev_factorList;
+	char *dev_sizeFactorList;
 
-	//Copies GPU
-	uint64_t *dev_currentDiv;
-	uint64_t *dev_nextDiv;
-	int *sizeNextDiv;
-	//cudaMalloc((int **) &dev_currentDiv, Div->Size * sizeof(int));
-	CUDA_CHECK_RETURN(cudaMalloc((uint64_t **) &dev_nextDiv, NB_BLOCKS * MAX_FACTORS_PER_BLOCK * sizeof(uint64_t)));
-	CUDA_CHECK_RETURN(cudaMalloc((int **) &sizeNextDiv, NB_BLOCKS * sizeof(int)));
+	CUDA_CHECK_RETURN(cudaMalloc((uint64_t **) &dev_factorList, NB_BLOCKS * sizeof(uint64_t)));
+	CUDA_CHECK_RETURN(cudaMalloc((char **) &dev_sizeFactorList, NB_BLOCKS * sizeof(char)));
+
+	printf("pointeur : %p\n", ptr);
 
 	while (produitDiv(*Div) != nbr) {
-		CUDA_CHECK_RETURN(cudaMalloc((int **) &dev_currentDiv, Div->Size * sizeof(int)));
-		CUDA_CHECK_RETURN(cudaMemcpy(dev_currentDiv, Div->List, Div->Size, cudaMemcpyHostToDevice));
-		CUDA_CHECK_RETURN(cudaMemset(dev_nextDiv, 0, NB_BLOCKS * MAX_FACTORS_PER_BLOCK * sizeof(uint64_t)));
-		CUDA_CHECK_RETURN(cudaMemset(sizeNextDiv, 0, NB_BLOCKS * sizeof(int)));
-		memset(tmpDiv, 0, NB_BLOCKS * MAX_FACTORS_PER_BLOCK * sizeof(uint64_t));
-		memset(sizeTmpDiv, 0, NB_BLOCKS * sizeof(int));
-		dixonParrallele<<<NB_BLOCKS, threads>>>(dev_currentDiv, Div->Size, dev_nextDiv, sizeNextDiv, ptr, sizePL, nbr);
-		CUDA_CHECK_RETURN(cudaMemcpy(tmpDiv, dev_nextDiv, NB_BLOCKS * MAX_FACTORS_PER_BLOCK * sizeof(uint64_t), cudaMemcpyDeviceToHost));
-		CUDA_CHECK_RETURN(cudaMemcpy(sizeTmpDiv, sizeNextDiv, NB_BLOCKS * sizeof(int), cudaMemcpyDeviceToHost));
-		for (int i = 0; i < NB_BLOCKS; i++) {
-			for (int j = 0; j < sizeTmpDiv[i]; j++) {
-				if (!isIn(tmp->List, tmpDiv[i * MAX_FACTORS_PER_BLOCK + j], tmp->Size)) {
-					addInt(&tmp, tmpDiv[i * MAX_FACTORS_PER_BLOCK + j]);
-					nbr /= tmpDiv[i * MAX_FACTORS_PER_BLOCK + j];
+		sizeTmpFactor = 0;
+		CUDA_CHECK_RETURN(cudaMalloc((uint64_t **) &dev_div, Div->Size * sizeof(uint64_t)));
+		CUDA_CHECK_RETURN(cudaMemset(dev_factorList, 0, NB_BLOCKS * sizeof(uint64_t)));
+		CUDA_CHECK_RETURN(cudaMemset(dev_sizeFactorList, 0, NB_BLOCKS * sizeof(char)));
+		memset(factorList, 0, NB_BLOCKS * sizeof(uint64_t));
+		memset(sizeFactorList, 0, NB_BLOCKS * sizeof(char));
+		memset(tmpFactor, 0, NB_BLOCKS * sizeof(uint64_t));
+
+		CUDA_CHECK_RETURN(cudaMemcpy(dev_div, Div->List, Div->Size * sizeof(uint64_t), cudaMemcpyHostToDevice));
+		dixonParrallele<<<NB_BLOCKS, threads>>>(dev_div, Div->Size, dev_factorList, dev_sizeFactorList, ptr, sizePL, nbr);
+		CUDA_CHECK_RETURN(cudaMemcpy(sizeFactorList, dev_sizeFactorList, NB_BLOCKS * sizeof(char), cudaMemcpyDeviceToHost));
+		CUDA_CHECK_RETURN(cudaMemcpy(factorList, dev_factorList, NB_BLOCKS * sizeof(uint64_t), cudaMemcpyDeviceToHost));
+
+		for(int i = 0; i < NB_BLOCKS; i++) {
+			//printf("le 12 == %llu\n",factorList[0]);
+			if (sizeFactorList[i] > 0) {
+
+				if (!isIn(tmpFactor, factorList[i], sizeTmpFactor)) {
+
+					tmpFactor[sizeTmpFactor] = factorList[i];
+					sizeTmpFactor++;
 				}
 			}
 		}
-		Div = mergeDiv(Div, tmp);
-		resetIntList(&tmp);
-		CUDA_CHECK_RETURN(cudaFree(dev_currentDiv));
+		for (int i = 0; i < sizeTmpFactor; i++) {
+			addInt(&Div, tmpFactor[i]);
+			nbr /= tmpFactor[i];
+		}
 		if (Miller(nbr, 10)) {
 			addInt(&Div, nbr);
-			CUDA_CHECK_RETURN(cudaFree(dev_nextDiv));
-			CUDA_CHECK_RETURN(cudaFree(sizeNextDiv));
 			return Div;
 		}
+		CUDA_CHECK_RETURN(cudaFree(dev_div));
 	}
-	free(tmpDiv);
-	free(sizeTmpDiv);
-	free(tmp);
-	CUDA_CHECK_RETURN(cudaFree(dev_nextDiv));
-	CUDA_CHECK_RETURN(cudaFree(sizeNextDiv));
+	CUDA_CHECK_RETURN(cudaFree(dev_factorList));
+	CUDA_CHECK_RETURN(cudaFree(dev_sizeFactorList));
+	free(factorList);
+	free(tmpFactor);
+	free(sizeFactorList);
 	return Div;
 }
