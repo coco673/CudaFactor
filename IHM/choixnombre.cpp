@@ -2,6 +2,7 @@
 #include <sstream>
 #include <QButtonGroup>
 #include <QDebug>
+#include <gmpxx.h>
 
 ChoixNombre::ChoixNombre(Model * m)
 {
@@ -60,16 +61,15 @@ void ChoixNombre::check() {
         nombre->setTextCursor(temp);
     }
 
-    long double chiffre = 0;
+    mpz_class chiffre = 0;
     if (decimal->isChecked()) {
-        bool ok;
-        chiffre = nombre->toPlainText().toLongLong(&ok,10);
+        chiffre = nombre->toPlainText().toStdString();
     } else if (hexa->isChecked()) {
-        bool ok;
-        chiffre = nombre->toPlainText().toLongLong(&ok,16);
+       chiffre = mpz_class(nombre->toPlainText().toStdString(),16);
+
     } else {
-        bool ok;
-        chiffre = nombre->toPlainText().toLongLong(&ok,2);
+        chiffre = mpz_class(nombre->toPlainText().toStdString(),2);
+
     }
     model->setNombre(chiffre);
 }

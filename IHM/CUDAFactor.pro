@@ -3,13 +3,15 @@
 # Project created by QtCreator 2014-02-04T11:54:19
 #
 #-------------------------------------------------
-
+PATH=pwd
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = CUDAFactor
 TEMPLATE = app
+
+LIBS +=-L$(PATH)../Sage/libSage/local/lib -lgmpxx -lgmp
 
 MOC_DIR = ./tmp/moc/
 

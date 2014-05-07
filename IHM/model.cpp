@@ -1,6 +1,5 @@
 #include "model.h"
-
-
+#include <gmpxx.h>
 Model::Model()
 {
     methode = CUDA;
@@ -12,7 +11,10 @@ int Model::getMethode() {
     return methode;
 }
 
-long double Model::getNombre() {
+/*long double Model::getNombre() {
+    return nombre;
+}*/
+mpz_class Model::getNombre() {
     return nombre;
 }
 
@@ -28,7 +30,7 @@ void Model::setMethode(int m) {
     methode = m;
 }
 
-void Model::setNombre(long double n) {
+void Model::setNombre(mpz_class n) {
     nombre = n;
 }
 

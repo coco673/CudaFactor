@@ -1,10 +1,13 @@
 #include "fenetreprincipale.h"
 #include <QApplication>
-
+#include <iostream>
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QDir::setCurrent(QDir::currentPath());
+    QString path = QDir::currentPath();
+    path.append("/IHM/");
+    QDir::setCurrent(path);
+
     FenetrePrincipale w;
     w.show();
 
