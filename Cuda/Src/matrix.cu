@@ -7,7 +7,7 @@
  * 																			   *
  ******************************************************************************/
 
- __host__ matrix2D *createEmptyMatrix2D() {
+__host__ matrix2D *createEmptyMatrix2D() {
 	matrix2D *matrix = (matrix2D *) malloc(sizeof(matrix2D));
 	matrix->mat = NULL;
 	matrix->colsNb = 0;
@@ -15,7 +15,7 @@
 	return matrix;
 }
 
- __host__ matrix2D *createMatrix2D(int rows, int cols) {
+__host__ matrix2D *createMatrix2D(int rows, int cols) {
 	matrix2D *matrix = (matrix2D *) malloc(sizeof(matrix2D));
 	matrix->mat = (char **) malloc(rows * sizeof(char*));
 
@@ -24,7 +24,7 @@
 		/*for (int j = 0; j < cols; j++) {
 			matrix->mat[i][j] = 0;
 		}*/
-			if(matrix->mat[i] == NULL){
+		if(matrix->mat[i] == NULL){
 			char s[30];
 			sprintf(s," create matrix %i",i);
 			perror(s);
@@ -40,20 +40,20 @@
 	return matrix;
 }
 
- __host__ matrix2D *copyMatrix2D(matrix2D src) {
+__host__ matrix2D *copyMatrix2D(matrix2D src) {
 	matrix2D *matrix = (matrix2D *) malloc(sizeof(matrix2D));
 	if(matrix == NULL){
-			perror("copy mat");
-		}
+		perror("copy mat");
+	}
 	matrix->mat = (char **) malloc(src.rowsNb * sizeof(char*));
 	if(matrix->mat == NULL){
-			perror("matrix mat");
-		}
+		perror("matrix mat");
+	}
 	for (int i = 0; i < src.rowsNb; i++) {
 		matrix->mat[i] = (char *) malloc(src.colsNb * sizeof(char));
 		if(matrix->mat[i] == NULL){
-				perror("mattrix mat[i]");
-			}
+			perror("mattrix mat[i]");
+		}
 		for (int j = 0; j < src.colsNb; j++) {
 			matrix->mat[i][j] = src.mat[i][j];
 		}
@@ -63,18 +63,18 @@
 	return matrix;
 }
 
- __host__ matrix2D *addLineToMatrix2D(matrix2D *src, int val, int index) {
-	 char *vector = (char *) malloc(src->colsNb * sizeof(char));
+__host__ matrix2D *addLineToMatrix2D(matrix2D *src, int val, int index) {
+	char *vector = (char *) malloc(src->colsNb * sizeof(char));
 	if(vector == NULL){
-			perror("add line vector");
-		}
+		perror("add line vector");
+	}
 	for (int i = 0; i < src->colsNb; i++) {
 		vector[i] = val;
 	}
 	matrix2D *matrix = createMatrix2D(src->rowsNb + 1, src->colsNb);
 	if(matrix == NULL){
-			perror("add line matrix");
-		}
+		perror("add line matrix");
+	}
 	for (int i = 0; i < index; i++) {
 		matrix->mat[i] = src->mat[i];
 	}
@@ -82,12 +82,12 @@
 	for (int i = index + 1; i < matrix->rowsNb; i++) {
 		matrix->mat[i] = src->mat[i - 1];
 	}
-delete[](src->mat);
+	delete[](src->mat);
 	free(src);
 	return matrix;
 }
 
- __host__ void swapLineMatrix2D(matrix2D *src, int line1, int line2) {
+__host__ void swapLineMatrix2D(matrix2D *src, int line1, int line2) {
 	char *tmpLine = (char *) malloc(src->colsNb * sizeof(char));
 	if(tmpLine == NULL){
 		perror("swapLine");
@@ -108,7 +108,7 @@ delete[](src->mat);
  * 																			   *
  ******************************************************************************/
 
- __host__ matrix1D *createEmptyMatrix1D() {
+__host__ matrix1D *createEmptyMatrix1D() {
 	matrix1D *matrix = (matrix1D *) malloc(sizeof(matrix1D));
 	matrix->mat = NULL;
 	matrix->colsNb = 0;
@@ -116,7 +116,7 @@ delete[](src->mat);
 	return matrix;
 }
 
- __host__ matrix1D *createMatrix1D(int rows, int cols) {
+__host__ matrix1D *createMatrix1D(int rows, int cols) {
 	matrix1D *matrix = (matrix1D *) malloc(sizeof(matrix1D));
 	matrix->mat = (char *) malloc(rows * cols * sizeof(char));
 	for (int j = 0; j < cols; j++) {
@@ -127,7 +127,7 @@ delete[](src->mat);
 	return matrix;
 }
 
- __host__ matrix1D *copyMatrix1D(matrix1D src) {
+__host__ matrix1D *copyMatrix1D(matrix1D src) {
 	matrix1D *matrix = (matrix1D *) malloc(sizeof(matrix1D));
 	matrix->mat = (char *) malloc(src.rowsNb * src.colsNb * sizeof(char));
 	for (int j = 0; j < src.colsNb * src.rowsNb; j++) {
@@ -138,7 +138,7 @@ delete[](src->mat);
 	return matrix;
 }
 
- __host__ matrix1D *addLineToMatrix1D(matrix1D *src, int val, int index) {
+__host__ matrix1D *addLineToMatrix1D(matrix1D *src, int val, int index) {
 	matrix1D *matrix = createMatrix1D(src->rowsNb + 1, src->colsNb);
 	for (int i = 0; i < index * src->colsNb; i++) {
 		matrix->mat[i] = src->mat[i];
@@ -152,7 +152,7 @@ delete[](src->mat);
 	return matrix;
 }
 
- __host__ void swapLineMatrix1D(matrix1D *src, int line1, int line2) {
+__host__ void swapLineMatrix1D(matrix1D *src, int line1, int line2) {
 	char *tmpLine = (char*) malloc(src->rowsNb * sizeof(char));
 	for (int i = 0; i < src->rowsNb; i++) {
 		tmpLine[i] = src->mat[line1 * src->colsNb + i];
