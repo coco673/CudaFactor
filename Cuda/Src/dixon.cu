@@ -18,7 +18,7 @@ int adjust_bl(int value){
 	if(value < 32){
 		return 1;
 	}
-	return(ceil(value/NB_TH_PER_BLOCK)+1);
+	return((int)ceil(value/NB_TH_PER_BLOCK)+1);
 }
 
 int adjust_th( int value){
@@ -311,10 +311,12 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 		CUDA_CHECK_RETURN(cudaMemcpy(&sizeR,dev_sizeR,sizeof(int),cudaMemcpyDeviceToHost));
 		int tp = sizeR - sizePL;
 		sizeR -= tp;
+
 		CUDA_CHECK_RETURN(cudaMemcpy(tmpC,dev_R, sizeR * sizeof(Couple),cudaMemcpyDeviceToHost));
 
 		CUDA_CHECK_RETURN(cudaMemcpy(tmpmatrix,dev_matrix, sizePL*sizePL*sizeof(char),cudaMemcpyDeviceToHost));
 		matrix = matrix1DTo2D(tmpmatrix,sizePL);
+
 		for (int i = 0; i < sizeR; i++) {
 			for (int j = 0; j < sizePL; j++) {
 				matrixMod[i][j] = matrix[i][j] % 2;
@@ -325,11 +327,11 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 		free(tmpC);
 		listNoyau = gaussjordan_noyau(matrixMod, sizePL);
 		for (int i = 0; i < sizePL; i++) {
-					free(matrixMod[i]);
-				}
-				free(matrixMod);
+			free(matrixMod[i]);
+		}
+		free(matrixMod);
 
-				while (listNoyau->list != NULL) {
+		while (listNoyau->list != NULL) {
 			noyau = listNoyau->list->vec;
 
 			u = (calcul_u(*R, noyau, n));
@@ -371,7 +373,6 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 		free(listNoyau);
 		CUDA_CHECK_RETURN(cudaFree(dev_Div));
 		resetCoupleList(R);
-		printf("c est pas fini\n");
 	}
 
 

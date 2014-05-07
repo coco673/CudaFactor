@@ -295,7 +295,6 @@ Vector_List *gaussjordan_noyau(char **matrix, int size) {
 
 	// on traite toutes les colonnes
 	while (jc < nc and jl < nl) {
-printf("jc = %i jl = %i\n",jc,jl);
 		//choix du pivot que l'on veut mettre en M[jl,jc]
 		k = jl;
 		while (tmpMat->mat[k][jc] == 0 and k < nl-1) {
@@ -369,7 +368,9 @@ printf("jc = %i jl = %i\n",jc,jl);
 		}
 		free(noyau);
 	}
-
+for (int i =0;i<tmpMat->colsNb;i++){
+	free(tmpMat->mat[i]);
+}
 	free(tmpMat->mat);
 	free(tmpMat);
 	return listNoyau;

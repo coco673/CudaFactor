@@ -183,7 +183,7 @@ __host__ void printIntList(Int_List_GPU l) {
 	sprintf(tmp,"%s ","facteurs");
 	for (int i = 0; i < l.Size; i++) {
 		//printf("valeur : %ld\n", getVal(l, i));
-		sprintf(tmptmp," %llud", getVal(l, i));
+		sprintf(tmptmp," %lu", getVal(l, i));
 		strcat(tmp, tmptmp);
 		sprintf(tmptmp,"%s", "");
 	}
