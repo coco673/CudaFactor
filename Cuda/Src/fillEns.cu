@@ -93,7 +93,7 @@ __device__ void isInEnsembleG(uint64_t *ens, uint64_t y,int size, int *res){
 __device__ void setup_kernel ( curandState_t *state )
 {
 	int id = threadIdx.x + blockIdx.x*blockDim.x;
-	curand_init ( clock()+id, id, 0, &state[id] );
+	curand_init ( clock64()+id, id, 0, &state[id] );
 }
 
 __device__ void generate( curandState_t *globalState, uint64_t *rand, uint64_t nbr, uint64_t racN)
@@ -175,62 +175,61 @@ __global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,
 
 	__shared__ int sizeR;
 	Couple tmp;
-	//__shared__ int *matTmp;
+	__shared__ int *matTmp;
 	int bsmooth= -1;
 	int present= -1;
 	uint64_t x = 0;
 	uint64_t y =  0;
 	if(tid % blockDim.x == 0){
 		sizeR = 0;
-	/*	matTmp = (int *)malloc((k*k)*sizeof(int));
-		memset(matTmp,0,(k*k)*sizeof(int));*/
+			matTmp = (int *)malloc((k*k)*sizeof(int));
+		memset(matTmp,0,(k*k)*sizeof(int));
 	}
 	__syncthreads();
 	uint64_t sqrtNBR = (uint64_t) sqrtf(nbr);
 
-		do{
-			generate(state,rand,nbr,sqrtNBR);
+	do{
+		generate(state,rand,nbr,sqrtNBR);
 
-			x = rand[tid];
-			y = (x*x) % nbr;
+		x = rand[tid];
+		y = (x*x) % nbr;
 
-			if(devPremList == NULL ){
-				printf("PrimeList est NULL\n");
-			}
-			if(k <= 0 ){
-				printf("valeur de K <= 0 \n");
-			}
-
-			isBSmoothG(devPremList, k,y,&bsmooth);
-
-			isInEnsembleG(Div,y,sizeDiv,&present);
-
-
-		}while(!bsmooth || present);
-
-		tmp.x = x;
-		tmp.y = y;
-
-		atomicAdd(&sizeR,1);
-		uint64_t y1 = y;
-		for(int j = 0;j<k;j++){
-			while(y1%devPremList[j] == 0){
-				y1 = y1 / devPremList[j];
-				//matTmp[threadIdx.x*k+j]=(matTmp[threadIdx.x*k+j]+1);
-				matrix[threadIdx.x*k+j]=(matrix[threadIdx.x*k+j]+1);
-			}
+		if(devPremList == NULL ){
+			printf("PrimeList est NULL\n");
+		}
+		if(k <= 0 ){
+			printf("valeur de K <= 0 \n");
 		}
 
-		R[tid] = tmp;
+		isBSmoothG(devPremList, k,y,&bsmooth);
 
-		/*for(int j = 0; j< k;j++){
+		isInEnsembleG(Div,y,sizeDiv,&present);
+
+
+	}while(!bsmooth || present);
+
+	tmp.x = x;
+	tmp.y = y;
+	__syncthreads();
+	atomicAdd(&sizeR,1);
+	uint64_t y1 = y;
+	for(int j = 0;j<k;j++){
+		while(y1%devPremList[j] == 0){
+			y1 = y1 / devPremList[j];
+			matTmp[threadIdx.x*k+j]=(matTmp[threadIdx.x*k+j]+1);
+			//matrix[threadIdx.x*k+j]=(matrix[threadIdx.x*k+j]+1);
+		}
+	}
+	__syncthreads();
+	R[tid] = tmp;
+
+	for(int j = 0; j< k;j++){
 			matrix[tid*k+j]=matTmp[threadIdx.x*k+j];
 
-		}*/
-
-		size[0] += sizeR;
-		if(tid % blockDim.x == 0){
-		//free(matTmp);
 		}
+	if(tid % blockDim.x == 0){
+		free(matTmp);
+		atomicAdd(size, sizeR);
+	}
 }
 
