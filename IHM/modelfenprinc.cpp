@@ -1,5 +1,6 @@
 #include "modelfenprinc.h"
 
+// Initialisation de la Frame
 ModelFenPrinc::ModelFenPrinc(Model* mod,
                              modelComparaison* modComp,
                              int* chx,
@@ -18,7 +19,6 @@ ModelFenPrinc::ModelFenPrinc(Model* mod,
     listFramesComp = listComp;
     bulle = bulleInfo;
 
-    // Initialisation des models
     model = mod;
     modelComp = modComp;
 
@@ -29,28 +29,34 @@ ModelFenPrinc::ModelFenPrinc(Model* mod,
 
 }
 
+//Retourne le modèle contenant les informations sur la factorisation
 Model* ModelFenPrinc::getModel() {
     return model;
 }
 
+//Retourne le modèle de comparaison contenant les informations sur la comparaison de deux rapports
 modelComparaison* ModelFenPrinc::getModelComp() {
     return modelComp;
 }
 
+//Initialise les listes des fenêtres
 void ModelFenPrinc::initLists(QList<Frame *> listAv, QList<Frame *> listFact, QList<Frame *> listComp) {
     listFramesAvant = listAv;
     listFramesFact = listFact;
     listFramesComp = listComp;
 }
 
+//Retourne la page courante
 int ModelFenPrinc::getPage(){
     return page;
 }
 
+//Retourne si l'utilisateur souhaite factoriser un nombre ou comparer deux rapports
 int ModelFenPrinc::getChxCompFact() {
     return *chxCompFact;
 }
 
+//Revenir à la fenêtre précédente
 void ModelFenPrinc::prev() {
     bulle->hide();
     if (page < 1) {
@@ -107,6 +113,7 @@ void ModelFenPrinc::prev() {
     }
 }
 
+//Passer à la fenêtre suivante
 void ModelFenPrinc::next() {
     bulle->hide();
     if (getChxCompFact() == factorisation) {
@@ -186,6 +193,7 @@ void ModelFenPrinc::next() {
     }
 }
 
+//Réinitialise les modèles
 void ModelFenPrinc::reinitialiser() {
     model->reinitialiser();
     modelComp->reinitialiser();

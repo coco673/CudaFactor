@@ -1,3 +1,7 @@
+/*
+ * Frame permettant à l'utilisateur de visualiser le resulat de l'execution et d'enregistrer le rapport
+ */
+
 #ifndef RESULTAT_H
 #define RESULTAT_H
 

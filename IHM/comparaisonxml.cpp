@@ -1,6 +1,7 @@
 #include "comparaisonxml.h"
 #include <QFileDialog>
 
+// Initialisation de la Frame
 comparaisonXml::comparaisonXml(modelComparaison* m)
 {
     modelComp = m;
@@ -56,17 +57,20 @@ comparaisonXml::comparaisonXml(modelComparaison* m)
 
 }
 
+//Verifie la validité des éléments mais inutile dans cette frame
 void comparaisonXml::check() {
 
 }
 
+//Actualisation de la frame après qu'elle soit show
 void comparaisonXml::actualiseApresAffichage() {
 }
 
+//Execution pour sélectionner et ouvrir le rapport n°1
 void comparaisonXml::ouvrirFichier1() {
     QString s = QFileDialog::getOpenFileName(0, "Open File",
-                                                   "untitled.xml",
-                                                   "Xml (*.xml)");
+                                             "untitled.xml",
+                                             "Xml (*.xml)");
     if (s != "") {
         modelComp->setXML1(s);
         lecturefichierXML1();
@@ -83,10 +87,11 @@ void comparaisonXml::ouvrirFichier1() {
     }
 }
 
+//Execution pour sélectionner et ouvrir le rapport n°2
 void comparaisonXml::ouvrirFichier2() {
     QString s = QFileDialog::getOpenFileName(0, "Open File",
-                                                   "untitled.xml",
-                                                   "Xml (*.xml)");
+                                             "untitled.xml",
+                                             "Xml (*.xml)");
     if (s != "") {
         modelComp->setXML2(s);
         lecturefichierXML2();
@@ -103,6 +108,7 @@ void comparaisonXml::ouvrirFichier2() {
     }
 }
 
+//Est-il possible de comparer les deux rapports
 bool comparaisonXml::isComparable() {
     if (modelComp->getXML1() == "" || modelComp->getXML2() == "") {
         return false;
@@ -113,6 +119,7 @@ bool comparaisonXml::isComparable() {
     return true;
 }
 
+//Execution pour de la comparaison des deux rapports
 void comparaisonXml::comparaison() {
     text1->clear();
     text2->clear();
@@ -164,6 +171,7 @@ void comparaisonXml::comparaison() {
     }
 }
 
+//Execution pour remplir la zone de texte n°1 avec le rapport choisi
 void comparaisonXml::remplirText1() {
     text1->clear();
     QString taille = "font-size: 20px;";
@@ -188,6 +196,7 @@ void comparaisonXml::remplirText1() {
     text1->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(taille, s));
 }
 
+//Execution pour remplir la zone de texte n°2 avec le rapport choisi
 void comparaisonXml::remplirText2() {
     text2->clear();
     QString taille = "font-size: 20px;";
@@ -211,6 +220,7 @@ void comparaisonXml::remplirText2() {
     text2->insertHtml(QString("<span style=\"%1\">%2</span><br />").arg(taille, s));
 }
 
+//Parsing du rapport n°1
 void comparaisonXml::lecturefichierXML1() {
 
     QXmlStreamReader reader;//Objet servant à la navigation
@@ -219,10 +229,10 @@ void comparaisonXml::lecturefichierXML1() {
     reader.setDevice(&file);//Initialise l'instance reader avec le flux XML venant de file
 
 
-//Le but de cette boucle est de parcourir le fichier et de vérifier si l'on est au debut d'un element.
-QString derniereBaliseOuverte = "";
-listFacteursPremiers1.clear();
-while (!reader.atEnd())
+    //Le but de cette boucle est de parcourir le fichier et de vérifier si l'on est au debut d'un element.
+    QString derniereBaliseOuverte = "";
+    listFacteursPremiers1.clear();
+    while (!reader.atEnd())
     {
         QXmlStreamReader::TokenType t = reader.readNext();
         QString name = reader.name().toString ();
@@ -235,41 +245,42 @@ while (!reader.atEnd())
             break;
 
         case QXmlStreamReader::Characters :
-            {
-                QString t = "";
-                t+= reader.text();
-                t.remove(QChar(' '), Qt::CaseInsensitive);
-                t.remove(QChar('\n'), Qt::CaseInsensitive);
-                if (derniereBaliseOuverte == "nombre") {
-                    if (t != "") {
-                        nombre1 = t;
-                    }
+        {
+            QString t = "";
+            t+= reader.text();
+            t.remove(QChar(' '), Qt::CaseInsensitive);
+            t.remove(QChar('\n'), Qt::CaseInsensitive);
+            if (derniereBaliseOuverte == "nombre") {
+                if (t != "") {
+                    nombre1 = t;
                 }
-                else if (derniereBaliseOuverte == "methode") {
-                    if (t != "") {
-                        methode1 = t;
-                    }
-                }
-                else if (derniereBaliseOuverte == "temps") {
-                    if (t != "") {
-                        temps1 = t;
-                    }
-                }
-                else if (derniereBaliseOuverte == "listfacteurs" ) {
-                }
-                else if (derniereBaliseOuverte == "facteur" ) {
-                    if (t != "") {
-                        listFacteursPremiers1.append(t);
-                    }
-                }
-                break;
             }
+            else if (derniereBaliseOuverte == "methode") {
+                if (t != "") {
+                    methode1 = t;
+                }
+            }
+            else if (derniereBaliseOuverte == "temps") {
+                if (t != "") {
+                    temps1 = t;
+                }
+            }
+            else if (derniereBaliseOuverte == "listfacteurs" ) {
+            }
+            else if (derniereBaliseOuverte == "facteur" ) {
+                if (t != "") {
+                    listFacteursPremiers1.append(t);
+                }
+            }
+            break;
+        }
         default :
             break;
         }
     }
 }
 
+//Parsing du rapport n°2
 void comparaisonXml::lecturefichierXML2() {
 
     QXmlStreamReader reader;//Objet servant à la navigation
@@ -278,10 +289,10 @@ void comparaisonXml::lecturefichierXML2() {
     reader.setDevice(&file);//Initialise l'instance reader avec le flux XML venant de file
 
 
-//Le but de cette boucle est de parcourir le fichier et de vérifier si l'on est au debut d'un element.
-QString derniereBaliseOuverte = "";
-listFacteursPremiers2.clear();
-while (!reader.atEnd())
+    //Le but de cette boucle est de parcourir le fichier et de vérifier si l'on est au debut d'un element.
+    QString derniereBaliseOuverte = "";
+    listFacteursPremiers2.clear();
+    while (!reader.atEnd())
     {
         QXmlStreamReader::TokenType t = reader.readNext();
         QString name = reader.name().toString ();
@@ -294,41 +305,42 @@ while (!reader.atEnd())
             break;
 
         case QXmlStreamReader::Characters :
-            {
-                QString t = "";
-                t+= reader.text();
-                t.remove(QChar(' '), Qt::CaseInsensitive);
-                t.remove(QChar('\n'), Qt::CaseInsensitive);
-                if (derniereBaliseOuverte == "nombre") {
-                    if (t != "") {
-                        nombre2 = t;
-                    }
+        {
+            QString t = "";
+            t+= reader.text();
+            t.remove(QChar(' '), Qt::CaseInsensitive);
+            t.remove(QChar('\n'), Qt::CaseInsensitive);
+            if (derniereBaliseOuverte == "nombre") {
+                if (t != "") {
+                    nombre2 = t;
                 }
-                else if (derniereBaliseOuverte == "methode") {
-                    if (t != "") {
-                        methode2 = t;
-                    }
-                }
-                else if (derniereBaliseOuverte == "temps") {
-                    if (t != "") {
-                        temps2 = t;
-                    }
-                }
-                else if (derniereBaliseOuverte == "listfacteurs" ) {
-                }
-                else if (derniereBaliseOuverte == "facteur" ) {
-                    if (t != "") {
-                        listFacteursPremiers2.append(t);
-                    }
-                }
-                break;
             }
+            else if (derniereBaliseOuverte == "methode") {
+                if (t != "") {
+                    methode2 = t;
+                }
+            }
+            else if (derniereBaliseOuverte == "temps") {
+                if (t != "") {
+                    temps2 = t;
+                }
+            }
+            else if (derniereBaliseOuverte == "listfacteurs" ) {
+            }
+            else if (derniereBaliseOuverte == "facteur" ) {
+                if (t != "") {
+                    listFacteursPremiers2.append(t);
+                }
+            }
+            break;
+        }
         default :
             break;
         }
     }
 }
 
+//Réinitialisation de la frame
 void comparaisonXml::actualiser() {
     text1->setPlainText("");
     text2->setPlainText("");
@@ -343,6 +355,7 @@ void comparaisonXml::actualiser() {
     labelErreur->hide();
 }
 
+//Bouton suivant affiché ou non
 bool comparaisonXml::boutonSuivant() {
     return true;
 }

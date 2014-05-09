@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <gmpxx.h>
 
+// Initialisation de la Frame
 ChoixNombre::ChoixNombre(Model * m)
 {
     model = m;
@@ -41,13 +42,16 @@ ChoixNombre::ChoixNombre(Model * m)
     setStyleSheet("background-color: rgb(1,74,111);");
 }
 
+//Execution lorsque l'un des boutons radiobouton est pressé
 void ChoixNombre::boutonClique() {
     check();
 }
 
+//Actualisation de la frame après qu'elle soit show
 void ChoixNombre::actualiseApresAffichage() {
 }
 
+//Verifie la validité des éléments
 void ChoixNombre::check() {
     QStringList listString = nombre->toPlainText().split("\n");
 
@@ -74,6 +78,7 @@ void ChoixNombre::check() {
     model->setNombre(chiffre);
 }
 
+//Réinitialisation de la frame
 void ChoixNombre::actualiser() {
     if (model->getNombre() == 0) {
         nombre->setText("");
@@ -86,6 +91,7 @@ void ChoixNombre::actualiser() {
     decimal->setChecked(true);
 }
 
+//Bouton suivant affiché ou non
 bool ChoixNombre::boutonSuivant() {
     return true;
 }

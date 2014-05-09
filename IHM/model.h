@@ -1,3 +1,7 @@
+/*
+ * Model qui contient toutes les informations que l'utilisateur va entrer
+ */
+
 #ifndef MODEL_H
 #define MODEL_H
 
@@ -19,8 +23,8 @@ public:
     mpz_class getNombre();
     //void setNombre(long double);
     void setNombre(mpz_class);
-    QList<long double> getListFacteursPremiers();
-    void setListFacteursPremiers(QList<long double> l);
+    QList<mpz_class> getListFacteursPremiers();
+    void setListFacteursPremiers(QList<mpz_class> l);
     double getTempsExecution();
     void setTempsExecution(double t);
     QString getTitre();
@@ -30,7 +34,7 @@ private:
     int methode;
     //long double nombre;
     mpz_class nombre;
-    QList<long double> listFacteursPremiers;
+    QList<mpz_class> listFacteursPremiers;
     double temps;
     QString titre;
 

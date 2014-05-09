@@ -1,5 +1,6 @@
 #include "fenetreprincipale.h"
 
+// Initialisation de la Frame
 FenetrePrincipale::FenetrePrincipale() {
 
     suivant = new QPushButton(this);
@@ -103,10 +104,12 @@ FenetrePrincipale::FenetrePrincipale() {
 
 }
 
+//Retourne le modèle de la fenetre principale
 ModelFenPrinc* FenetrePrincipale::getModelFenPrinc() {
     return modelFen;
 }
 
+//Retourne la frame show
 Frame * FenetrePrincipale::getFrameCourante() {
     if (modelFen->getPage() < listFramesAvant.size()) {
         return listFramesAvant[modelFen->getPage()];
@@ -119,46 +122,58 @@ Frame * FenetrePrincipale::getFrameCourante() {
     }
 }
 
+//Retourne la liste des fenêtres affichées avant que l'utilisateur
+//puisse choisir si il souhaite comparer deux rapports ou factoriser un nombre
 QList<Frame *> FenetrePrincipale::getListeFramesAvant() {
     return listFramesAvant;
 }
 
+//Retourne la liste des fenêtres permettant la factorisation du nombre
 QList<Frame *> FenetrePrincipale::getListeFramesFact() {
     return listFramesFact;
 }
 
+//Retourne la liste des fenêtres permettant la comparaison du nombre
 QList<Frame *> FenetrePrincipale::getListeFramesComp() {
     return listFramesComp;
 }
 
+//Retourne la fenêtre permettant à l'utilisateur de choisir si il souhaite factoriser un nombre ou comparer deux rapports
 choixCompa_facto* FenetrePrincipale::getChoixCompFact() {
     return choixCompFact;
 }
 
+//Retourne la fenêtre permettant à l'utilisateur de rentrer son nombre
 ChoixNombre* FenetrePrincipale::getChoixNombre() {
     return choixNombre;
 }
 
+//Retourne la fenêtre permettant à l'utilisateur de choisir la langage sous lequel l'algorithme sera exécuté (Sage ou Cuda)
 ChoixMethode* FenetrePrincipale::getChoixMethode() {
     return choixMethode;
 }
 
+//Retourne la fenêtre permettant à l'utilisateur de lancer l'exécution
 Attente* FenetrePrincipale::getAttente() {
     return attente;
 }
 
+//Retourne la fenêtre permettant à l'utilisateur de visualiser et d'enregistrer le rapport d'exécution
 Resultat* FenetrePrincipale::getResultat() {
     return resultat;
 }
 
+//Retourne la fenêtre permettant à l'utilisateur de comparer deux rapports
 comparaisonXml* FenetrePrincipale::getComparaisonXml() {
     return compXml;
 }
 
+//Permet de revenir à la fenêtre précédente
 void FenetrePrincipale::prev() {
     modelFen->prev();
 }
 
+//Permet de passer à la fenêtre suivante
 void FenetrePrincipale::next() {
     modelFen->next();
 }

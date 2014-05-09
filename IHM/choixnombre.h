@@ -1,3 +1,7 @@
+/*
+ * Frame permettant à l'utilisateur de choisir l'entrer le nombre qu'il souhaite factroiser
+ */
+
 #ifndef CHOIXNOMBRE_H
 #define CHOIXNOMBRE_H
 

@@ -1,3 +1,7 @@
+/*
+ * Frame permettant à l'utilisateur d'exécuter l'algorithme
+ */
+
 #ifndef ATTENTE_H
 #define ATTENTE_H
 

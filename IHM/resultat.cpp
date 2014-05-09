@@ -9,6 +9,7 @@
 #include <sstream>
 #include <QTextStream>
 
+// Initialisation de la Frame
 Resultat::Resultat(Model *m)
 {
     model = m;
@@ -41,22 +42,27 @@ Resultat::Resultat(Model *m)
     setStyleSheet("background-color: rgb(1,74,111);");
 }
 
+//Réinitialisation de la frame
 void Resultat::actualiser() {
     remplirText();
 }
 
+//Verifie la validité des éléments mais inutile dans cette frame
 void Resultat::check() {
 
 }
 
+//Actualisation de la frame après qu'elle soit show
 void Resultat::actualiseApresAffichage() {
 
 }
 
+//Bouton suivant affiché ou non
 bool Resultat::boutonSuivant() {
     return true;
 }
 
+//Permet de remplir la zone de texte avec le rapport d'exécution
 void Resultat::remplirText() {
 
     std::stringstream stream;
@@ -97,20 +103,19 @@ void Resultat::remplirText() {
     text->setPlainText(s);
 }
 
+//Permet d'enregistrer le rapport
 void Resultat::enregistrer() {
-    //Choix du chemin d'enregistrement
     QString s = QFileDialog::getSaveFileName(0, "Save File",
                                                    "untitled.xml",
                                                    "Xml (*.xml)");
     if (s != "") {
-        //Enregistrement
         fileName = s;
         creerXml();
     }
 }
 
+//Création du rapport en XML
 void Resultat::creerXml() {
-//fileName = "xml/untitled.xml";
     QFile file(fileName);
     if(file.open(QFile::WriteOnly|QFile::Text)) {
 

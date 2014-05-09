@@ -1,3 +1,7 @@
+/*
+ * Widget principale permettant de changer de fenetre
+ */
+
 #ifndef FENETREPRINCIPALE_H
 #define FENETREPRINCIPALE_H
 

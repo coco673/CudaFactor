@@ -1,3 +1,7 @@
+/*
+ * Frame permettant à l'utilisateur de choisir si il souhaite factoriser un nombre ou comparer deux rapports
+ */
+
 #ifndef CHOIXCOMPA_FACTO_H
 #define CHOIXCOMPA_FACTO_H
 

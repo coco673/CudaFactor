@@ -1,3 +1,7 @@
+/*
+ * Class dont toutes les frames héritent
+ */
+
 #ifndef FRAME_H
 #define FRAME_H
 

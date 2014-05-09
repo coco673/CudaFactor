@@ -1,3 +1,7 @@
+/*
+ * Frame permettant à l'utilisateur de choisir si il veut factoriser le nombre sous Sage ou sous Cuda
+ */
+
 #ifndef CHOIXMETHODE_H
 #define CHOIXMETHODE_H
 

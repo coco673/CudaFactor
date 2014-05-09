@@ -1,6 +1,7 @@
 #include "choixmethode.h"
 #include <QTextStream>
 
+// Initialisation de la Frame
 ChoixMethode::ChoixMethode(Model *m, ModelFenPrinc *mfp)
 {
     model = m;
@@ -47,28 +48,33 @@ ChoixMethode::ChoixMethode(Model *m, ModelFenPrinc *mfp)
 
 }
 
+//Réinitialisation de la frame
 void ChoixMethode::actualiser() {
 
 }
 
+//Actualisation de la frame après qu'elle soit show
 void ChoixMethode::actualiseApresAffichage() {
 
 }
 
+//Verifie la validité des éléments mais inutile dans cette frame
 void ChoixMethode::check() {
 
 }
 
+//Bouton suivant affiché ou non
 bool ChoixMethode::boutonSuivant() {
     return false;
 }
 
-
+//Execution lorsque le bouton CUDA est pressé
 void ChoixMethode::pressCUDA() {
     model->setMethode(CUDA);
     modelFen->next();
 }
 
+//Execution lorsque le bouton SAGE est pressé
 void ChoixMethode::pressSAGE() {
     model->setMethode(SAGE);
     printf("set methode : SAGE %d\n",SAGE);

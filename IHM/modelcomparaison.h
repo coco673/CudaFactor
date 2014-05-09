@@ -1,3 +1,7 @@
+/*
+ * Model contenant les rapports a comparer
+ */
+
 #ifndef MODELCOMPARAISON_H
 #define MODELCOMPARAISON_H
 

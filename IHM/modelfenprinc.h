@@ -1,3 +1,7 @@
+/*
+ * Model de la widget principale
+ */
+
 #ifndef MODELFENPRINC_H
 #define MODELFENPRINC_H
 

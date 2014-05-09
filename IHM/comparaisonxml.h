@@ -1,3 +1,7 @@
+/*
+ * Frame permettant à l'utilisateur de comparer deux rapports
+ */
+
 #ifndef COMPARAISONXML_H
 #define COMPARAISONXML_H
 

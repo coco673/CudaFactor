@@ -1,5 +1,6 @@
 #include "choixcompa_facto.h"
 
+// Initialisation de la Frame
 choixCompa_facto::choixCompa_facto(int* chx, ModelFenPrinc* m)
 {
     chxCompFact = chx;
@@ -44,26 +45,32 @@ choixCompa_facto::choixCompa_facto(int* chx, ModelFenPrinc* m)
 
 }
 
+//Réinitialisation de la frame
 void choixCompa_facto::actualiser() {
 
 }
 
+//Actualisation de la frame après qu'elle soit show
 void choixCompa_facto::actualiseApresAffichage() {
 }
 
+//Verifie la validité des éléments mais inutile dans cette frame
 void choixCompa_facto::check() {
 
 }
 
+//Bouton suivant affiché ou non
 bool choixCompa_facto::boutonSuivant() {
     return false;
 }
 
+//Execution lorsque le bouton factorisation est pressé
 void choixCompa_facto::pressFact() {
     *chxCompFact = factorisation;
     model->next();
 }
 
+//Execution lorsque le bouton Comparaison est pressé
 void choixCompa_facto::pressComp() {
     *chxCompFact = Comparaison;
     model->next();

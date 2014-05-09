@@ -4,6 +4,8 @@
 #include <QTextStream>
 #include <iomanip>
 #include <QApplication>
+
+// Initialisation de la Frame
 Attente::Attente(Model *m)
 {
     model = m;
@@ -19,7 +21,7 @@ Attente::Attente(Model *m)
     execButton->setFixedSize(250, 50);
     execButton->move(260, 500);
     execButton->setCursor(Qt::PointingHandCursor);
-    execButton->setText("Lancer l'exécution");
+    execButton->setText("Lancer l'execution");
     execButton->setIconSize(QSize(100, 100));
 
     text = new QTextEdit(this);
@@ -34,13 +36,17 @@ Attente::Attente(Model *m)
     QObject::connect(execButton, SIGNAL(clicked()), this, SLOT(lancerExec()));
 }
 
+//Réinitialisation de la frame
 void Attente::actualiser() {
     text->clear();
 }
 
+//Actualisation de la frame après qu'elle soit show
 void Attente::actualiseApresAffichage() {
 
 }
+
+//Lance l'execution de l'algorithme
 void Attente::lancerExec() {
     text->clear();
     boolBoutonSuiv = false;
@@ -52,6 +58,7 @@ void Attente::lancerExec() {
     boolBoutonSuiv = true;
 }
 
+//Lance l'algorithme sous Sage
 void Attente::execSAGE() {
     FILE * sage_output;
     std::ostringstream strs;
@@ -92,7 +99,7 @@ void Attente::execSAGE() {
             }
         case 2: // facteurs
             {
-                 QList<long double> l;
+                 QList<mpz_class> l;
                  tab = strsep(&tmp," ");
                  tab = strsep(&tmp," ");
                  for (int j = 0; j < nbFact; j++) {
@@ -127,6 +134,7 @@ void Attente::execSAGE() {
     free(tmp);
 }
 
+//Lance algorithme sous Cuda
 void Attente::execCUDA() {
    // std::stringstream strs;
     FILE * cuda_output;
@@ -166,7 +174,7 @@ void Attente::execCUDA() {
             }
         case 2: // facteurs
             {
-                 QList<long double> l;
+                 QList<mpz_class> l;
 
                  tab = strsep(&tmp," ");
                  tab = strsep(&tmp," ");
@@ -202,12 +210,12 @@ void Attente::execCUDA() {
     free(tmp);
 }
 
-
+//Verifie la validité des éléments mais inutile dans cette frame
 void Attente::check() {
 
 }
 
-
+//Bouton suivant affiché ou non
 bool Attente::boutonSuivant() {
     //return boolBoutonSuiv;
     return true;
