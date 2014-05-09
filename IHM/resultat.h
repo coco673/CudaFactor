@@ -39,7 +39,6 @@ private:
     QLabel * label;
     QString fileName;
     QPushButton * sauvegarder;
-    QIcon * icon;
 };
 
 #endif // RESULTAT_H

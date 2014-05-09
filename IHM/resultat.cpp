@@ -26,16 +26,13 @@ Resultat::Resultat(Model *m)
     text->setStyleSheet("background-color: white; border: 2px solid gray");
     remplirText();
 
-    icon = new QIcon("images/boutonEnregistrer.png");
     sauvegarder = new QPushButton(this);
 
-    sauvegarder->setFixedSize(190, 150);
-    sauvegarder->move(305, 440);
+    sauvegarder->setFixedSize(250, 50);
+    sauvegarder->move(260, 500);
     sauvegarder->setCursor(Qt::PointingHandCursor);
+    sauvegarder->setText("Enregistrer rapport");
     sauvegarder->raise(); //au premier plan
-    sauvegarder->setStyleSheet("border-radius: 10px;");
-    sauvegarder->setIcon(*icon);
-    sauvegarder->setIconSize(QSize(190, 150));
 
     QObject::connect(sauvegarder, SIGNAL(clicked()), this, SLOT(enregistrer()));
 
