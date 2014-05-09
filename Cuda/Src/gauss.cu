@@ -16,7 +16,6 @@ void print_matrix(int **matrix, int size) {
 //Avec des matrix2D
 Vector_List *gaussjordan_noyau(char **matrix, int size) {
 	int pivo,jc,jl,k,j,nl,nc,l,a;
-	int nbt = 0;
 	matrix2D Mat;
 	Mat.mat = matrix;
 	Mat.colsNb = size;
