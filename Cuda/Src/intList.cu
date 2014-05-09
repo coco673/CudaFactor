@@ -120,7 +120,7 @@ __host__ void printIntList(Int_List_GPU l) {
 	char *tmptmp = (char *) malloc (1000*sizeof(char));
 	sprintf(tmp,"%s ","facteurs");
 	for (int i = 0; i < l.Size; i++) {
-		sprintf(tmptmp," %lu", getVal(l, i));
+		sprintf(tmptmp,"%lu ", getVal(l, i));
 		strcat(tmp, tmptmp);
 		sprintf(tmptmp,"%s", "");
 	}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rapport>
+    <nombre>1587463</nombre>
+    <methode>CUDA</methode>
+    <temps>0.071373</temps>
+    <listfacteurs>
+        <facteur>151</facteur>
+        <facteur>10513</facteur>
+    </listfacteurs>
+</rapport>
