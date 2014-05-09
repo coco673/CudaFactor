@@ -19,9 +19,7 @@ public:
     void reinitialiser();
     int getMethode();
     void setMethode(int m);
-    //long double getNombre();
     mpz_class getNombre();
-    //void setNombre(long double);
     void setNombre(mpz_class);
     QList<mpz_class> getListFacteursPremiers();
     void setListFacteursPremiers(QList<mpz_class> l);
@@ -32,7 +30,6 @@ public:
 
 private:
     int methode;
-    //long double nombre;
     mpz_class nombre;
     QList<mpz_class> listFacteursPremiers;
     double temps;

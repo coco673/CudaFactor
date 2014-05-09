@@ -22,7 +22,6 @@ Attente::Attente(Model *m)
     execButton->move(260, 500);
     execButton->setCursor(Qt::PointingHandCursor);
     execButton->setText("Lancer l'execution");
-    execButton->setIconSize(QSize(100, 100));
 
     text = new QTextEdit(this);
 

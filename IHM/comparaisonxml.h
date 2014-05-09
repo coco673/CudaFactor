@@ -39,9 +39,7 @@ private:
     QPushButton* boutonOpen2;
     QTextEdit* text1;
     QTextEdit* text2;
-    QIcon * icon;
     QLabel * label;
-    QLabel * labelErreur;
     modelComparaison* modelComp;
     QString methode1;
     QString nombre1;

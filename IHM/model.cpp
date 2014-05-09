@@ -36,7 +36,10 @@ void Model::setMethode(int m) {
 
 //Change le nombre à factoriser
 void Model::setNombre(mpz_class n) {
-    nombre = n;
+    if (n == 0 || n == NULL)
+        nombre = 0;
+    else
+        nombre = n;
 }
 
 //Change la liste des facteurs premiers
