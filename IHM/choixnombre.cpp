@@ -66,14 +66,15 @@ void ChoixNombre::check() {
     }
 
     mpz_class chiffre = 0;
-    if (decimal->isChecked()) {
-        chiffre = nombre->toPlainText().toStdString();
-    } else if (hexa->isChecked()) {
-       chiffre = mpz_class(nombre->toPlainText().toStdString(),16);
-
-    } else {
-        chiffre = mpz_class(nombre->toPlainText().toStdString(),2);
-
+    QString s = nombre->toPlainText();
+    if (s != NULL) {
+        if (decimal->isChecked()) {
+            chiffre = s.toStdString();
+        } else if (hexa->isChecked()) {
+            chiffre = mpz_class(s.toStdString(),16);
+        } else {
+            chiffre = mpz_class(s.toStdString(),2);
+        }
     }
     model->setNombre(chiffre);
 }
