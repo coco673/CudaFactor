@@ -19,9 +19,9 @@ int main(int argc, char **argv) {
 		n = atoll(argv[1]);
 	else
 		n = 3061 * 3259;
-	
-	printf("Le nombre entré est %lu \n",n);
-	
+
+	printf("Le nombre entre est %lu \n",n);
+
 	if (n < 0) {
 		fprintf(stderr, "Le nombre entre est négatif, entrez un nombre >= 2!\n");
 		return EXIT_FAILURE;
