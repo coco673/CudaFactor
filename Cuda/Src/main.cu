@@ -10,22 +10,24 @@ int main(int argc, char **argv) {
 	cudaEventCreate(&start);
 	cudaEventCreate(&stop);
 	cudaEventRecord(start, 0);
+
 	if (argc > 1)
 		n = atoll(argv[1]);
 	else
 		n = 3061 * 3259;
-	printf("Le nombre entré est %lud\n",n);
+	
+	printf("Le nombre entré est %lu \n",n);
+	
 	if (n < 0) {
 		fprintf(stderr, "Le nombre entre est négatif, entrez un nombre >= 2!\n");
 		return EXIT_FAILURE;
 	} else if (n <= 1) {
-		printf("%lud n'est pas factorisable!\n", n);
+		printf("%lu n'est pas factorisable!\n", n);
 		return EXIT_SUCCESS;
 	} else if (n == 2) {
 		Div = createIntList();
 		addInt(&Div, n);
 	} else {
-		//Div = dixonGPU(n);
 		Div = factor(n);
 	}
 	printIntList(*Div);
@@ -36,8 +38,7 @@ int main(int argc, char **argv) {
 	printf("temps %f\n", elapsedTime / 1000);
 	cudaEventDestroy(start);
 	cudaEventDestroy(stop);
-		delete[](Div->List);
-
+	delete[](Div->List);
 	delete[](Div);
 	cudaDeviceReset();
 }

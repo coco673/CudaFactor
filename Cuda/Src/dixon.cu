@@ -3,32 +3,34 @@
 #include "header/fillEns.h"
 #include <assert.h>
 
-#define CUDA_CHECK_RETURN(value) {											\
-		cudaError_t _m_cudaStat = value;										\
-		if (_m_cudaStat != cudaSuccess) {										\
-			fprintf(stderr, "Error %s at line %d in file %s\n",					\
-					cudaGetErrorString(_m_cudaStat), __LINE__, __FILE__);		\
-					exit(1);															\
-		} }
+#define CUDA_CHECK_RETURN(value) {											
+		cudaError_t _m_cudaStat = value;										
+		if (_m_cudaStat != cudaSuccess) {										
+			fprintf(stderr, "Error %s at line %d in file %s\n",					
+					cudaGetErrorString(_m_cudaStat), __LINE__, __FILE__);		
+					exit(1);														
+		}
+	}
 
 __device__ __constant__ int devPremList[10000];
 
 
-int adjust_bl(int value){
-	if(value < 32){
+int adjust_bl(int value) {
+	if (value < 32) {
 		return 1;
 	}
-	return((int)ceil(value/NB_TH_PER_BLOCK)+1);
+	return((int) ceil(value / NB_TH_PER_BLOCK) + 1);
 }
 
-int adjust_th( int value){
-	if(value < NB_TH_PER_BLOCK){
+int adjust_th( int value) {
+	if (value < NB_TH_PER_BLOCK) {
 		return value;
 	}
 	return NB_TH_PER_BLOCK;
 }
+
 uint64_t alea(uint64_t a, uint64_t b) {
-	return rand()%(b-a) +a;
+	return rand() % (b - a) + a;
 }
 
 uint64_t produitDiv(Int_List_GPU Div) {
@@ -52,7 +54,7 @@ int calcul_u(Couple_List R, int *noyau, int n) {
 	int res = 1;
 	for (int i = 0; i < R.size; i++) {
 		if (noyau[i] == 1) {
-			res = (res * (getCouple(R, i).x * getCouple(R, i).x)) %n;
+			res = (res * (getCouple(R, i).x * getCouple(R, i).x)) % n;
 		}
 	}
 	return res;
@@ -68,123 +70,19 @@ int calcul_v(int *premList, int sizePL, Couple_List R, char **matrix, int *noyau
 				somme += matrix[j][i] * noyau[j];
 		}
 		somme = floor(somme / 2);
-		res *= (int)(pow(premList[i], somme));
+		res *= (int) (pow(premList[i], somme));
 		res %= n;
 	}
 	return res;
 }
 
-/*Int_List_GPU *dixon(int n) {
-	//timer
-
-
-	//Declarations
-
-	//int borne = sqrt(exp(sqrt(log(n)*log(log(n)))));
-	int borne = ceil(sqrt(exp(sqrt(2 * log(n) * log(log(n))))));
-	int sizePL;
-	int *premList = generatePrimeList(borne, &sizePL);
-	Couple_List *R = createCoupleList();
-
-	Int_List_GPU *Div = createIntList();
-	Couple tmpC;
-	int **matrix;
-	int **matrixMod;
-	int *noyau;
-	int u, v;
-	int nbr = n;
-	Vector_List *listNoyau;
-	VEC_ELEM *tmp;
-
-	//Allocations
-	matrixMod = (int **) malloc(sizePL * sizeof(int *));
-
-	for (int i  = 0; i < sizePL; i++) {
-		matrixMod[i] = (int *) malloc(sizePL * sizeof(int));
-	}
-
-	int index = 0;
-	while(index < sizePL) {
-		if (nbr % premList[index] == 0) {
-			addInt(&Div, premList[index]);
-			nbr /= premList[index];
-		} else {
-			index++;
-		}
-	}
-	if (Miller(nbr, 10)) {
-		addInt(&Div, nbr);
-		return Div;
-	}
-	printf("entree dans Dixon\n");
-	while (produitDiv(*Div) != nbr) {
-		while (R->size < sizePL) {
-			uint64_t x = alea(sqrt(nbr), nbr + 1);
-			uint64_t y = ((uint64_t)pow(x, 2)) % nbr;
-
-			if (isBSmoothG(premList, sizePL, y) && notIn(*Div, y) == 0) {
-				tmpC.x = x;
-				tmpC.y = y;
-				addCouple(R, tmpC);
-			}
-		}
-		matrix = fillMatrix(premList, sizePL, R);
-
-		for (int i = 0; i < R->size; i++) {
-			for (int j = 0; j < sizePL; j++) {
-				matrixMod[i][j] = matrix[i][j] % 2;
-			}
-		}
-		listNoyau = gaussjordan_noyau(matrixMod, sizePL);
-
-		while (listNoyau->list != NULL) {
-			noyau = listNoyau->list->vec;
-			u = (calcul_u(*R, noyau, n));
-			v = (calcul_v(premList, sizePL, *R, matrix, noyau,n));
-			if ((pgcdUint(u - v, nbr) != 1) && (pgcdUint(u - v, nbr) != nbr)) {
-				addInt(&Div, pgcdUint(u - v, nbr));
-				nbr /= pgcdUint(u - v, nbr);
-			} else if ((pgcdUint(u + v, nbr) != 1) && (pgcdUint(u + v, nbr) != nbr)) {
-				addInt(&Div, pgcdUint(u + v, nbr));
-				nbr /= pgcdUint(u + v, nbr);
-			}
-			if (Miller(nbr, 10)) {
-				addInt(&Div, nbr);
-				return Div;
-			}
-			tmp = listNoyau->list;
-
-			listNoyau->list = listNoyau->list->suiv;
-			free(tmp);
-			free(noyau);
-
-		}
-		for (int i = 0; i < sizePL; i++) {
-			free(matrix[i]);
-		}
-		free(matrix);
-		free(listNoyau);
-
-		resetCoupleList(R);
-	}
-	for (int i = 0; i < sizePL; i++) {
-		free(matrixMod[i]);
-	}
-	free(matrixMod);
-	free(R);
-	free(premList);
-
-	//timer
-
-
-	return Div;
-}*/
-
 char **matrix1DTo2D(char *matrix, int size) {
 	char **mat = new char*[size];
-	for(int i = 0;i< size ; i++){
+
+	for (int i = 0;i< size ; i++) {
 		mat[i] = new char[size];
 	}
+	
 	int row = 0, col = 0;
 	for (int i = 0; i < size * size; i++) {
 		mat[row][col] = matrix[i];
@@ -213,7 +111,6 @@ Int_List_GPU *factor(uint64_t n) {
 	int borne = ceil(sqrt(exp(sqrt(2 * log(n) * log(log(n))))));
 	int sizePL;
 	int *premList = generatePrimeList(borne, &sizePL);
-	printf("size pl = %i\n",sizePL);
 	CUDA_CHECK_RETURN(cudaMemcpyToSymbol(devPremList, premList, sizePL * sizeof(int), 0, cudaMemcpyHostToDevice));
 	int *ptr;
 	cudaGetSymbolAddress((void **)&ptr, devPremList);
@@ -253,7 +150,6 @@ Int_List_GPU *factor(uint64_t n) {
 
 Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int *ptr) {
 	Couple_List *R = createCoupleList();
-	//int * sizeR = (int *) malloc(sizeof(int));
 	int sizeR = 0;
 	Int_List_GPU *Div = createIntList();
 	Couple *tmpC = NULL;
@@ -285,7 +181,6 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_matrix,(sizePL+32)*(sizePL+32)*sizeof(char)));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_matrixMod,(sizePL+32)*(sizePL+32)*sizeof(char)));
 
-	printf("entree dans Dixon\n");
 	while (produitDiv(*Div) != nbr) {
 		matrixMod = (char **) malloc(sizePL * sizeof(char *));
 
@@ -385,7 +280,6 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 	CUDA_CHECK_RETURN(cudaFree(dev_matrixMod));
 
 	free(R);
-	//free(sizeR);
 	free(premList);
 
 	return Div;

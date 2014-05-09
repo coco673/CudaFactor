@@ -1,8 +1,5 @@
 /*
  * pgcd.c
- *
- *  Created on: 30 janv. 2014
- *      Author: tony
  */
 
 #include "header/pgcd.h"
