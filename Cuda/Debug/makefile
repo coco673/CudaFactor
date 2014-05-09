@@ -48,7 +48,7 @@ all: CudaFactor secondary-outputs
 CudaFactor: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: NVCC Linker'
-	/usr/local/cuda-5.5/bin/nvcc --cudart static --relocatable-device-code=true -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_20 -link -o  "CudaFactor" $(OBJS) $(USER_OBJS) $(LIBS)
+	nvcc --cudart static --relocatable-device-code=true -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_20 -link -o  "CudaFactor" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
