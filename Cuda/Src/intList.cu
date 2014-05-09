@@ -16,7 +16,7 @@ __device__ void copyTabDev(uint64_t *src, uint64_t *dest, int size) {
 __global__ void copyTabGPU(uint64_t *src, uint64_t *dest, int size) {
 	int tid = threadIdx.x;
 	if (tid < size) {
-		dest[tid] = src[tid];
+		 dest[tid] = src[tid];
 	}
 }
 

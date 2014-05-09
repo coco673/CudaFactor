@@ -58,7 +58,7 @@ typedef struct {
  * \val index Position où insérer la ligne dans la matrice
  * \return matrix : Copie de la matrice à laquelle on a rajouté la ligne
  */
- __host__ matrix2D *addLineToMatrix2D(matrix2D *src, int val, int index);
+ __host__ void addLineToMatrix2D(matrix2D *src, int val, int index);
  
 /**
  * \fn __host__ void swapLineMatrix2D(matrix2D *src, int line1, int line2) 

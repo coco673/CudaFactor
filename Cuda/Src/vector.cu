@@ -26,6 +26,7 @@
 		cl->suiv = list->list;
 		list->list = cl;
 	}
+
 	list->vecNb++;
 }
 

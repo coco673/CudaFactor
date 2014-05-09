@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
 	cudaEventRecord(start, 0);
 
 	if (argc > 1)
-		n = atoll(argv[1]);
+	n= strtoull(argv[1],NULL,10);
 	else
 		n = 3061 * 3259;
 
@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
 	printf("temps %f\n", elapsedTime / 1000);
 	cudaEventDestroy(start);
 	cudaEventDestroy(stop);
-	delete[](Div->List);
-	delete[](Div);
+	free(Div->List);
+	free(Div);
 	cudaDeviceReset();
 }

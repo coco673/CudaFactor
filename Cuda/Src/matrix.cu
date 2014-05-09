@@ -51,16 +51,15 @@ __host__ matrix2D *copyMatrix2D(matrix2D src) {
 		if(matrix->mat[i] == NULL){
 			perror("mattrix mat[i]");
 		}
-		for (int j = 0; j < src.colsNb; j++) {
-			matrix->mat[i][j] = src.mat[i][j];
-		}
+
+		memcpy(matrix->mat[i],src.mat[i],src.colsNb*sizeof(char));
 	}
 	matrix->rowsNb = src.rowsNb;
 	matrix->colsNb = src.colsNb;
 	return matrix;
 }
 
-__host__ matrix2D *addLineToMatrix2D(matrix2D *src, int val, int index) {
+__host__ void addLineToMatrix2D(matrix2D *src, int val, int index) {
 	char *vector = (char *) malloc(src->colsNb * sizeof(char));
 	if (vector == NULL) {
 		perror("add line vector");
@@ -72,16 +71,32 @@ __host__ matrix2D *addLineToMatrix2D(matrix2D *src, int val, int index) {
 	if (matrix == NULL) {
 		perror("add line matrix");
 	}
+
 	for (int i = 0; i < index; i++) {
-		matrix->mat[i] = src->mat[i];
+		memcpy(matrix->mat[i],src->mat[i],src->colsNb * sizeof(char));
 	}
-	matrix->mat[index] = vector;
+	memcpy(matrix->mat[index],vector,src->colsNb * sizeof(char));
 	for (int i = index + 1; i < matrix->rowsNb; i++) {
-		matrix->mat[i] = src->mat[i - 1];
+		memcpy(matrix->mat[i],src->mat[i-1],src->colsNb*sizeof(char));
 	}
-	delete[](src->mat);
-	free(src);
-	return matrix;
+	for(int i=0;i<src->rowsNb;i++){
+		free(src->mat[i]);
+	}
+	free(src->mat);
+	src->mat=(char **)malloc(matrix->rowsNb*sizeof(char*));
+
+	for (int i =0;i<matrix->rowsNb;i++){
+		src->mat[i]=((char*)malloc(matrix->colsNb * sizeof(char)));
+		memcpy(src->mat[i],matrix->mat[i],matrix->colsNb * sizeof(char));
+
+	}
+	src->colsNb = matrix->colsNb;
+	src->rowsNb = matrix->rowsNb;
+	for(int i=0;i<src->rowsNb;i++){
+		free(matrix->mat[i]);
+	}
+	free(matrix->mat);
+	free(matrix);
 }
 
 __host__ void swapLineMatrix2D(matrix2D *src, int line1, int line2) {

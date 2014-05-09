@@ -26,7 +26,6 @@ Vector_List *gaussjordan_noyau(char **matrix, int size) {
 	//on met des 0 sous la diagonale
 	jc = 0;
 	jl = 0;
-
 	// on traite toutes les colonnes
 	while (jc < nc and jl < nl) {
 		//choix du pivot que l'on veut mettre en M[jl,jc]
@@ -63,7 +62,7 @@ Vector_List *gaussjordan_noyau(char **matrix, int size) {
 		} else {
 			//on ajoute une ligne de 0 si ce n'est pas le dernier 0
 			if (jl < nc - 1) {
-				tmpMat = addLineToMatrix2D(tmpMat, 0, jl);
+				addLineToMatrix2D(tmpMat, 0, jl);
 				nl = nl + 1;
 			}
 		}
@@ -73,7 +72,7 @@ Vector_List *gaussjordan_noyau(char **matrix, int size) {
 		jl = jl + 1;
 		//il faut faire toutes les colonnes
 		if (jl == nl and jl < nc) {
-			tmpMat = addLineToMatrix2D(tmpMat, 0, nl);
+			addLineToMatrix2D(tmpMat, 0, nl);
 			nl++;
 		}
 

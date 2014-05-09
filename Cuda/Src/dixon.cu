@@ -92,8 +92,8 @@ char **matrix1DTo2D(char *matrix, int size) {
 	}
 	
 	int row = 0, col = 0;
-	for (int i = 0; i < size * size; i++) {
-		mat[row][col] = matrix[i];
+	for (int i = 0; i < size * size; i+=size) {
+		memcpy(mat[row],matrix+i,size*sizeof(char));
 		col = (col + 1) % size;
 		if (col == 0) {
 			row++;
@@ -110,8 +110,8 @@ Int_List_GPU *mergeDiv(Int_List_GPU *src1, Int_List_GPU *src2) {
 	for (int i = 0; i < src2->Size; i++) {
 		addInt(&result, src2->List[i]);
 	}
-	delete[](src1);
-	delete[](src2);
+	free(src1);
+	free(src2);
 	return result;
 }
 
@@ -245,21 +245,26 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 			uint64_t pgcd2 = pgcdUint(u + v, nbr);
 
 			if ((pgcd1 != 1) && (pgcd1 != nbr)) {
+				printf("ajout 2\n");
 				addInt(&Div, pgcd1);
 				nbr /= pgcd1;
 				while (nbr % pgcd1 == 0) {
+					printf("ajout 3\n");
 					addInt(&Div, pgcd1);
 					nbr /= pgcd1;
 				}
 			} else if ((pgcd2 != 1) && (pgcd2 != nbr)) {
+				printf("ajout 4\n");
 				addInt(&Div, pgcd2);
 				nbr /= pgcd2;
 				while (nbr % pgcd2 == 0) {
+					printf("ajout 5\n");
 					addInt(&Div, pgcd2);
 					nbr /= pgcd2;
 				}
 			}
 			if (Miller(nbr, 10)) {
+				printf("ajout 6\n");
 				addInt(&Div, nbr);
 				return Div;
 			}
@@ -271,8 +276,10 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 
 		}
 
-
-		delete[](matrix);
+for(int i=0;i<sizePL;i++){
+		delete(matrix[i]);
+}
+delete(matrix);
 		free(listNoyau);
 		CUDA_CHECK_RETURN(cudaFree(dev_Div));
 		resetCoupleList(R);
