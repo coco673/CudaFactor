@@ -1,3 +1,7 @@
+/**
+ * main.cu
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "header/dixon.h"

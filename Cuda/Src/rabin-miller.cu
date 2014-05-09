@@ -1,3 +1,7 @@
+/**
+ * rabin-miller.cu
+ */
+ 
 #include "header/rabin-miller.h"
 
 int modulo(int a,int b,int c) {

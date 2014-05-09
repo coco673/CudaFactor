@@ -1,5 +1,5 @@
 /*
- * pgcd.c
+ * pgcd.cu
  */
 
 #include "header/pgcd.h"

@@ -1,3 +1,6 @@
+/**
+ * fillMatrix.cu
+ */
 #include "header/fillMatrix.h"
 
 int **fillMatrix(int *premList, int sizePL, const Couple_List *R) {

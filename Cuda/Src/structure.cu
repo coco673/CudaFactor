@@ -1,5 +1,5 @@
 /*
- * structure.c
+ * structure.cu
  */
 #include "header/structure.h"
 #include <stdlib.h>

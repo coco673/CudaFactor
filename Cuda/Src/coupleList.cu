@@ -1,3 +1,6 @@
+/**
+ * coupleList.cu
+ */
 #include "header/coupleList.h"
 
  __host__ Couple_List *createCoupleList() {

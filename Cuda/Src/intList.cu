@@ -1,3 +1,6 @@
+/**
+ * intList.cu
+ */
 #include "header/intList.h"
 
 __device__ void copyTabDev(uint64_t *src, uint64_t *dest, int size) {

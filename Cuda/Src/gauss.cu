@@ -1,3 +1,6 @@
+/**
+ * gauss.cu
+ */
 #include "header/gauss.h"
 
 #include <unistd.h>

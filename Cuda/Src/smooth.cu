@@ -1,3 +1,6 @@
+/**
+ * smooth.cu
+ */
 #include "header/smooth.h"
 
 int isBSmoothG(int *primeList, int size, uint64_t y) {

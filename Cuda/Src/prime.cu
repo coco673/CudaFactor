@@ -1,3 +1,6 @@
+/**
+ * prime.cu
+ */
 #include "header/prime.h"
 
 __global__ void fillList(int *list, uint64_t borne) {

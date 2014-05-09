@@ -1,8 +1,16 @@
+/**
+ * dixon.cu
+ */
+ 
 #include "header/dixon.h"
 #include <unistd.h>
 #include "header/fillEns.h"
 #include <assert.h>
 
+/**
+ * \def CUDA_CHECK_RETURN(value)
+ * \brief Protection des appels système cuda
+ */
 #define CUDA_CHECK_RETURN(value) {											
 		cudaError_t _m_cudaStat = value;										
 		if (_m_cudaStat != cudaSuccess) {										
