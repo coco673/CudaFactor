@@ -22,6 +22,7 @@ Attente::Attente(Model *m)
     execButton->move(260, 500);
     execButton->setCursor(Qt::PointingHandCursor);
     execButton->setText("Lancer l'execution");
+    execButton->setStyleSheet("color: white; background-color: rgb(1,65,100);");
 
     text = new QTextEdit(this);
 

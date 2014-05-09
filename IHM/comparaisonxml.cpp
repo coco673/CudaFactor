@@ -31,12 +31,14 @@ comparaisonXml::comparaisonXml(modelComparaison* m)
     boutonOpen1->setText("Ouvrir rapport N°1");
     boutonOpen1->move(75, 400);
     boutonOpen1->setCursor(Qt::PointingHandCursor);
+    boutonOpen1->setStyleSheet("color: white; background-color: rgb(1,65,100);");
     boutonOpen1->raise(); //au premier plan
 
     boutonOpen2->setFixedSize(250, 50);
     boutonOpen2->setText("Ouvrir rapport N°2");
     boutonOpen2->move(475, 400);
     boutonOpen2->setCursor(Qt::PointingHandCursor);
+    boutonOpen2->setStyleSheet("color: white; background-color: rgb(1,65,100);");
     boutonOpen2->raise(); //au premier plan
 
     QObject::connect(boutonOpen1, SIGNAL(clicked()), this, SLOT(ouvrirFichier1()));

@@ -31,6 +31,7 @@ Resultat::Resultat(Model *m)
     sauvegarder->setFixedSize(250, 50);
     sauvegarder->move(260, 500);
     sauvegarder->setCursor(Qt::PointingHandCursor);
+    sauvegarder->setStyleSheet("color: white; background-color: rgb(1,65,100);");
     sauvegarder->setText("Enregistrer rapport");
     sauvegarder->raise(); //au premier plan
 

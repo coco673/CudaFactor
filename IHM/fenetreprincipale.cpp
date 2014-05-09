@@ -28,7 +28,6 @@ FenetrePrincipale::FenetrePrincipale() {
     bulle = new QLabel(this);
     bulle->setPixmap(*bulleIcon);
     bulle->move(560, 400);
-    //bulle->move(700-1.5*bulle->size().width(), 500-3.5*bulle->size().height());
     bulle->hide();
 
     int* chxCompFact;
