@@ -1,6 +1,9 @@
 #!/bin/sh
+grep libSage ~/.bashrc
+if [ $? != 0];then
+	echo "export PATH=$PWD/Sage/libSage:$PATH" >> ~/.bashrc 
+fi
 
-echo "export PATH= Sage/libSage:$PATH" >> ~/.bashrc 
 path=${PWD}
 
 if [ -e ${path}/Cuda/Debug/makefile ];then
