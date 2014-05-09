@@ -20,7 +20,7 @@ mpz_class Model::getNombre() {
 }
 
 //Retourne la liste des facteurs premiers
-QList<long double> Model::getListFacteursPremiers() {
+QList<mpz_class> Model::getListFacteursPremiers() {
     return listFacteursPremiers;
 }
 
@@ -40,7 +40,7 @@ void Model::setNombre(mpz_class n) {
 }
 
 //Change la liste des facteurs premiers
-void Model::setListFacteursPremiers(QList<long double> l) {
+void Model::setListFacteursPremiers(QList<mpz_class> l) {
     listFacteursPremiers = l;
 }
 
