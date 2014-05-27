@@ -111,7 +111,7 @@ __global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,
 
 	__shared__ int sizeR;
 	Couple tmp;
-	__shared__ int *matTmp;
+	 int *matTmp;
 	int bsmooth= -1;
 	int present= -1;
 	uint64_t x = 0;

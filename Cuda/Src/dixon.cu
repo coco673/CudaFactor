@@ -189,30 +189,25 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 
 			v = (calcul_v(premList, sizePL, *R, matrix, noyau,n));
 
-			uint64_t pgcd1 = pgcdUint(u - v, nbr);
-			uint64_t pgcd2 = pgcdUint(u + v, nbr);
+			uint64_t pgcd1 = pgcdRec(u - v, nbr);
+			uint64_t pgcd2 = pgcdRec(u + v, nbr);
 
 			if ((pgcd1 != 1) && (pgcd1 != nbr)) {
-				printf("ajout 2\n");
 				addInt(&Div, pgcd1);
 				nbr /= pgcd1;
 				while (nbr % pgcd1 == 0) {
-					printf("ajout 3\n");
 					addInt(&Div, pgcd1);
 					nbr /= pgcd1;
 				}
 			} else if ((pgcd2 != 1) && (pgcd2 != nbr)) {
-				printf("ajout 4\n");
 				addInt(&Div, pgcd2);
 				nbr /= pgcd2;
 				while (nbr % pgcd2 == 0) {
-					printf("ajout 5\n");
 					addInt(&Div, pgcd2);
 					nbr /= pgcd2;
 				}
 			}
 			if (Miller(nbr, 10)) {
-				printf("ajout 6\n");
 				addInt(&Div, nbr);
 				return Div;
 			}

@@ -16,3 +16,4 @@ int TestPgcd();
 int TestPgcdG();
 
 uint64_t pgcdUint(uint64_t u, uint64_t v);
+uint64_t pgcdRec(uint64_t u, uint64_t v);

@@ -25,5 +25,14 @@
 */
 uint64_t pgcdUint(uint64_t u, uint64_t v);
 
+/**
+* \fn uint64_t pgcdRec(uint64_t u, uint64_t v)
+* \brief Calcule le plus grand commun diviseur de deux nombres recursivement
+* \param u Premier nombre
+* \param v Second Nombre
+* \return res : Pgcd( \a u , \a v )
+*/
+uint64_t pgcdRec(uint64_t u, uint64_t v);
+
 
 #endif /* PGCD_H_ */
