@@ -3,8 +3,7 @@
  *
  * @brief Multiple Precision arithmetic code.
  *
- * @author David Matlack (dmatlack)
- */
+  */
 #ifndef __418_MPZ_H__
 #define __418_MPZ_H__
 
