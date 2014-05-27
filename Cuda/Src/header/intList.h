@@ -106,4 +106,31 @@ __device__ void resetIntListGPU(int **list, int size);
  */
 __host__ void printIntList(Int_List_GPU l);
 
+/**
+ * \fn uint64_t produitDiv(Int_List_GPU Div)
+ * \brief Renvoie le produit des facteurs contenus dans div
+ * \param Div Ensemble des factuers
+ * \return res : Le résultat du produit
+ */
+uint64_t produitDiv(Int_List_GPU Div);
+
+/**
+ * \fn int notIn(Int_List_GPU Div, uint64_t val)
+ * \brief Vérifie si le facteur est déja dans Div
+ * \param Div La liste des facteurs
+ * \param val Le facteur à vérifier
+ * \return 1 : Le facteur est dans Div | 0 : Le facteur n'est pas dans Div
+ */
+int notIn(Int_List Div, uint64_t val);
+
+/**
+ * \fn Int_List_GPU *mergeDiv(Int_List_GPU *src1, Int_List_GPU *src2)
+ * \brief Fusionne deux ensembles Int_List_GPU et supprime les deux ensembles source
+ * \param src1 Premier ensemble
+ * \param src2 Second ensemble
+ * \return result : L'ensemble formé après la fusion
+ */
+Int_List_GPU *mergeDiv(Int_List_GPU *src1, Int_List_GPU *src2);
+
+
 #endif

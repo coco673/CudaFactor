@@ -37,27 +37,6 @@ int adjust_th( int value) {
 	return NB_TH_PER_BLOCK;
 }
 
-uint64_t alea(uint64_t a, uint64_t b) {
-	return rand() % (b - a) + a;
-}
-
-uint64_t produitDiv(Int_List_GPU Div) {
-	uint64_t res = 1;
-	for (int i = 0; i < Div.Size; i++) {
-		res *= getVal(Div, i);
-	}
-	return res;
-}
-
-int notIn(Int_List_GPU Div, uint64_t val) {
-	for (int i = 0; i < Div.Size; i++) {
-		if (getVal(Div, i) == val) {
-			return 1;
-		}
-	}
-	return 0;
-}
-
 int calcul_u(Couple_List R, int *noyau, int n) {
 	int res = 1;
 	for (int i = 0; i < R.size; i++) {
@@ -82,37 +61,6 @@ int calcul_v(int *premList, int sizePL, Couple_List R, char **matrix, int *noyau
 		res %= n;
 	}
 	return res;
-}
-
-char **matrix1DTo2D(char *matrix, int size) {
-	char **mat = new char*[size];
-
-	for (int i = 0;i< size ; i++) {
-		mat[i] = new char[size];
-	}
-	
-	int row = 0, col = 0;
-	for (int i = 0; i < size * size; i+=size) {
-		memcpy(mat[row],matrix+i,size*sizeof(char));
-		col = (col + 1) % size;
-		if (col == 0) {
-			row++;
-		}
-	}
-	return mat;
-}
-
-Int_List_GPU *mergeDiv(Int_List_GPU *src1, Int_List_GPU *src2) {
-	Int_List_GPU *result = createIntList();
-	for (int i = 0; i < src1->Size; i++) {
-		addInt(&result, src1->List[i]);
-	}
-	for (int i = 0; i < src2->Size; i++) {
-		addInt(&result, src2->List[i]);
-	}
-	free(src1);
-	free(src2);
-	return result;
 }
 
 Int_List_GPU *factor(uint64_t n) {

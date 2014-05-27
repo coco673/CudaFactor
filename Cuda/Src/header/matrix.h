@@ -113,5 +113,13 @@ typedef struct {
  */
  __host__ void swapLineMatrix1D(matrix1D *src, int line1, int line2);
 
+ /**
+  * \fn char **matrix1DTo2D(char *matrix, int size)
+  * \brief Transforme un matrice à 1D en matrice à 2D
+  * \param matrix Matrice à transformer
+  * \param size Taille de la matrice
+  * \return mat : La matrice 2D attendue
+  */
+ char **matrix1DTo2D(char *matrix, int size);
 
 #endif /* MATRIX_H_ */

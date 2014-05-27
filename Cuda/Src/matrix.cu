@@ -171,3 +171,21 @@ __host__ void swapLineMatrix1D(matrix1D *src, int line1, int line2) {
 		src->mat[line1 * src->colsNb + i] = tmpLine[i];
 	}
 }
+
+char **matrix1DTo2D(char *matrix, int size) {
+	char **mat = new char*[size];
+
+	for (int i = 0;i< size ; i++) {
+		mat[i] = new char[size];
+	}
+
+	int row = 0, col = 0;
+	for (int i = 0; i < size * size; i+=size) {
+		memcpy(mat[row],matrix+i,size*sizeof(char));
+		col = (col + 1) % size;
+		if (col == 0) {
+			row++;
+		}
+	}
+	return mat;
+}
