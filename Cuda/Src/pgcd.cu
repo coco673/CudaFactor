@@ -1,13 +1,8 @@
 /*
- * pgcd.c
- *
- *  Created on: 30 janv. 2014
- *      Author: tony
+ * pgcd.cu
  */
 
-
-
-#include "pgcd.h"
+#include "header/pgcd.h"
 #include <string.h>
 
 #include <time.h>
@@ -46,4 +41,17 @@ uint64_t pgcdUint(uint64_t u, uint64_t v) {
 
 	uint64_t res = u << shift;
 	return res;
+}
+
+uint64_t pgcdRec(uint64_t u, uint64_t v) {
+ if (u == v) return u;
+ if (u == 0) return v;
+ if (v == 0) return u;
+ if (~u & 1) {
+   if (v & 1) return pgcdRec(u >> 1, v);
+   else return pgcdRec(u >> 1, v >> 1) << 1;
+ }
+ if (~v & 1) return pgcdRec(u, v >> 1);
+ if (u > v) return pgcdRec((u - v) >> 1, v);
+ return pgcdRec((v - u) >> 1, u);
 }

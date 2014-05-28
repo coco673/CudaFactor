@@ -1,13 +1,16 @@
-#include "coupleList.h"
+/**
+ * coupleList.cu
+ */
+#include "header/coupleList.h"
 
-__device__ __host__ Couple_List *createCoupleList() {
+ __host__ Couple_List *createCoupleList() {
 	Couple_List *list = (Couple_List *) malloc(sizeof(Couple_List));
 	list->list = NULL;
 	list->size = 0;
 	return list;
 }
 
-__device__ __host__ void addCouple(Couple_List *list, const Couple c) {
+ __host__ void addCouple(Couple_List *list, const Couple c) {
 	Couple tmp;
 	tmp.x = c.x;
 	tmp.y = c.y;
@@ -24,13 +27,13 @@ __device__ __host__ void addCouple(Couple_List *list, const Couple c) {
 	list->size++;
 }
 
-__device__ __host__ Couple getCouple(const Couple_List list, int index) {
+ __host__ Couple getCouple(const Couple_List list, int index) {
 	int i = 0;
 	Couple_List tmp = list;
 	if (index > list.size - 1 || index < 0) {
 		Couple error;
-		error.x = -1;
-		error.y = -1;
+		error.x = 0;
+		error.y = 0;
 		return error;
 	} else {
 		while (i != index) {
@@ -41,7 +44,7 @@ __device__ __host__ Couple getCouple(const Couple_List list, int index) {
 	}
 }
 
-__device__ __host__ void removeLastCouple(Couple_List *list) {
+ __host__ void removeLastCouple(Couple_List *list) {
 	if (list->size != 0) {
 		struct CL *ptr;
 		ptr = list->list;
@@ -57,17 +60,17 @@ __device__ __host__ void removeLastCouple(Couple_List *list) {
 		}
 		free(ptr);
 		list->size--;
-	} 
-} 
+	}
+}
 
-__device__ __host__ void resetCoupleList(Couple_List *list) {
+ __host__ void resetCoupleList(Couple_List *list) {
 	while (list->size != 0) {
 		removeLastCouple(list);
 	}
 }
 
 void printCouple(Couple c) {
-	printf("x : %i ; y : %i\n", c.x, c.y);
+	printf("x : %lu ; y : %lu \n", c.x, c.y);
 }
 
 void printCoupleList(const Couple_List list) {

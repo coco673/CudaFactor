@@ -1,9 +1,8 @@
-/*
- * pgcd.h
- *
- *  Created on: 28 janv. 2014
- *      Author: tony
- */
+/**
+* \file pgcd.h
+* \brief Réimplémentation pgcd
+*
+*/ 
 
 #ifndef PGDC_H_
 #define PGCD_H_
@@ -17,11 +16,23 @@
 
 #define N 2000
 
-
-/*int pgcd(int a, int b);
-char *convert(int a);
-char *equalNBit(char *res,int size);*/
+/**
+* \fn uint64_t pgcdUint(uint64_t u, uint64_t v)
+* \brief Calcule le plus grand commun diviseur de deux nombres
+* \param u Premier nombre
+* \param v Second Nombre
+* \return res : Pgcd( \a u , \a v )
+*/
 uint64_t pgcdUint(uint64_t u, uint64_t v);
+
+/**
+* \fn uint64_t pgcdRec(uint64_t u, uint64_t v)
+* \brief Calcule le plus grand commun diviseur de deux nombres recursivement
+* \param u Premier nombre
+* \param v Second Nombre
+* \return res : Pgcd( \a u , \a v )
+*/
+uint64_t pgcdRec(uint64_t u, uint64_t v);
 
 
 #endif /* PGCD_H_ */
