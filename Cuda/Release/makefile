@@ -9,7 +9,6 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir.mk
--include Test/subdir.mk
 -include Src/subdir.mk
 -include objects.mk
 
@@ -48,7 +47,7 @@ all: CudaFactor
 CudaFactor: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: NVCC Linker'
-	/opt/cuda/bin/nvcc --cudart static --relocatable-device-code=true -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_20 -link -o  "CudaFactor" $(OBJS) $(USER_OBJS) $(LIBS)
+	nvcc --cudart static --relocatable-device-code=true -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_20 -link -o  "CudaFactor" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
