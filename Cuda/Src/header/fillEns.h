@@ -123,10 +123,11 @@ __global__ void Generation(curandState_t *state,uint64_t nbr, uint64_t sqrtNBR,u
  * \param k Taille de la devPremList
  * \param rand Liste aléatoire pour générer les \x
  * \param nbr Nombre à factoriser
+ * \param sqrtNBR racine du nombre à factoriser
  * \param matrix Matrice des vecteurs à remplir à partir de R
  *
  * Construction de l'ensemble des couples (\a x , \a y ) répondant aux critères puis remplissage de la matrice nécéssaire pour le calcul de u et v
  * Ces deux étapes importantes de l'algorithme ont été réunies pour éviter d'avoir à fermer les threads et les blocs, ce qui serait une perte de performances
  */
-__global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,int sizeDiv,int *, int k,uint64_t *rand,uint64_t nbr,char *matrix);
+__global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,int sizeDiv,int *, int k,uint64_t *rand,uint64_t nbr,uint64_t sqrtNBR,char *matrix);
 #endif /* FILLENS_H_ */

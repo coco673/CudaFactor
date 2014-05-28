@@ -13,15 +13,30 @@ __global__ void fillList(int *list, uint64_t borne) {
 __global__ void eratosthene(int *list) {
 	int bid = blockIdx.x;
 	int tid = threadIdx.x;
-	if (tid > 1 && tid != list[bid]) {
-		if (list[bid] % tid == 0) {
-			list[bid] = 0;
+
+	int nbThread = 1024;
+	if(gridDim.x > nbThread){
+		nbThread = (int)ceilf(gridDim.x / nbThread);
+		for (int i = 0; i < nbThread ; i++){
+			if (tid > 1 && tid != list[bid] && tid < gridDim.x) {
+				if (list[bid] % tid == 0) {
+					list[bid] = 0;
+				}
+			}
+			tid +=1024;
+		}
+	} else{
+		if (tid > 1 && tid != list[bid]) {
+			if (list[bid] % tid == 0) {
+				list[bid] = 0;
+			}
 		}
 	}
 }
 
 int *generatePrimeList(int borne, int *size) {
 	int *list = (int *) malloc((borne - 1) * sizeof(int));
+	int nbThreads = 1024;
 	int *dev_list;
 	int cures = cudaMalloc((int **)&dev_list, (borne - 1) * sizeof(int));
 	if (cures != cudaSuccess) {
@@ -29,7 +44,12 @@ int *generatePrimeList(int borne, int *size) {
 		exit(1);
 	}
 	fillList<<<borne + 1, 1>>>(dev_list, borne);
-	eratosthene<<<borne - 1, borne - 1>>>(dev_list);
+	if((borne-1) > nbThreads ){
+		eratosthene<<<borne - 1, nbThreads>>>(dev_list);
+	} else {
+		eratosthene<<<borne - 1, borne - 1>>>(dev_list);
+	}
+
 	cures = cudaMemcpy(list, dev_list, (borne - 1) * sizeof(int), cudaMemcpyDeviceToHost);
 	if (cures != cudaSuccess) {
 		fprintf(stderr, "2 ; %s", cudaGetErrorString(cudaGetLastError()));

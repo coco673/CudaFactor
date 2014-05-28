@@ -136,6 +136,7 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_rand,(sizePL+32)*sizeof(uint64_t)));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_matrix,(sizePL+32)*(sizePL+32)*sizeof(char)));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_matrixMod,(sizePL+32)*(sizePL+32)*sizeof(char)));
+	uint64_t sqrtNBR = (uint64_t) sqrt(nbr);
 
 	while (produitDiv(*Div) != nbr) {
 		matrixMod = (char **) malloc(sizePL * sizeof(char *));
@@ -145,7 +146,7 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 		}
 		tmpC = (Couple *) malloc(sizePL * sizeof(Couple));
 		tmpmatrix = (char*) malloc((sizePL+32)*(sizePL+32) * sizeof(char));
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_Div,Div->Size*sizeof(int)));
+		CUDA_CHECK_RETURN(cudaMalloc((void **)&dev_Div,Div->Size*sizeof(uint64_t)));
 		CUDA_CHECK_RETURN(cudaMemset(dev_state,0,(sizePL+32)*sizeof(curandState_t)));
 		CUDA_CHECK_RETURN(cudaMemset(dev_R,0,(sizePL+32)*sizeof(Couple)));
 		CUDA_CHECK_RETURN(cudaMemset(dev_sizeR,0,sizeof(int)));
@@ -155,8 +156,9 @@ Int_List_GPU *dixonGPU(uint64_t nbr, uint64_t n, int *premList, int sizePL, int 
 		CUDA_CHECK_RETURN(cudaMemset(dev_matrixMod,0,(sizePL+32)*(sizePL+32)*sizeof(char)));
 
 		CUDA_CHECK_RETURN(cudaMemcpy(dev_Div,Div->List,Div->Size*sizeof(int),cudaMemcpyHostToDevice));
-		Generation<<<adjust_bl(sizePL),adjust_th(sizePL)>>>(dev_state,nbr,(uint64_t)sqrtf(nbr),dev_rand);
-		fillEnsR<<<adjust_bl(sizePL),adjust_th(sizePL)>>>(dev_state,dev_R,dev_sizeR,dev_Div,Div->Size,ptr, sizePL,dev_rand,nbr,dev_matrix);
+
+		Generation<<<adjust_bl(sizePL),adjust_th(sizePL)>>>(dev_state,nbr,(uint64_t)sqrt(nbr),dev_rand);
+		fillEnsR<<<adjust_bl(sizePL),adjust_th(sizePL)>>>(dev_state,dev_R,dev_sizeR,dev_Div,Div->Size,ptr, sizePL,dev_rand,nbr,sqrtNBR,dev_matrix);
 
 
 		CUDA_CHECK_RETURN(cudaMemcpy(&sizeR,dev_sizeR,sizeof(int),cudaMemcpyDeviceToHost));

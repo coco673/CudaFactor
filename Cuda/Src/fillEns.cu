@@ -106,23 +106,22 @@ __global__ void Generation(curandState_t *state,uint64_t nbr, uint64_t sqrtNBR,u
 	setup_kernel(state);
 }
 
-__global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,int sizeDiv,int * devPremList,int k,uint64_t *rand,uint64_t nbr,char *matrix){
-	int tid = threadIdx.x + blockIdx.x * blockDim.x;
+__global__ void fillEnsR(curandState_t *state,Couple *R,int *size,uint64_t *Div,int sizeDiv,int * devPremList,int k,uint64_t *rand,uint64_t nbr,uint64_t sqrtNBR,char *matrix){	int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
 	__shared__ int sizeR;
 	Couple tmp;
-	 int *matTmp;
+	__shared__ char *matTmp;
 	int bsmooth= -1;
 	int present= -1;
 	uint64_t x = 0;
 	uint64_t y =  0;
 	if (tid % blockDim.x == 0) {
 		sizeR = 0;
-		matTmp = (int *)malloc((k*k)*sizeof(int));
-		memset(matTmp,0,(k*k)*sizeof(int));
+		matTmp = (char *)malloc((k*k)*sizeof(char));
+		memset(matTmp,0,(k*k)*sizeof(char));
 	}
 	__syncthreads();
-	uint64_t sqrtNBR = (uint64_t) sqrtf(nbr);
+
 
 	do {
 		generate(state,rand,nbr,sqrtNBR);
