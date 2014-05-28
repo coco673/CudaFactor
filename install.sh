@@ -1,6 +1,6 @@
 #!/bin/sh
 grep libSage ~/.bashrc
-if [ $? != 0];then
+if [ $? != 0 ];then
 	echo "export PATH=$PWD/Sage/libSage:$PATH" >> ~/.bashrc 
 fi
 
