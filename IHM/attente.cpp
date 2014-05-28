@@ -142,7 +142,7 @@ void Attente::execCUDA() {
     int pres = 2000;
     strs << std::setprecision(pres) << model->getNombre();
     std::string stest = strs.str();
-    std::string cmds = " ../Cuda/Debug/CudaFactor ";
+    std::string cmds = " ../Cuda/Release/CudaFactor ";
     char boom [50];
     strcpy(boom, cmds.c_str());
     char booom [25];
